@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SimpleMvp</string>
+
+    <string name="error_msg">错误消息</string>
+</resources>
