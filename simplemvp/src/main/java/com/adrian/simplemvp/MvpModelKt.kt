@@ -6,6 +6,7 @@ import com.adrian.simplemvp.base.BaseModelKt
 class MvpModelKt(val mParam: String) : BaseModelKt<String>(mParam) {
 
     companion object {
+        @JvmStatic
         fun getData(param: String, callback: MvpCallbackKt<String>) {
             Handler().postDelayed({
                 when (param) {

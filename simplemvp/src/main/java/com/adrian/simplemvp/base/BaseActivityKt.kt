@@ -3,7 +3,6 @@ package com.adrian.simplemvp.base
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.adrian.simplemvp.R
@@ -12,8 +11,8 @@ abstract class BaseActivityKt : AppCompatActivity(), IBaseViewKt {
 
     private lateinit var mProgressDialog: ProgressDialog
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         mProgressDialog = ProgressDialog(this)
         mProgressDialog.setCancelable(false)

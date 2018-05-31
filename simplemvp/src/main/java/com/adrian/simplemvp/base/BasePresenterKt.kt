@@ -1,6 +1,6 @@
 package com.adrian.simplemvp.base
 
-class BasePresenterKt<V : IBaseViewKt> {
+open class BasePresenterKt<V : IBaseViewKt> {
 
     private var mvpView: V? = null
 
