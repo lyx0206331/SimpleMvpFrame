@@ -1,5 +1,6 @@
 package com.adrian.simplemvpframe;
 
+import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import com.adrian.simplemvp.base.BaseActivity;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
+    SuperCircleView mSuperCircleView;
+    TextView textView;
+
     TextView text;
     MvpPresenter presenter;
 
@@ -20,6 +24,22 @@ public class MainActivity extends BaseActivity implements MvpView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        textView = (TextView) findViewById(R.id.tv);
+        mSuperCircleView = (SuperCircleView) findViewById(R.id.superview);
+        mSuperCircleView.setShowSelect(false);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
+        valueAnimator.setTarget(textView);
+        valueAnimator.setDuration(2000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int i = Integer.valueOf(String.valueOf(animation.getAnimatedValue()));
+                textView.setText(i + "");
+                mSuperCircleView.setSelect((int) (360 * (i / 100f)));
+            }
+        });
+        valueAnimator.start();
 
         text = (TextView)findViewById(R.id.text);
 

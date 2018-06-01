@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="white">#ffffff</color>
+
+    <color name="huise">#C5C7C7</color>
+
+    <color name="huise2">#EAECF0</color>
+
+    <color name="text_color">#CFD5DE</color>
 </resources>
