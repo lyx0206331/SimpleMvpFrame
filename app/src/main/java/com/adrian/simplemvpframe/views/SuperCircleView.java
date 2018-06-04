@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe;
+package com.adrian.simplemvpframe.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,6 +10,8 @@ import android.graphics.SweepGradient;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import com.adrian.simplemvpframe.R;
 
 public class SuperCircleView extends View {
 

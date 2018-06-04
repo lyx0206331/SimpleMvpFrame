@@ -1,96 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_horizontal_margin"
-    android:background="#fff"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_gravity="center">
+    <LinearLayout
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="#fff"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
-        <com.adrian.simplemvpframe.SuperCircleView
-            android:id="@+id/superview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center">
+
+            <com.adrian.simplemvpframe.views.SuperCircleView
+                android:id="@+id/superview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:min_circle_radio="200"
+                app:ring_width="60" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"
+                android:text="信息完成度"
+                android:textColor="#CFD5DE"
+                android:textSize="9sp" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#506946"
+                    android:textSize="40sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <com.adrian.simplemvpframe.views.SuperCircleView
+            android:id="@+id/superview2"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
-            app:min_circle_radio="300"
-            app:ring_width="60" />
+            app:is_show_select="true"
+            app:min_circle_radio="100"
+            app:ring_color_select="2"
+            app:ring_width="10"
+            app:select="40" />
+
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="点击按钮获取网络数据"/>
+
+        <Button
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="60dp"
-            android:text="信息完成度"
-            android:textColor="#CFD5DE"
-            android:textSize="18sp" />
+            android:text="获取数据【成功】"
+            android:onClick="getData" />
 
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:text="获取数据【失败】"
+            android:onClick="getDataForFailure" />
 
-            <TextView
-                android:id="@+id/tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="#506946"
-                android:textSize="80sp" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="获取数据【异常】"
+            android:onClick="getDataForError" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="%"
-                android:textSize="28sp" />
-        </LinearLayout>
-    </FrameLayout>
-
-    <com.adrian.simplemvpframe.SuperCircleView
-        android:id="@+id/superview2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:is_show_select="true"
-        app:min_circle_radio="100"
-        app:ring_color_select="2"
-        app:ring_width="10"
-        app:select="40" />
-
-
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="点击按钮获取网络数据"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="获取数据【成功】"
-        android:onClick="getData"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="获取数据【失败】"
-        android:onClick="getDataForFailure"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="获取数据【异常】"
-        android:onClick="getDataForError"
-        />
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

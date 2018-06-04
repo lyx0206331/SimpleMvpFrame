@@ -1,16 +1,14 @@
 package com.adrian.simplemvpframe;
 
 import android.animation.ValueAnimator;
-import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.adrian.simplemvp.MvpPresenter;
 import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
+import com.adrian.simplemvpframe.views.SuperCircleView;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
