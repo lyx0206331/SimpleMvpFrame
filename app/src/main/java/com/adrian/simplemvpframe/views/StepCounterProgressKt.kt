@@ -71,7 +71,7 @@ class StepCounterProgressKt : RelativeLayout {
     private lateinit var baseCircle: RectF
     private lateinit var progressCircle: RectF
     private var baseStartAngle = 270f
-    private var baseFinishAngle = 359.9f
+    private var baseFinishAngle = 360f
     private var progressStartAngle = 270f
     private var plusAngle = 0f
     private var paddingR = 0
@@ -206,7 +206,7 @@ class StepCounterProgressKt : RelativeLayout {
     fun reset() = {
         begin = min
 
-        invalidate()
+//        invalidate()
     }
 
     override fun onDetachedFromWindow() {
