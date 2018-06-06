@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CharView">
+        <attr name="leftColor" format="color" />
+        <attr name="leftColorBottom" format="color" />
+        <attr name="selectLeftColor" format="color" />
+        <attr name="rightColor" format="color" />
+        <attr name="rightColorBottom" format="color" />
+        <attr name="selectRightColor" format="color" />
+        <attr name="xyColor" format="color" />
+    </declare-styleable>
+</resources>
