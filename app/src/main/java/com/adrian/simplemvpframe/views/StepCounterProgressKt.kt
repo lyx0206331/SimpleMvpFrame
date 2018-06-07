@@ -113,6 +113,8 @@ class StepCounterProgressKt : RelativeLayout {
         duration = attributes.getInt(R.styleable.StepCounterProgress_duration, duration)
         progressStrokeWidth = attributes.getDimensionPixelOffset(R.styleable.StepCounterProgress_progress_stroke_width, progressStrokeWidth)
 
+        attributes.recycle()
+
         initBasePainter()
         initProgressPainter()
         initValueAnimator()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CharView">
+    <declare-styleable name="ChartView">
         <attr name="leftColor" format="color" />
         <attr name="leftColorBottom" format="color" />
         <attr name="selectLeftColor" format="color" />

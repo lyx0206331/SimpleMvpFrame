@@ -18,6 +18,8 @@
 
         <include layout="@layout/layout_step_counter" />
 
+        <include layout="@layout/layout_chart_view1" />
+
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
