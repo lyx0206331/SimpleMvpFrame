@@ -16,6 +16,7 @@ import com.adrian.simplemvp.MvpPresenter;
 import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
 import com.adrian.simplemvpframe.views.ChartView;
+import com.adrian.simplemvpframe.views.CustomChartView;
 import com.adrian.simplemvpframe.views.DHealthyProgressView;
 import com.adrian.simplemvpframe.views.StepCounterProgressKt;
 import com.adrian.simplemvpframe.views.SuperCircleView;
@@ -36,7 +37,7 @@ public class MainActivity extends BaseActivity implements MvpView {
     private TextView tv_value;
 
     private ChartView myChartView;
-    private RelativeLayout relativeLayout;
+    private LinearLayout relativeLayout;
     private LinearLayout llChart;
     private List<Float> chartList;
 
@@ -138,7 +139,7 @@ public class MainActivity extends BaseActivity implements MvpView {
         myChartView.setLineColor(getResources().getColor(R.color.xyColor));
         chartList = new ArrayList<>();
 
-        relativeLayout = (RelativeLayout) findViewById(R.id.linearLayout);
+        relativeLayout = (LinearLayout) findViewById(R.id.linearLayout);
         relativeLayout.removeView(llChart);
         Random random = new Random();
         while (chartList.size() < 24) {
@@ -170,6 +171,20 @@ public class MainActivity extends BaseActivity implements MvpView {
                 relativeLayout.addView(llChart);
             }
         });
+
+        String[] xLabel = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
+                "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27",
+                "28", "29", "30", "31"};
+        String[] yLabel = {"0", "100", "200", "300", "400", "500", "600", "700", "800", "900"};
+        int[] data1 = {300, 500, 550, 500, 300, 700, 800, 750, 550, 600, 400, 300, 400, 600, 500,
+                700, 300, 500, 550, 500, 300, 700, 800, 750, 550, 600, 400, 300, 400, 600, 500};
+        List<int[]> data = new ArrayList<>();
+        data.add(data1);
+        List<Integer> color = new ArrayList<>();
+        color.add(R.color.leftColor);
+        color.add(R.color.rightColor);
+        color.add(R.color.colorPrimary);
+        relativeLayout.addView(new CustomChartView(this, xLabel, yLabel, data, color));
     }
 
     @Override

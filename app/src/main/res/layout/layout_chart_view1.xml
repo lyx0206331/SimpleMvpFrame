@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="250dp"
@@ -12,5 +12,5 @@
             android:id="@+id/chart_view1"
             android:layout_width="match_parent"
             android:layout_height="200dp" />
-    </RelativeLayout>
+    </LinearLayout>
 </merge>
