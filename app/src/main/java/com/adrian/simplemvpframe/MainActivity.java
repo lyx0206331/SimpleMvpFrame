@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity implements MvpView {
     private TextView tv_value;
 
     private ChartView myChartView;
-    private LinearLayout relativeLayout;
+    private LinearLayout linearLayout;
     private LinearLayout llChart;
     private List<Float> chartList;
 
@@ -139,8 +139,8 @@ public class MainActivity extends BaseActivity implements MvpView {
         myChartView.setLineColor(getResources().getColor(R.color.xyColor));
         chartList = new ArrayList<>();
 
-        relativeLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        relativeLayout.removeView(llChart);
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        linearLayout.removeView(llChart);
         Random random = new Random();
         while (chartList.size() < 24) {
             int randomInt = random.nextInt(100);
@@ -150,7 +150,7 @@ public class MainActivity extends BaseActivity implements MvpView {
         myChartView.setListener(new ChartView.OnClickNumberListener() {
             @Override
             public void clickNumber(int number, int x, int y) {
-                relativeLayout.removeView(llChart);
+                linearLayout.removeView(llChart);
                 //反射加载点击柱状图弹出布局
                 llChart = (LinearLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_shouru_zhichu, null);
                 TextView tvZhichu = (TextView) llChart.findViewById(R.id.tv_zhichu);
@@ -163,28 +163,14 @@ public class MainActivity extends BaseActivity implements MvpView {
                 params.leftMargin = x - 100;
                 if (x - 100 < 0) {
                     params.leftMargin = 0;
-                } else if (x - 100 > relativeLayout.getWidth() - llChart.getMeasuredWidth()) {
+                } else if (x - 100 > linearLayout.getWidth() - llChart.getMeasuredWidth()) {
                     //设置布局距左侧屏幕宽度减去布局宽度
-                    params.leftMargin = relativeLayout.getWidth() - llChart.getMeasuredWidth();
+                    params.leftMargin = linearLayout.getWidth() - llChart.getMeasuredWidth();
                 }
                 llChart.setLayoutParams(params);
-                relativeLayout.addView(llChart);
+                linearLayout.addView(llChart);
             }
         });
-
-        String[] xLabel = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
-                "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27",
-                "28", "29", "30", "31"};
-        String[] yLabel = {"0", "100", "200", "300", "400", "500", "600", "700", "800", "900"};
-        int[] data1 = {300, 500, 550, 500, 300, 700, 800, 750, 550, 600, 400, 300, 400, 600, 500,
-                700, 300, 500, 550, 500, 300, 700, 800, 750, 550, 600, 400, 300, 400, 600, 500};
-        List<int[]> data = new ArrayList<>();
-        data.add(data1);
-        List<Integer> color = new ArrayList<>();
-        color.add(R.color.leftColor);
-        color.add(R.color.rightColor);
-        color.add(R.color.colorPrimary);
-        relativeLayout.addView(new CustomChartView(this, xLabel, yLabel, data, color));
     }
 
     @Override

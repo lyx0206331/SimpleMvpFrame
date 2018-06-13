@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
+import android.util.AttributeSet
 import android.view.View
 import com.adrian.simplemvpframe.R
 
@@ -47,7 +48,6 @@ class CustomChartView : View {
         this.dataList = dataList
         this.colorList = colorList
 
-        initData()
     }
 
     private fun initData() {
@@ -61,14 +61,14 @@ class CustomChartView : View {
         paintAxes.style = Paint.Style.STROKE
         paintAxes.strokeWidth = 4f
         paintAxes.isDither = true
-        paintAxes.color = getColor(R.color.leftColor)
+        paintAxes.color = getColor(R.color.color11)
 
         paintCoordinate = Paint()
         paintCoordinate.isAntiAlias = true
         paintCoordinate.style = Paint.Style.STROKE
         paintCoordinate.textSize = 15f
         paintCoordinate.isDither = true
-        paintCoordinate.color = getColor(R.color.leftColor)
+        paintCoordinate.color = getColor(R.color.color11)
 
         paintRectF = Paint()
         paintRectF.isDither = true
@@ -86,7 +86,18 @@ class CustomChartView : View {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.drawColor(getColor(R.color.rightColor))
+        canvas?.drawColor(getColor(R.color.white))
+
+        initData()
+        drawAxesLine(canvas!!, paintAxes)
+        drawCoordinate(canvas!!, paintCoordinate)
+        if (dataList!!.size == 1) {
+            drawSingleBar(canvas!!, paintRectF, dataList!![0], colorList!!)
+            drawSingleValue(canvas!!, paintValue, dataList!![0], colorList!![2])
+        } else if (dataList!!.size == 2) {
+            drawDoubleBars(canvas!!, paintRectF, dataList!!, colorList!!)
+            drawDoubleValues(canvas!!, paintValue, dataList!!, colorList!![2])
+        }
     }
 
     /**
@@ -109,25 +120,43 @@ class CustomChartView : View {
      */
     private fun drawCoordinate(canvas: Canvas, paint: Paint) {
         //X
-        for (i in 0..(xLabel!!.size - 1)) {
+//        for (i in 0..(xLabel!!.size - 1)) {
+//            paint.textAlign = Paint.Align.CENTER
+//            val startX: Int = xPoint + i * xScale
+//            canvas.drawText(xLabel!![i], startX.toFloat(), height - margin / 6f, paint)
+//        }
+        for ((index, value) in xLabel!!.withIndex()) {
             paint.textAlign = Paint.Align.CENTER
-            val startX: Int = xPoint + i * xScale
-            canvas.drawText(xLabel!![i], startX.toFloat(), height - margin / 6f, paint)
+            val startX = xPoint + index * xScale
+            canvas.drawText(value, startX.toFloat(), height - margin / 6f, paint)
         }
 
         //Y
-        for (i in 0..(yLabel!!.size - 1)) {
+//        for (i in 0..(yLabel!!.size - 1)) {
+//            paint.textAlign = Paint.Align.LEFT
+//            val startY: Int = yPoint - i * yScale
+//            val offsetX: Int = when (yLabel!!.size) {
+//                1 -> 28
+//                2 -> 20
+//                3 -> 12
+//                4 -> 5
+//                else -> 0
+//            }
+//            val offsetY: Int = if (i == 0) 0 else margin / 5
+//            canvas.drawText(yLabel!![i], margin / 4f + offsetX, startY.toFloat() + offsetY, paint)
+//        }
+        for ((index, value) in yLabel!!.withIndex()) {
             paint.textAlign = Paint.Align.LEFT
-            val startY: Int = yPoint - i * yScale
-            val offsetX: Int = when (yLabel!!.size) {
+            val startY = yPoint - index * yScale
+            val offsetX = when (yLabel!!.size) {
                 1 -> 28
                 2 -> 20
                 3 -> 12
                 4 -> 5
                 else -> 0
             }
-            val offsetY: Int = if (i == 0) 0 else margin / 5
-            canvas.drawText(yLabel!![i], margin / 4f + offsetX, startY.toFloat() + offsetY, paint)
+            val offsetY = if (index == 0) 0 else margin / 5
+            canvas.drawText(value, margin / 4f + offsetX, startY.toFloat() + offsetY, paint)
         }
     }
 
@@ -138,7 +167,7 @@ class CustomChartView : View {
         for (i in 1..(xLabel!!.size - 1)) {
             val startX: Int = xPoint + i * xScale
             val rect: RectF = RectF(startX - 5f, toY(data[i - 1]), startX + 5f, height - margin - 2f)
-            val color: Int = getColor(colorList.get((i + 1) % 2))
+            val color: Int = getColor(colorList[(i + 1) % 2])
             paint.color = color
             canvas.drawRect(rect, paint)
         }
@@ -151,11 +180,11 @@ class CustomChartView : View {
         for (i in 1..(xLabel!!.size - 1)) {
             val startX: Int = xPoint + i * xScale
             paint.color = getColor(colorList[0])
-            val rect1 = RectF(startX - 20f, toY(dataList.get(0)[i - 1]), startX - 10f, height - margin - 2f)
+            val rect1 = RectF(startX - 20f, toY(dataList[0][i - 1]), startX - 10f, height - margin - 2f)
             canvas.drawRect(rect1, paint)
 
             paint.color = getColor(colorList[1])
-            val rect2 = RectF(startX - 5f, toY(dataList.get(1)[i - 1]), startX + 5f, height - margin - 2f)
+            val rect2 = RectF(startX - 5f, toY(dataList[1][i - 1]), startX + 5f, height - margin - 2f)
             canvas.drawRect(rect2, paint)
         }
     }

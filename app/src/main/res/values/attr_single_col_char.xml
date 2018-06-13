@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SingleColChartView">
+        <attr name="normalColor" format="color|reference" />
+        <attr name="touchColor" format="color|reference" />
+        <attr name="bgColor" format="color|reference" />
+        <attr name="xAxesVisible" format="boolean" />
+        <attr name="yAxesVisible" format="boolean" />
+        <attr name="axesColor" format="color|reference" />
+        <attr name="txtColor" format="color|reference" />
+        <attr name="txtSize" format="float|reference" />
+        <attr name="showValueType">
+            <flag name="neverShow" value="0" />
+            <flag name="clickShow" value="1" />
+            <flag name="alwaysShow" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
