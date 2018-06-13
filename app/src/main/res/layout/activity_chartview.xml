@@ -10,11 +10,11 @@
         android:id="@+id/sccv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:normalColor="@color/color12"
-        app:touchColor="@color/color13"
+        app:normalColor="@color/color13"
+        app:touchColor="@color/color11"
         app:axesColor="@color/color14"
         app:yAxesVisible="false"
-        app:showValueType="neverShow" />
+        app:showValueType="clickShow" />
 
     <!-- 柱状图1 -->
     <RelativeLayout

@@ -9,6 +9,7 @@ import android.graphics.RectF
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.adrian.simplemvpframe.R
@@ -55,10 +56,16 @@ class SingleColChartView : View {
     private var xScale: Int = 0
     private var yScale: Int = 0
 
+    //柱形宽度
+    private var colWidth: Float = 0f
+    private var touchIndex = -1
+
     private lateinit var paintAxes: Paint
     private lateinit var paintAxesTxt: Paint
     private lateinit var paintRectF: Paint
     private lateinit var paintValue: Paint
+
+    var listener: OnClickColumnListener? = null
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
@@ -131,6 +138,9 @@ class SingleColChartView : View {
         yPoint = height - margin
         xScale = (width - 2 * margin - marginX) / (xLabelList!!.size - 1)
         yScale = (height - 2 * margin) / (yLabelList!!.size - 1)
+        colWidth = xScale / 2f
+
+        logE("xScale:$xScale, yScale:$yScale")
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -196,9 +206,11 @@ class SingleColChartView : View {
      */
     private fun drawColumn(canvas: Canvas, data: IntArray) {
         try {
+            val halfW = colWidth / 2
             for ((index, value) in data.withIndex()) {
                 val startX: Int = xPoint + (index + 1) * xScale
-                val rect = RectF(startX - 5f, toY(value), startX + 5f, height - margin - 2f)
+                val rect = RectF(startX - halfW, toY(value), startX + halfW, height - margin - 2f)
+                paintRectF.color = if (showValueType == 1 && touchIndex == index) touchColor else normalColor
                 canvas.drawRect(rect, paintRectF)
             }
         } catch (e: Exception) {
@@ -221,7 +233,9 @@ class SingleColChartView : View {
      * 点击显示数值
      */
     private fun showClicked(canvas: Canvas, data: IntArray) {
-
+        if (touchIndex >= 0 && touchIndex < data.size) {
+            canvas.drawText("${data[touchIndex]}", xPoint.toFloat() + (touchIndex+1) * xScale, toY(data[touchIndex]) - 5, paintValue)
+        }
     }
 
     /**
@@ -245,7 +259,17 @@ class SingleColChartView : View {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = event!!.x
         val y = event!!.y
-        return super.onTouchEvent(event)
+        when(event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                touchIndex = ((x - xPoint)/xScale).toInt()
+//                logE("touchIndex:$touchIndex")
+                if (showValueType == 1 && touchIndex >= 0 && touchIndex < dataList.size) {
+                    listener?.clickColumn(touchIndex, dataList[touchIndex])
+                }
+                invalidate()
+            }
+        }
+        return true
     }
 
     /**
@@ -281,7 +305,11 @@ class SingleColChartView : View {
         return y
     }
 
+    private fun logE(msg: String) {
+        Log.e("CHARTVIEW", msg)
+    }
+
     open interface OnClickColumnListener {
-        fun clickColumn(index: Int, x: Float, y: Float)
+        fun clickColumn(index: Int, value: Int)
     }
 }
