@@ -15,6 +15,7 @@
         app:axesColor="@color/color14"
         app:yAxesVisible="true"
         app:dashedVisible="true"
+        app:dashedType="dashLine"
         app:showValueType="clickShow" />
 
     <!-- 柱状图1 -->

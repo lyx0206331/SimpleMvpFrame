@@ -67,6 +67,11 @@ class SingleColChartView : View {
             field = value
             invalidate()
         }
+    var dashedType = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
     //坐标轴颜色
     var axesColor: Int = Color.BLACK
         set(value) {
@@ -120,6 +125,7 @@ class SingleColChartView : View {
     private var paintAxesTxt: Paint = Paint()
     private var paintRectF: Paint = Paint()
     private var paintValue: Paint = Paint()
+    private var paintDashed = Paint()
 
     var listener: OnClickColumnListener? = null
 
@@ -138,6 +144,7 @@ class SingleColChartView : View {
         showValueType = ta.getInt(R.styleable.SingleColChartView_showValueType, 0)
         yUnitValue = ta.getFloat(R.styleable.SingleColChartView_yUnitValue, 100f)
         dashedVisible = ta.getBoolean(R.styleable.SingleColChartView_dashedVisible, false)
+        dashedType = ta.getInt(R.styleable.SingleColChartView_dashedType, 0)
         ta.recycle()
 
         initData()
@@ -181,6 +188,15 @@ class SingleColChartView : View {
         paintValue.textAlign = Paint.Align.CENTER
         paintValue.textSize = txtSize
         paintValue.color = txtColor
+
+        if (paintDashed == null) {
+            paintDashed = Paint()
+        }
+        paintDashed.isAntiAlias = true
+        paintDashed.style = Paint.Style.STROKE
+        paintDashed.strokeWidth = 3f
+        paintDashed.isDither = true
+        paintDashed.color = axesColor
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -259,15 +275,58 @@ class SingleColChartView : View {
             canvas.drawText(value, margin.toFloat(), startY.toFloat() + offsetY, paintAxesTxt)
 
             //绘制虚线
-            if (dashedVisible && index > 0) {
-                paintAxes.strokeWidth = 3f
-                paintAxes.pathEffect = DashPathEffect(floatArrayOf(5f, 5f), 0f)
-                val path = Path()
-                path.moveTo(xPoint.toFloat(), startY.toFloat())
-                path.lineTo(width - margin / 6f, startY.toFloat())
-                canvas.drawPath(path, paintAxes)
+            drawDashed(index, startY, canvas)
+        }
+    }
+
+    /**
+     * 绘制虚线
+     */
+    private fun drawDashed(index: Int, startY: Int, canvas: Canvas) {
+        if (dashedVisible && index > 0) {
+            when (dashedType) {
+                0 -> drawDashLine(startY, canvas)
+                1 -> drawDashDot(startY, canvas)
+                2 -> drawGradientDashDot(startY, canvas)
             }
         }
+    }
+
+    /**
+     * 绘制线状虚线
+     */
+    private fun drawDashLine(startY: Int, canvas: Canvas) {
+        paintDashed.pathEffect = DashPathEffect(floatArrayOf(5f, 5f), 0f)
+        val path = Path()
+        path.moveTo(xPoint.toFloat(), startY.toFloat())
+        path.lineTo(width - margin / 6f, startY.toFloat())
+        canvas.drawPath(path, paintDashed)
+    }
+
+    /**
+     * 绘制点状虚线
+     */
+    private fun drawDashDot(startY: Int, canvas: Canvas) {
+        val path = Path()
+        path.addCircle(0f, 0f, 3f, Path.Direction.CW)
+        paintDashed.pathEffect = PathDashPathEffect(path, 15f, 0f, PathDashPathEffect.Style.ROTATE)
+        path.moveTo(xPoint.toFloat(), startY.toFloat())
+        path.lineTo(width - margin / 6f, startY.toFloat())
+        canvas.drawPath(path, paintDashed)
+    }
+
+    /**
+     * 绘制渐变点状虚线
+     */
+    private fun drawGradientDashDot(startY: Int, canvas: Canvas) {
+        val path = Path()
+        path.addCircle(0f, 0f, 3f, Path.Direction.CW)
+        paintDashed.pathEffect = PathDashPathEffect(path, 15f, 0f, PathDashPathEffect.Style.ROTATE)
+        paintDashed.shader = LinearGradient(0f, 0f, width - margin / 6f, 0f,
+                intArrayOf(Color.TRANSPARENT, axesColor, Color.TRANSPARENT), floatArrayOf(0f, .5f, 1f), Shader.TileMode.CLAMP)
+        path.moveTo(xPoint.toFloat(), startY.toFloat())
+        path.lineTo(width - margin / 6f, startY.toFloat())
+        canvas.drawPath(path, paintDashed)
     }
 
     /**
