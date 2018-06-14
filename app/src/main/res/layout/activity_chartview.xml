@@ -13,7 +13,8 @@
         app:normalColor="@color/color13"
         app:touchColor="@color/color11"
         app:axesColor="@color/color14"
-        app:yAxesVisible="false"
+        app:yAxesVisible="true"
+        app:dashedVisible="true"
         app:showValueType="clickShow" />
 
     <!-- 柱状图1 -->

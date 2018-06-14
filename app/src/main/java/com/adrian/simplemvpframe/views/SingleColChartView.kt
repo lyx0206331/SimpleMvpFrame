@@ -2,17 +2,16 @@ package com.adrian.simplemvpframe.views
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import com.adrian.simplemvpframe.R
+import org.jetbrains.annotations.NotNull
 
 /**
  * date:2018/6/13
@@ -21,6 +20,12 @@ import com.adrian.simplemvpframe.R
  */
 class SingleColChartView : View {
 
+    companion object {
+        const val DATA_LENGTH_EXCEPTION = "数据长度大于横轴坐标长度"
+        const val CHART_DATA_EXCEPTION = "图表数据异常"
+        const val DATA_TOO_LARGE = "图表数据值太大"
+    }
+
     //坐标轴数据
     private lateinit var xLabelList: Array<String>
     private lateinit var yLabelList: Array<String>
@@ -28,23 +33,69 @@ class SingleColChartView : View {
     //数据
     private lateinit var dataList: IntArray
     //背景色
-    private var background: Int = Color.WHITE
+    var background: Int = Color.WHITE
+        set(value) {
+            field = value
+            invalidate()
+        }
     //柱形通用颜色
-    private var normalColor: Int = Color.BLACK
+    var normalColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            invalidate()
+        }
     //柱形触摸颜色
-    private var touchColor: Int = Color.BLACK
+    var touchColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            invalidate()
+        }
     //显示X轴
-    private var xAxesVisible: Boolean = true
+    var xAxesVisible: Boolean = true
+        set(value) {
+            field = value
+            invalidate()
+        }
     //显示Y轴
-    private var yAxesVisible: Boolean = true
+    var yAxesVisible: Boolean = true
+        set(value) {
+            field = value
+            invalidate()
+        }
+    var dashedVisible = false
+        set(value) {
+            field = value
+            invalidate()
+        }
     //坐标轴颜色
-    private var axesColor: Int = Color.BLACK
+    var axesColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            paintAxes.color = value
+            invalidate()
+        }
     //文字颜色
-    private var txtColor: Int = Color.BLACK
+    var txtColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            paintAxesTxt.color = value
+            paintValue.color = value
+            invalidate()
+        }
     //文字尺寸
-    private var txtSize: Float = 15f
+    var txtSize: Float = 15f
+        set(value) {
+            field = value
+            paintAxesTxt.textSize = value
+            paintValue.textSize = value
+            invalidate()
+        }
     //数值显示类型(不显示/点击显示/总是显示)
-    private var showValueType: Int = 0
+    var showValueType: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
     //默认边距
     private val margin: Int = 20
     //距离左边偏移量
@@ -53,17 +104,22 @@ class SingleColChartView : View {
     private var xPoint = 0
     private var yPoint = 0
     //XY轴单位长度
-    private var xScale: Int = 0
-    private var yScale: Int = 0
+    private var xUnit: Int = 0
+    private var yUnit: Int = 0
+    var yUnitValue = 100f
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     //柱形宽度
     private var colWidth: Float = 0f
     private var touchIndex = -1
 
-    private lateinit var paintAxes: Paint
-    private lateinit var paintAxesTxt: Paint
-    private lateinit var paintRectF: Paint
-    private lateinit var paintValue: Paint
+    private var paintAxes: Paint = Paint()
+    private var paintAxesTxt: Paint = Paint()
+    private var paintRectF: Paint = Paint()
+    private var paintValue: Paint = Paint()
 
     var listener: OnClickColumnListener? = null
 
@@ -80,6 +136,8 @@ class SingleColChartView : View {
         txtColor = ta.getColor(R.styleable.SingleColChartView_txtColor, Color.BLACK)
         txtSize = ta.getDimension(R.styleable.SingleColChartView_txtSize, 15f)
         showValueType = ta.getInt(R.styleable.SingleColChartView_showValueType, 0)
+        yUnitValue = ta.getFloat(R.styleable.SingleColChartView_yUnitValue, 100f)
+        dashedVisible = ta.getBoolean(R.styleable.SingleColChartView_dashedVisible, false)
         ta.recycle()
 
         initData()
@@ -87,33 +145,41 @@ class SingleColChartView : View {
 
     private fun initData() {
 
-        paintAxes = Paint()
+        if (paintAxes == null) {
+            paintAxes = Paint()
+        }
         paintAxes.isAntiAlias = true
         paintAxes.style = Paint.Style.STROKE
         paintAxes.strokeWidth = 4f
         paintAxes.isDither = true
         paintAxes.color = axesColor
 
-        paintAxesTxt = Paint()
+        if (paintAxesTxt == null) {
+            paintAxesTxt = Paint()
+        }
         paintAxesTxt.isAntiAlias = true
         paintAxesTxt.style = Paint.Style.STROKE
         paintAxesTxt.textSize = txtSize
         paintAxesTxt.isDither = true
         paintAxesTxt.color = txtColor
 
-        paintRectF = Paint()
+        if (paintRectF == null) {
+            paintRectF = Paint()
+        }
         paintRectF.isDither = true
         paintRectF.isAntiAlias = true
         paintRectF.style = Paint.Style.FILL
         paintRectF.strokeWidth = 1f
         paintRectF.color = normalColor
 
-        paintValue = Paint()
+        if (paintValue == null) {
+            paintValue = Paint()
+        }
         paintValue.isAntiAlias = true
         paintValue.isDither = true
         paintValue.style = Paint.Style.STROKE
-        paintValue.textSize = txtSize
         paintValue.textAlign = Paint.Align.CENTER
+        paintValue.textSize = txtSize
         paintValue.color = txtColor
     }
 
@@ -136,11 +202,11 @@ class SingleColChartView : View {
 
         xPoint = margin + marginX
         yPoint = height - margin
-        xScale = (width - 2 * margin - marginX) / (xLabelList!!.size - 1)
-        yScale = (height - 2 * margin) / (yLabelList!!.size - 1)
-        colWidth = xScale / 2f
+        xUnit = (width - 2 * margin - marginX) / (xLabelList!!.size - 1)
+        yUnit = (height - 2 * margin) / (yLabelList!!.size - 1)
+        colWidth = xUnit / 2f
 
-        logE("xScale:$xScale, yScale:$yScale")
+//        logE("xScale:$xUnit, yScale:$yUnit")
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -181,23 +247,26 @@ class SingleColChartView : View {
         //X
         for ((index, value) in xLabelList!!.withIndex()) {
             paintAxesTxt.textAlign = Paint.Align.CENTER
-            val startX = xPoint + index * xScale
+            val startX = xPoint + index * xUnit
             canvas.drawText(value, startX.toFloat(), height - margin / 6f, paintAxesTxt)
         }
 
         //Y
         for ((index, value) in yLabelList!!.withIndex()) {
             paintAxesTxt.textAlign = Paint.Align.LEFT
-            val startY = yPoint - index * yScale
-            val offsetX = when (yLabelList!!.size) {
-                1 -> 28
-                2 -> 20
-                3 -> 12
-                4 -> 5
-                else -> 0
-            }
+            val startY = yPoint - index * yUnit
             val offsetY = if (index == 0) 0 else margin / 5
-            canvas.drawText(value, margin / 4f + offsetX, startY.toFloat() + offsetY, paintAxesTxt)
+            canvas.drawText(value, margin.toFloat(), startY.toFloat() + offsetY, paintAxesTxt)
+
+            //绘制虚线
+            if (dashedVisible && index > 0) {
+                paintAxes.strokeWidth = 3f
+                paintAxes.pathEffect = DashPathEffect(floatArrayOf(5f, 5f), 0f)
+                val path = Path()
+                path.moveTo(xPoint.toFloat(), startY.toFloat())
+                path.lineTo(width - margin / 6f, startY.toFloat())
+                canvas.drawPath(path, paintAxes)
+            }
         }
     }
 
@@ -208,13 +277,13 @@ class SingleColChartView : View {
         try {
             val halfW = colWidth / 2
             for ((index, value) in data.withIndex()) {
-                val startX: Int = xPoint + (index + 1) * xScale
+                val startX: Int = xPoint + (index + 1) * xUnit
                 val rect = RectF(startX - halfW, toY(value), startX + halfW, height - margin - 2f)
                 paintRectF.color = if (showValueType == 1 && touchIndex == index) touchColor else normalColor
                 canvas.drawRect(rect, paintRectF)
             }
         } catch (e: Exception) {
-            throw IllegalArgumentException("图表数据异常")
+            throw IllegalArgumentException(CHART_DATA_EXCEPTION)
         }
     }
 
@@ -234,7 +303,7 @@ class SingleColChartView : View {
      */
     private fun showClicked(canvas: Canvas, data: IntArray) {
         if (touchIndex >= 0 && touchIndex < data.size) {
-            canvas.drawText("${data[touchIndex]}", xPoint.toFloat() + (touchIndex+1) * xScale, toY(data[touchIndex]) - 5, paintValue)
+            canvas.drawText("${data[touchIndex]}", xPoint.toFloat() + (touchIndex + 1) * xUnit, toY(data[touchIndex]) - 5, paintValue)
         }
     }
 
@@ -243,7 +312,7 @@ class SingleColChartView : View {
      */
     private fun showNever(canvas: Canvas, data: IntArray) {
         for (i in 1..(xLabelList!!.size - 1)) {
-            canvas.drawText("", xPoint.toFloat() + i * xScale, toY(data[i - 1]) - 5, paintValue)
+            canvas.drawText("", xPoint.toFloat() + i * xUnit, toY(data[i - 1]) - 5, paintValue)
         }
     }
 
@@ -252,7 +321,7 @@ class SingleColChartView : View {
      */
     private fun showAlways(canvas: Canvas, data: IntArray) {
         for ((index, value) in data.withIndex()) {
-            canvas.drawText("$value", xPoint.toFloat() + (index + 1) * xScale, toY(value) - 5, paintValue)
+            canvas.drawText("$value", xPoint.toFloat() + (index + 1) * xUnit, toY(value) - 5, paintValue)
         }
     }
 
@@ -261,7 +330,7 @@ class SingleColChartView : View {
         val y = event!!.y
         when(event.action) {
             MotionEvent.ACTION_DOWN -> {
-                touchIndex = ((x - xPoint)/xScale).toInt()
+                touchIndex = ((x - xPoint) / xUnit).toInt()
 //                logE("touchIndex:$touchIndex")
                 if (showValueType == 1 && touchIndex >= 0 && touchIndex < dataList.size) {
                     listener?.clickColumn(touchIndex, dataList[touchIndex])
@@ -281,7 +350,9 @@ class SingleColChartView : View {
         this.yLabelList = yLabels
 
         if (data.size > (xLabelList.size - 1)) {
-            throw IllegalArgumentException("数据长度大于横轴坐标长度")
+            showToast(DATA_LENGTH_EXCEPTION)
+            logE(DATA_LENGTH_EXCEPTION)
+//            throw IllegalArgumentException("数据长度大于横轴坐标长度")
             return
         }
         invalidate()
@@ -297,8 +368,8 @@ class SingleColChartView : View {
     private fun toY(num: Int): Float {
         var y: Float
         try {
-            val a: Float = num / 100f
-            y = yPoint - a * yScale
+            val a: Float = num / yUnitValue
+            y = yPoint - a * yUnit
         } catch (e: Exception) {
             return 0f
         }
@@ -307,6 +378,10 @@ class SingleColChartView : View {
 
     private fun logE(msg: String) {
         Log.e("CHARTVIEW", msg)
+    }
+
+    private fun showToast(@NotNull msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
     open interface OnClickColumnListener {

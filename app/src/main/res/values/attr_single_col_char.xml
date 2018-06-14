@@ -9,6 +9,8 @@
         <attr name="axesColor" format="color|reference" />
         <attr name="txtColor" format="color|reference" />
         <attr name="txtSize" format="float|reference" />
+        <attr name="yUnitValue" format="float" />
+        <attr name="dashedVisible" format="boolean" />
         <attr name="showValueType">
             <flag name="neverShow" value="0" />
             <flag name="clickShow" value="1" />
