@@ -16,7 +16,7 @@
         app:yAxesVisible="true"
         app:dashedVisible="true"
         app:dashedType="dashLine"
-        app:showValueType="clickShow" />
+        app:showValueType="alwaysShow" />
 
     <!-- 柱状图1 -->
     <RelativeLayout

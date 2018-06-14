@@ -62,11 +62,13 @@ class SingleColChartView : View {
             field = value
             invalidate()
         }
+    //虚线刻度是否可见
     var dashedVisible = false
         set(value) {
             field = value
             invalidate()
         }
+    //虚线刻度类型(0线状虚线/1点状虚线/2点状渐变虚线)
     var dashedType = 0
         set(value) {
             field = value
@@ -95,7 +97,7 @@ class SingleColChartView : View {
             paintValue.textSize = value
             invalidate()
         }
-    //数值显示类型(不显示/点击显示/总是显示)
+    //数值显示类型(0不显示/1点击显示/2总是显示)
     var showValueType: Int = 0
         set(value) {
             field = value
@@ -353,7 +355,7 @@ class SingleColChartView : View {
         when (showValueType) {
             1 -> showClicked(canvas, data)
             2 -> showAlways(canvas, data)
-            else -> showNever(canvas, data)
+//            else -> showNever(canvas, data)
         }
     }
 
@@ -370,8 +372,8 @@ class SingleColChartView : View {
      * 始终不显示数值
      */
     private fun showNever(canvas: Canvas, data: IntArray) {
-        for (i in 1..(xLabelList!!.size - 1)) {
-            canvas.drawText("", xPoint.toFloat() + i * xUnit, toY(data[i - 1]) - 5, paintValue)
+        for ((index, value) in data.withIndex()) {
+            canvas.drawText("", xPoint.toFloat() + (index + 1) * xUnit, toY(value) - 5, paintValue)
         }
     }
 
