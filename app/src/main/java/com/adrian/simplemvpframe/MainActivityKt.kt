@@ -6,11 +6,14 @@ import android.widget.TextView
 import com.adrian.simplemvp.MvpPresenterKt
 import com.adrian.simplemvp.MvpViewKt
 import com.adrian.simplemvp.base.BaseActivityKt
+import com.adrian.simplemvpframe.views.MyDialog
 
 class MainActivityKt : BaseActivityKt(), MvpViewKt {
 
     private lateinit var text: TextView
     private lateinit var presenter: MvpPresenterKt
+
+    private var dialog: MyDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,11 @@ class MainActivityKt : BaseActivityKt(), MvpViewKt {
     }
 
     override fun showData(data: String) {
-        text.setText(data)
+        text.text = data
+
+        if (dialog == null) {
+            dialog = MyDialog(this)
+        }
+        dialog?.show()
     }
 }
