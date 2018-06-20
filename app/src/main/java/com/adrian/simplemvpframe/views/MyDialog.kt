@@ -11,14 +11,12 @@ import com.adrian.simplemvpframe.R
  * date:2018/6/20
  * description:
  **/
-class MyDialog(context: Context) : BaseDialog(context) {
+class MyDialog(context: Context, private val listener: IOnClickListener) : BaseDialog(context) {
 
     private lateinit var tvTitle: TextView
     private lateinit var tvContent: TextView
     private lateinit var tvConfirm: TextView
     private lateinit var tvCancel: TextView
-
-    private var listener: IOnClickListener? = null
 
     override fun getLayoutResId(): Int {
         return R.layout.dialog_my_layout
@@ -31,16 +29,16 @@ class MyDialog(context: Context) : BaseDialog(context) {
         tvCancel = findViewById(R.id.tv_cancel)
 
         tvConfirm.setOnClickListener {
-            listener?.clickConfirm()
+            listener?.clickConfirm(this)
         }
         tvCancel.setOnClickListener {
-            listener?.clickCancel()
+            listener?.clickCancel(this)
             dismiss()
         }
     }
 
     interface IOnClickListener {
-        fun clickConfirm()
-        fun clickCancel()
+        fun clickConfirm(dialog: MyDialog)
+        fun clickCancel(dialog: MyDialog)
     }
 }

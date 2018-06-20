@@ -1,8 +1,10 @@
 package com.adrian.simplemvpframe
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.adrian.simplemvp.MvpPresenterKt
 import com.adrian.simplemvp.MvpViewKt
 import com.adrian.simplemvp.base.BaseActivityKt
@@ -46,7 +48,18 @@ class MainActivityKt : BaseActivityKt(), MvpViewKt {
         text.text = data
 
         if (dialog == null) {
-            dialog = MyDialog(this)
+            dialog = MyDialog(this, object : MyDialog.IOnClickListener {
+                override fun clickConfirm(dialog: MyDialog) {
+                    Log.e("DIALOG", "确定")
+                    Toast.makeText(this@MainActivityKt, "确定", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun clickCancel(dialog: MyDialog) {
+                    Log.e("DIALOG", "取消")
+                    Toast.makeText(this@MainActivityKt, "取消", Toast.LENGTH_SHORT).show()
+                }
+
+            })
         }
         dialog?.show()
     }
