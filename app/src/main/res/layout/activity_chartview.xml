@@ -16,7 +16,7 @@
         app:yAxesVisible="true"
         app:dashedVisible="true"
         app:dashedType="dashLine"
-        app:showValueType="alwaysShow" />
+        app:showValueType="clickShow" />
 
     <!-- 柱状图1 -->
     <RelativeLayout
@@ -25,7 +25,8 @@
         android:background="@null"
         android:orientation="vertical"
         android:paddingEnd="15dp"
-        android:paddingStart="15dp">
+        android:paddingStart="15dp"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -84,7 +85,8 @@
         android:background="@null"
         android:orientation="vertical"
         android:paddingEnd="15dp"
-        android:paddingStart="15dp">
+        android:paddingStart="15dp"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -22,8 +22,8 @@ class ChartViewActivity : AppCompatActivity() {
 
         customBarChart1 = findViewById(R.id.customBarChart1)
         initBarChart1()
-        customBarChart2 = findViewById(R.id.customBarChart2)
-        initBarChart2()
+//        customBarChart2 = findViewById(R.id.customBarChart2)
+//        initBarChart2()
     }
 
     /**
