@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WheelViewActivity">
+
+    <com.adrian.simplemvpframe.views.wheel_view1.WheelView
+        android:id="@+id/wheel_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        wheel:valueTextColor="#ff585A57"
+        wheel:labelTextColor="#ff585A57"
+        wheel:itemPaddingVertical="8dp"
+        wheel:itemPaddingHorizontal="18dp"
+        wheel:valueLabelPadding="18dp"
+        wheel:itemTextSize="21dp"
+        wheel:isCyclic="true"
+        wheel:shadowColor1="#ccffffff"
+        wheel:shadowColor2="#00ffffff" />
+</RelativeLayout>
