@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe.views;
+package com.adrian.simplemvpframe.views.chart_view;
 
 
 import android.animation.ValueAnimator;

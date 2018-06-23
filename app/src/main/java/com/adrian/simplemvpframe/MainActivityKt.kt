@@ -8,7 +8,7 @@ import android.widget.Toast
 import com.adrian.simplemvp.MvpPresenterKt
 import com.adrian.simplemvp.MvpViewKt
 import com.adrian.simplemvp.base.BaseActivityKt
-import com.adrian.simplemvpframe.views.MyDialog
+import com.adrian.simplemvpframe.views.chart_view.MyDialog
 
 class MainActivityKt : BaseActivityKt(), MvpViewKt {
 

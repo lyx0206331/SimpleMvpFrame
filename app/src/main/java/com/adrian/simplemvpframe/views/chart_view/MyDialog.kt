@@ -1,7 +1,6 @@
-package com.adrian.simplemvpframe.views
+package com.adrian.simplemvpframe.views.chart_view
 
 import android.content.Context
-import android.view.View
 import android.widget.TextView
 import com.adrian.simplemvp.views.BaseDialog
 import com.adrian.simplemvpframe.R

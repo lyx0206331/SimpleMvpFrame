@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe.views
+package com.adrian.simplemvpframe.views.chart_view
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -6,7 +6,6 @@ import android.content.res.TypedArray
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.RelativeLayout
 import com.adrian.simplemvpframe.R

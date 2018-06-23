@@ -7,7 +7,7 @@
         android:layout_height="200dp"
         android:layout_gravity="center">
 
-        <com.adrian.simplemvpframe.views.SuperCircleView
+        <com.adrian.simplemvpframe.views.chart_view.SuperCircleView
             android:id="@+id/superview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         </LinearLayout>
     </FrameLayout>
 
-    <com.adrian.simplemvpframe.views.SuperCircleView
+    <com.adrian.simplemvpframe.views.chart_view.SuperCircleView
         android:id="@+id/superview2"
         android:layout_width="200dp"
         android:layout_height="200dp"

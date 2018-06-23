@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe.views
+package com.adrian.simplemvpframe.views.chart_view
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -389,7 +389,7 @@ class SingleColChartView : View {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = event!!.x
         val y = event!!.y
-        when(event.action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchIndex = ((x - xPoint) / xUnit).toInt()
 //                logE("touchIndex:$touchIndex")

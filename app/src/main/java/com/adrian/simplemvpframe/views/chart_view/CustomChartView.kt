@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe.views
+package com.adrian.simplemvpframe.views.chart_view
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
-import android.util.AttributeSet
 import android.view.View
 import com.adrian.simplemvpframe.R
 

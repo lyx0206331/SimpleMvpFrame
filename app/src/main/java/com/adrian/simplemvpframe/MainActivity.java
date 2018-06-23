@@ -15,11 +15,9 @@ import android.widget.Toast;
 import com.adrian.simplemvp.MvpPresenter;
 import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
-import com.adrian.simplemvpframe.views.ChartView;
-import com.adrian.simplemvpframe.views.CustomChartView;
-import com.adrian.simplemvpframe.views.DHealthyProgressView;
-import com.adrian.simplemvpframe.views.StepCounterProgressKt;
-import com.adrian.simplemvpframe.views.SuperCircleView;
+import com.adrian.simplemvpframe.views.chart_view.ChartView;
+import com.adrian.simplemvpframe.views.chart_view.StepCounterProgressKt;
+import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
 
 import java.util.ArrayList;
 import java.util.List;
