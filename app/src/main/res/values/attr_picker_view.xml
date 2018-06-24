@@ -10,6 +10,7 @@
         <attr name="textColorOut" format="color" />
         <attr name="textColorCenter" format="color" />
         <attr name="dividerColor" format="color" />
+        <attr name="centerBackground" format="color" />
         <attr name="lineSpacingMultiplier" format="float" />
         <attr name="isLoop" format="boolean" />
         <attr name="initPosition" format="integer" />
