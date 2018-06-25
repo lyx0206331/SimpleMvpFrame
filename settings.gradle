@@ -1,1 +1,1 @@
-include ':app', ':simplemvp'
+include ':app', ':simplemvp', ':wheelviewpicker', ':pickerlib'
