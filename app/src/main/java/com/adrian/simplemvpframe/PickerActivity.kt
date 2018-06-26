@@ -10,6 +10,7 @@ import com.adrian.pickerlib.AddressPicker
 import com.adrian.pickerlib.CustomPicker
 import com.adrian.pickerlib.DatePicker
 import com.adrian.pickerlib.wheelview.WheelView
+import org.jetbrains.anko.toast
 
 class PickerActivity : AppCompatActivity() {
 
@@ -47,6 +48,7 @@ class PickerActivity : AppCompatActivity() {
             var resultStr = StringBuilder()
             result!!.forEach { resultStr.append(it) }
             btnShowData!!.text = resultStr
+            toast(resultStr)
         }
 
         customPicker = findViewById(R.id.customPicker)
