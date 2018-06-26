@@ -20,32 +20,16 @@
         android:layout_centerHorizontal="true"
         android:text="时间" />
 
-    <!--<com.adrian.pickerlib.CustomPicker
+    <com.adrian.pickerlib.CustomPicker
         android:id="@+id/customPicker"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />-->
-    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/btn_showData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.adrian.pickerlib.wheelview.WheelView
-            android:id="@+id/wv_0"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_weight="1.0" />
-
-        <com.adrian.pickerlib.wheelview.WheelView
-            android:id="@+id/wv_1"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_weight="1.0" />
-
-        <com.adrian.pickerlib.wheelview.WheelView
-            android:id="@+id/wv_2"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_weight="1.0" />
-    </LinearLayout>
+        android:text="Get Data" />
 
 </LinearLayout>

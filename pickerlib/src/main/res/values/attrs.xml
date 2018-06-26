@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="pickerview">
-        <attr name="pickerview_gravity">
+    <declare-styleable name="wheelview">
+        <attr name="wv_gravity">
             <enum name="center" value="17" />
             <enum name="left" value="3" />
             <enum name="right" value="5" />
         </attr>
-        <attr name="pickerview_textSize" format="dimension" />
-        <attr name="pickerview_textColorOut" format="color" />
-        <attr name="pickerview_textColorCenter" format="color" />
-        <attr name="pickerview_dividerColor" format="color" />
-        <attr name="pickerview_centerBackground" format="color" />
-        <attr name="pickerview_lineSpacingMultiplier" format="float" />
-        <attr name="pickerview_isLoop" format="boolean" />
-        <attr name="pickerview_initPosition" format="integer" />
-        <attr name="pickerview_visibleItemCount" format="integer" />
+        <attr name="wv_textSize" format="dimension" />
+        <attr name="wv_textColorOut" format="color" />
+        <attr name="wv_textColorCenter" format="color" />
+        <attr name="wv_dividerColor" format="color" />
+        <attr name="wv_centerBackground" format="color" />
+        <attr name="wv_lineSpacingMultiplier" format="float" />
+        <attr name="wv_isLoop" format="boolean" />
+        <attr name="wv_initPosition" format="integer" />
+        <attr name="wv_visibleItemCount" format="integer" />
     </declare-styleable>
 </resources>

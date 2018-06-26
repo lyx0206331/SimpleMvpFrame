@@ -3,6 +3,7 @@ package com.adrian.pickerlib.wheelview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -53,7 +54,7 @@ public class WheelView extends View {
     int textColorOut;//未选项文字颜色
     int textColorCenter;//选中项文字颜色
     int dividerColor;//分割线颜色
-    int CenterBackground;//中间背景颜色
+    int centerBackground;//中间背景颜色
     int textSize;//选项的文字大小 单位为sp
     boolean isLoop;//循环滚动
     float lineSpacingMultiplier;// 条目间距倍数 可用来设置上下间距
@@ -71,6 +72,7 @@ public class WheelView extends View {
     int maxTextHeight;//最大的文字高
     float itemHeight;//每行高度
     Typeface typeface = Typeface.MONOSPACE;//字体样式，默认是等宽字体
+    Typeface centerTypeface = Typeface.DEFAULT_BOLD;    //选中项字体，加粗
     float firstLineY;// 第一条线Y坐标值
     float secondLineY;//第二条线Y坐标
     float centerY;//中间label绘制的Y坐标
@@ -115,17 +117,17 @@ public class WheelView extends View {
         }
 
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.pickerview, 0, 0);
-            mGravity = a.getInt(R.styleable.pickerview_pickerview_gravity, Gravity.CENTER);
-            textColorOut = a.getColor(R.styleable.pickerview_pickerview_textColorOut, 0xFFa8a8a8);
-            textColorCenter = a.getColor(R.styleable.pickerview_pickerview_textColorCenter, 0xFF2a2a2a);
-            dividerColor = a.getColor(R.styleable.pickerview_pickerview_dividerColor, 0xFFd5d5d5);
-            CenterBackground = a.getColor(R.styleable.pickerview_pickerview_centerBackground, 0xFFa8a8a8);
-            textSize = a.getDimensionPixelOffset(R.styleable.pickerview_pickerview_textSize, sp2px(context, 16));
-            lineSpacingMultiplier = a.getFloat(R.styleable.pickerview_pickerview_lineSpacingMultiplier, 2.0F);
-            isLoop = a.getBoolean(R.styleable.pickerview_pickerview_isLoop, false);
-            initPosition = a.getInt(R.styleable.pickerview_pickerview_initPosition, -1);
-            visibleItemCount = a.getInt(R.styleable.pickerview_pickerview_visibleItemCount, 7);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.wheelview, 0, 0);
+            mGravity = a.getInt(R.styleable.wheelview_wv_gravity, Gravity.CENTER);
+            textColorOut = a.getColor(R.styleable.wheelview_wv_textColorOut, 0xFFa8a8a8);
+            textColorCenter = a.getColor(R.styleable.wheelview_wv_textColorCenter, 0xFF2a2a2a);
+            dividerColor = a.getColor(R.styleable.wheelview_wv_dividerColor, 0xFFd5d5d5);
+            centerBackground = a.getColor(R.styleable.wheelview_wv_centerBackground, Color.WHITE);
+            textSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textSize, sp2px(context, 16));
+            lineSpacingMultiplier = a.getFloat(R.styleable.wheelview_wv_lineSpacingMultiplier, 2.0F);
+            isLoop = a.getBoolean(R.styleable.wheelview_wv_isLoop, false);
+            initPosition = a.getInt(R.styleable.wheelview_wv_initPosition, -1);
+            visibleItemCount = a.getInt(R.styleable.wheelview_wv_visibleItemCount, 7);
             a.recycle();//回收内存
         }
 
@@ -165,7 +167,7 @@ public class WheelView extends View {
         paintCenterText.setColor(textColorCenter);
         paintCenterText.setAntiAlias(true);
         //paintCenterText.setTextScaleX(1.1F);
-        paintCenterText.setTypeface(typeface);
+        paintCenterText.setTypeface(centerTypeface);
         paintCenterText.setTextSize(textSize);
 
         paintIndicator = new Paint();
@@ -173,7 +175,7 @@ public class WheelView extends View {
         paintIndicator.setAntiAlias(true);
 
         paintCenterBackground = new Paint();
-        paintCenterBackground.setColor(CenterBackground);
+        paintCenterBackground.setColor(centerBackground);
         paintCenterBackground.setAntiAlias(true);
 
         if (android.os.Build.VERSION.SDK_INT >= 11) {
