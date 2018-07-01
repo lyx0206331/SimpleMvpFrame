@@ -13,10 +13,17 @@ abstract class BaseActivityKt : AppCompatActivity(), IBaseViewKt {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(getContentLayoutId())
+        initView()
+        loadData()
 
         mProgressDialog = ProgressDialog(this)
         mProgressDialog.setCancelable(false)
     }
+
+    abstract fun getContentLayoutId(): Int
+    abstract fun initView()
+    abstract fun loadData()
 
     override fun showLoading() {
         if (!mProgressDialog.isShowing) {

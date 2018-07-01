@@ -11,6 +11,19 @@ import com.adrian.simplemvp.base.BaseActivityKt
 import com.adrian.simplemvpframe.views.chart_view.MyDialog
 
 class MainActivityKt : BaseActivityKt(), MvpViewKt {
+    override fun getContentLayoutId(): Int {
+        return R.layout.activity_main
+    }
+
+    override fun initView() {
+        text = findViewById(R.id.text)
+
+        presenter = MvpPresenterKt()
+        presenter.attachView(this)
+    }
+
+    override fun loadData() {
+    }
 
     private lateinit var text: TextView
     private lateinit var presenter: MvpPresenterKt
@@ -19,12 +32,6 @@ class MainActivityKt : BaseActivityKt(), MvpViewKt {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        text = findViewById(R.id.text)
-
-        presenter = MvpPresenterKt()
-        presenter.attachView(this)
     }
 
     override fun onDestroy() {
