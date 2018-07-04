@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.support.annotation.ColorRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -55,7 +56,8 @@ public class WheelView extends View {
     int textColorCenter;//选中项文字颜色
     int dividerColor;//分割线颜色
     int centerBackground;//中间背景颜色
-    int textSize;//选项的文字大小 单位为sp
+    int textSelectedSize;//选中的文字大小 单位为sp
+    int textUnselectedSize;//未选中的文字大小 单位为sp
     boolean isLoop;//循环滚动
     float lineSpacingMultiplier;// 条目间距倍数 可用来设置上下间距
     private int mGravity;//文字显示位置
@@ -66,8 +68,11 @@ public class WheelView extends View {
     Paint paintCenterText;//选中项画笔
     Paint paintIndicator;//分割线画笔
     Paint paintCenterBackground;//选中背景画笔
+    Paint paintLabelText;//单位画笔
     private boolean isCenterLabel = true;//附加单位是否仅仅只显示在选中项后面
     private String label;//附加单位
+    float textLabelSize = 10f;
+    int textLabelColor;
     int maxTextWidth;//最大的文字宽
     int maxTextHeight;//最大的文字高
     float itemHeight;//每行高度
@@ -122,8 +127,11 @@ public class WheelView extends View {
             textColorOut = a.getColor(R.styleable.wheelview_wv_textColorOut, 0xFFa8a8a8);
             textColorCenter = a.getColor(R.styleable.wheelview_wv_textColorCenter, 0xFF2a2a2a);
             dividerColor = a.getColor(R.styleable.wheelview_wv_dividerColor, 0xFFd5d5d5);
-            centerBackground = a.getColor(R.styleable.wheelview_wv_centerBackground, Color.WHITE);
-            textSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textSize, sp2px(context, 16));
+            centerBackground = a.getColor(R.styleable.wheelview_wv_centerBackground, Color.TRANSPARENT);
+            textSelectedSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textSelectedSize, sp2px(context, 16));
+            textUnselectedSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textUnselectedSize, sp2px(context, 16));
+            textLabelColor = a.getColor(R.styleable.wheelview_wv_textLabelColor, sp2px(context, 16));
+            textLabelSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textLabelSize, sp2px(context, 16));
             lineSpacingMultiplier = a.getFloat(R.styleable.wheelview_wv_lineSpacingMultiplier, 2.0F);
             isLoop = a.getBoolean(R.styleable.wheelview_wv_isLoop, false);
             initPosition = a.getInt(R.styleable.wheelview_wv_initPosition, -1);
@@ -161,14 +169,20 @@ public class WheelView extends View {
         paintOuterText.setColor(textColorOut);
         paintOuterText.setAntiAlias(true);
         paintOuterText.setTypeface(typeface);
-        paintOuterText.setTextSize(textSize);
+        paintOuterText.setTextSize(textUnselectedSize);
 
         paintCenterText = new Paint();
         paintCenterText.setColor(textColorCenter);
         paintCenterText.setAntiAlias(true);
         //paintCenterText.setTextScaleX(1.1F);
         paintCenterText.setTypeface(centerTypeface);
-        paintCenterText.setTextSize(textSize);
+        paintCenterText.setTextSize(textSelectedSize);
+
+        paintLabelText = new Paint();
+        paintLabelText.setColor(textLabelColor);
+        paintLabelText.setAntiAlias(true);
+        paintLabelText.setTypeface(typeface);
+        paintLabelText.setTextSize(textLabelSize);
 
         paintIndicator = new Paint();
         paintIndicator.setColor(dividerColor);
@@ -181,6 +195,10 @@ public class WheelView extends View {
         if (android.os.Build.VERSION.SDK_INT >= 11) {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
         }
+    }
+
+    public void setCenterBackground(@ColorRes int centerBackground) {
+        this.centerBackground = centerBackground;
     }
 
     private void remeasure() {//重新测量
@@ -289,11 +307,29 @@ public class WheelView extends View {
         paintCenterText.setTypeface(typeface);
     }
 
-    public final void setTextSize(float size) {
+    public final void setSelectedTextSize(float size) {
         if (size > 0.0F) {
-            textSize = (int) (context.getResources().getDisplayMetrics().density * size);
-            paintOuterText.setTextSize(textSize);
-            paintCenterText.setTextSize(textSize);
+            textSelectedSize = (int) (context.getResources().getDisplayMetrics().density * size);
+            paintCenterText.setTextSize(textSelectedSize);
+        }
+    }
+
+    public final void setUnselectedTextSize(float size) {
+        if (size > 0.0F) {
+            textUnselectedSize = (int) (context.getResources().getDisplayMetrics().density * size);
+            paintOuterText.setTextSize(textUnselectedSize);
+        }
+    }
+
+    public void setTextLabelSize(float size) {
+        this.textLabelSize = (int) (context.getResources().getDisplayMetrics().density * size);
+        paintLabelText.setTextSize(textLabelSize);
+    }
+
+    public void setTextLabelColor(int textLabelColor) {
+        if (textLabelColor != 0) {
+            this.textLabelColor = textLabelColor;
+            paintLabelText.setColor(textLabelColor);
         }
     }
 
@@ -417,7 +453,7 @@ public class WheelView extends View {
         if (!TextUtils.isEmpty(label) && isCenterLabel) {
             //绘制文字，靠右并留出空隙
             int drawRightContentStart = measuredWidth - getTextWidth(paintCenterText, label);
-            canvas.drawText(label, drawRightContentStart - centerContentOffset, centerY, paintCenterText);
+            canvas.drawText(label, drawRightContentStart - centerContentOffset, centerY, paintLabelText);
         }
 
         counter = 0;
@@ -494,7 +530,7 @@ public class WheelView extends View {
                     canvas.restore();
                 }
                 canvas.restore();
-                paintCenterText.setTextSize(textSize);
+                paintCenterText.setTextSize(textSelectedSize);
             }
             counter++;
         }
@@ -509,7 +545,7 @@ public class WheelView extends View {
         Rect rect = new Rect();
         paintCenterText.getTextBounds(contentText, 0, contentText.length(), rect);
         int width = rect.width();
-        int size = textSize;
+        int size = textSelectedSize;
         while (width > measuredWidth) {
             size--;
             //设置2条横线中间的文字大小
@@ -518,7 +554,7 @@ public class WheelView extends View {
             width = rect.width();
         }
         //设置2条横线外面的文字大小
-        paintOuterText.setTextSize(size);
+        paintOuterText.setTextSize(textUnselectedSize);
     }
 
 
@@ -688,6 +724,7 @@ public class WheelView extends View {
      */
     public void setLabel(String label) {
         this.label = label;
+        invalidate();
     }
 
     public void isCenterLabel(Boolean isCenterLabel) {

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.adrian.pickerlib.wheelview.OnItemSelectedListener
 import com.adrian.pickerlib.wheelview.WheelView
 import java.util.*
@@ -21,22 +22,57 @@ class CustomPicker : LinearLayout {
     var view: LinearLayout? = null
     var bgColor: Int = Color.WHITE
     var txtSelectedColor = Color.BLACK
-    var txtSelectedSize = 12f
-    var txtUnselectedColor = Color.GRAY
-    var txtUnselectedSize = 10f
-    var dividerColor = Color.GRAY
-    var txtLabel: String = "步"
-    var txtLabelSize = 10f
-    var visibleCount = 3
-    var defaultSelected: Int = 0
-
-    var isShowLabel: Boolean = false
         set(value) {
             field = value
-            if (wheelGroup != null && wheelGroup!!.isNotEmpty()) {
-                wheelGroup!![wheelGroup!!.size - 1]!!.setLabel(txtLabel)
+            wheelGroup?.forEach {
+                it?.setTextColorCenter(value)
             }
         }
+    var txtSelectedSize = 24f
+        set(value) {
+            field = value
+            wheelGroup?.forEach {
+                it?.setSelectedTextSize(value)
+            }
+        }
+    var txtUnselectedColor = Color.GRAY
+        set(value) {
+            field = value
+            wheelGroup?.forEach {
+                it?.setTextColorOut(value)
+            }
+        }
+    var txtUnselectedSize = 10f
+        set(value) {
+            field = value
+            wheelGroup?.forEach {
+                it?.setUnselectedTextSize(value)
+            }
+        }
+    var dividerColor = Color.GRAY
+        set(value) {
+            field = value
+            wheelGroup?.forEach {
+                it?.setDividerColor(value)
+            }
+        }
+    var txtLabel: String = "步"
+    var txtLabelSize = 10f
+        set(value) {
+            field = value
+            wheelGroup?.forEach {
+                it?.setTextLabelSize(value)
+            }
+        }
+    var txtLabelColor: Int = Color.BLACK
+        set(value) {
+            field = value
+            wheelGroup?.forEach {
+                it?.setTextLabelColor(value)
+            }
+        }
+    var visibleCount = 3
+    var defaultSelected: Int = 0
 
     private var wheelGroup: Array<WheelView?>? = arrayOfNulls(5)
 
@@ -49,6 +85,7 @@ class CustomPicker : LinearLayout {
     private var wv2: WheelView? = null
     private var wv3: WheelView? = null
     private var wv4: WheelView? = null
+    private var tvUnit: TextView? = null
 
     constructor(context: Context?) : this(context, null)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -56,10 +93,12 @@ class CustomPicker : LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.layout_custom_picker, this)
 
         wv0 = findViewById(R.id.wv_0)
+//        wv0!!.setSelectedTextSize(txtSelectedSize)
         wv1 = findViewById(R.id.wv_1)
         wv2 = findViewById(R.id.wv_2)
         wv3 = findViewById(R.id.wv_3)
         wv4 = findViewById(R.id.wv_4)
+        tvUnit = findViewById(R.id.tv_unit)
 
         wheelGroup!![0] = wv0
         wheelGroup!![1] = wv1
@@ -68,7 +107,7 @@ class CustomPicker : LinearLayout {
         wheelGroup!![4] = wv4
     }
 
-    fun setData(dataGroup: Array<List<String>?>, visibleCount: Int) {
+    fun setData(dataGroup: Array<List<String>?>, visibleCount: Int, unit: String) {
         if (dataGroup.size > 5) {
             throw IllegalArgumentException("数据异常,请不要超过5组数据")
         }
@@ -86,32 +125,7 @@ class CustomPicker : LinearLayout {
             selectedDatas!![i] = dataGroup[i]!![defaultSelected]
             wheelGroup!![i]!!.setOnItemSelectedListener { index -> selectedDatas!![i] = dataGroup[i]!![index] }
         }
-    }
-
-    fun setData(groupNum: Int, dataGroup: Array<List<String>?>) {
-        if (groupNum != dataGroup.size) {
-            throw IllegalArgumentException("参数异常")
-        }
-
-        wheelGroup = arrayOfNulls(groupNum)
-        this.dataGroup = dataGroup
-        for (i in 0 until groupNum) {
-            val wheelView = createWheelView(dataGroup[i])
-            addView(wheelView)
-            wheelGroup!![i] = wheelView
-        }
-        invalidate()
-    }
-
-    private fun createWheelView(dataList: List<String>?): WheelView {
-        val wheelView = WheelView(ctx)
-        val lp = LayoutParams(0, LayoutParams.WRAP_CONTENT)
-        lp.weight = 1f
-        wheelView.layoutParams = lp
-        wheelView.setItems(dataList)
-        wheelView.currentItem = 0
-        wheelView.setVisibleItemCount(visibleCount + 2)
-        return wheelView
+        tvUnit?.text = unit
     }
 
 }

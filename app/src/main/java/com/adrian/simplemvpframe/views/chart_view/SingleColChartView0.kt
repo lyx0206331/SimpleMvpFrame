@@ -5,7 +5,6 @@ import android.content.res.TypedArray
 import android.graphics.*
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -19,7 +18,7 @@ import org.jetbrains.annotations.NotNull
  * author：RanQing
  * description：
  */
-class SingleColChartView : View {
+class SingleColChartView0 : View {
     companion object {
         const val DATA_LENGTH_EXCEPTION = "数据长度大于横轴坐标长度"
         const val CHART_DATA_EXCEPTION = "图表数据异常"
@@ -110,7 +109,7 @@ class SingleColChartView : View {
             invalidate()
         }
     //默认边距
-    private val margin: Int = 40
+    private val margin: Int = 20
     //距离左边偏移量
     private val marginX: Int = 30
     //原点坐标
@@ -218,7 +217,7 @@ class SingleColChartView : View {
         if (isAvailable()) {
             xPoint = margin + marginX
             yPoint = height - margin
-            xUnit = (width - 2 * margin - marginX) / (xLabelList!!.size)
+            xUnit = (width - 2 * margin - marginX) / (xLabelList!!.size - 1)
             yUnit = (height - 2 * margin) / (yLabelList!!.size - 1)
             colWidth = xUnit / 2f
         }
@@ -278,8 +277,8 @@ class SingleColChartView : View {
         //X
         for ((index, value) in xLabelList!!.withIndex()) {
             paintAxesTxt.textAlign = Paint.Align.CENTER
-            val startX = xPoint + (index + .5f) * xUnit
-            canvas.drawText(value, startX, height - margin / 6f, paintAxesTxt)
+            val startX = xPoint + index * xUnit
+            canvas.drawText(value, startX.toFloat(), height - margin / 6f, paintAxesTxt)
         }
 
         //Y
@@ -287,12 +286,10 @@ class SingleColChartView : View {
             paintAxesTxt.textAlign = Paint.Align.LEFT
             val startY = yPoint - index * yUnit
             val offsetY = if (index == 0) 0 else margin / 5
-            canvas.drawText(value, margin.toFloat() + marginX, startY.toFloat() - offsetY, paintAxesTxt)
+            canvas.drawText(value, margin.toFloat(), startY.toFloat() + offsetY, paintAxesTxt)
 
             //绘制虚线
-            if (!TextUtils.isEmpty(value.trim())) {
-                drawDashed(index, startY, canvas)
-            }
+            drawDashed(index, startY, canvas)
         }
     }
 
@@ -353,7 +350,7 @@ class SingleColChartView : View {
         try {
             val halfW = colWidth / 2
             for ((index, value) in data.withIndex()) {
-                val startX: Float = xPoint + (index + .5f) * xUnit
+                val startX: Int = xPoint + (index + 1) * xUnit
                 val rect = RectF(startX - halfW, toY(value), startX + halfW, height - margin - 2f)
                 paintRectF.color = if (showValueType == 1 && touchIndex == index) touchColor else normalColor
                 canvas.drawRect(rect, paintRectF)
@@ -381,7 +378,7 @@ class SingleColChartView : View {
      */
     private fun showClicked(canvas: Canvas, data: IntArray) {
         if (touchIndex >= 0 && touchIndex < data.size && data[touchIndex] > 0) {
-            canvas.drawText("${data[touchIndex]}", xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - 5, paintValue)
+            canvas.drawText("${data[touchIndex]}", xPoint.toFloat() + (touchIndex + 1) * xUnit, toY(data[touchIndex]) - 5, paintValue)
         }
     }
 
@@ -390,7 +387,7 @@ class SingleColChartView : View {
      */
     private fun showNever(canvas: Canvas, data: IntArray) {
         for ((index, value) in data.withIndex()) {
-            canvas.drawText("", xPoint + (index + .5f) * xUnit, toY(value) - 5, paintValue)
+            canvas.drawText("", xPoint.toFloat() + (index + 1) * xUnit, toY(value) - 5, paintValue)
         }
     }
 
@@ -400,7 +397,7 @@ class SingleColChartView : View {
     private fun showAlways(canvas: Canvas, data: IntArray) {
         for ((index, value) in data.withIndex()) {
             if (value > 0) {
-                canvas.drawText("$value", xPoint + (index + .5f) * xUnit, toY(value) - 5, paintValue)
+                canvas.drawText("$value", xPoint.toFloat() + (index + 1) * xUnit, toY(value) - 5, paintValue)
             }
         }
     }
@@ -412,7 +409,7 @@ class SingleColChartView : View {
                 maxIndex = index
             }
         }
-        canvas.drawText("${data[maxIndex]}", xPoint + (maxIndex + .5f) * xUnit, toY(data[maxIndex]) - 5, paintValue)
+        canvas.drawText("${data[maxIndex]}", xPoint.toFloat() + (maxIndex + 1) * xUnit, toY(data[maxIndex]) - 5, paintValue)
     }
 
     private fun showMin(canvas: Canvas, data: IntArray) {
@@ -422,7 +419,7 @@ class SingleColChartView : View {
                 minIndex = index
             }
         }
-        canvas.drawText("${data[minIndex]}", xPoint + (minIndex + .5f) * xUnit, toY(data[minIndex]) - 5, paintValue)
+        canvas.drawText("${data[minIndex]}", xPoint.toFloat() + (minIndex + 1) * xUnit, toY(data[minIndex]) - 5, paintValue)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -449,7 +446,7 @@ class SingleColChartView : View {
         this.xLabelList = xLabels
         this.yLabelList = yLabels
 
-        if (data.size > xLabelList!!.size) {
+        if (data.size > (xLabelList!!.size - 1)) {
             showToast(DATA_LENGTH_EXCEPTION)
             logE(DATA_LENGTH_EXCEPTION)
 //            throw IllegalArgumentException("数据长度大于横轴坐标长度")

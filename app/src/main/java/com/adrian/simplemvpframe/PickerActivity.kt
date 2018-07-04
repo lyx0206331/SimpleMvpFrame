@@ -57,7 +57,7 @@ class PickerActivity : AppCompatActivity() {
         datas[1] = arrayListOf("a", "b", "c", "d", "e")
         datas[2] = arrayListOf("1", "2", "3", "4")
 //        datas[3] = arrayListOf("1000", "20000", "300", "adsf")
-        customPicker!!.setData(datas, 5)
+        customPicker!!.setData(datas, 5, "单位")
 //        val wv0: WheelView = findViewById(R.id.wv_0)
 //        val wv1: WheelView = findViewById(R.id.wv_1)
 //        val wv2: WheelView = findViewById(R.id.wv_2)
