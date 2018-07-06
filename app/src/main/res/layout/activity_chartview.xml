@@ -17,7 +17,15 @@
         app:yAxesVisible="false"
         app:dashedVisible="true"
         app:dashedType="dashLine"
-        app:showValueType="clickShow" />
+        app:showValueType="clickShow|showMax" />
+
+    <com.adrian.simplemvpframe.views.LightView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:light_color="#fff"
+        app:light_radius="5"
+        app:light_src="@mipmap/ic_launcher"
+        android:layout_centerInParent="true" />
 
     <!-- 柱状图1 -->
     <RelativeLayout

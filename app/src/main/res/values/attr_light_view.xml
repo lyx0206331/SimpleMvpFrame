@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LightView">
+        <attr name="light_color" format="color" />
+        <attr name="light_radius" format="float" />
+        <attr name="light_src" format="float" />
+    </declare-styleable>
+</resources>

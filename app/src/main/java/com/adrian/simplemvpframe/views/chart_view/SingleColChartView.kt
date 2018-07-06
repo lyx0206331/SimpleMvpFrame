@@ -141,6 +141,55 @@ class SingleColChartView : View {
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         val ta: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.SingleColChartView, defStyleAttr, 0)
+
+//        val count = ta.indexCount
+//
+//        for (i in 0 until count) {
+//            val attr: Int = ta.getIndex(i)
+//            when(attr) {
+//                R.styleable.SingleColChartView_normalColor -> {
+//                    normalColor = ta.getColor(attr, Color.BLACK)
+//                }
+//                R.styleable.SingleColChartView_touchColor -> {
+//                    touchColor = ta.getColor(attr, Color.BLACK)
+//                }
+//                R.styleable.SingleColChartView_bgColor -> {
+//                    background = ta.getColor(attr, Color.WHITE)
+//                }
+//                R.styleable.SingleColChartView_xAxesVisible -> {
+//                    xAxesVisible = ta.getBoolean(attr, true)
+//                }
+//                R.styleable.SingleColChartView_yAxesVisible -> {
+//                    yAxesVisible = ta.getBoolean(attr, true)
+//                }
+//                R.styleable.SingleColChartView_axesColor -> {
+//                    axesColor = ta.getColor(attr, Color.BLACK)
+//                }
+//                R.styleable.SingleColChartView_txtColor -> {
+//                    txtColor = ta.getColor(attr, Color.BLACK)
+//                }
+//                R.styleable.SingleColChartView_txtSize -> {
+//                    txtSize = ta.getDimension(attr, 15f)
+//                }
+//                R.styleable.SingleColChartView_showValueType -> {
+//                    showValueType = ta.getInt(attr, 0)
+//                    Log.e("SHOWTYPE", "type:$showValueType")
+//                }
+//                R.styleable.SingleColChartView_yUnitValue -> {
+//                    yUnitValue = ta.getFloat(attr, 100f)
+//                }
+//                R.styleable.SingleColChartView_dashedVisible -> {
+//                    dashedVisible = ta.getBoolean(attr, false)
+//                }
+//                R.styleable.SingleColChartView_dashedType -> {
+//                    dashedType = ta.getInt(attr, 0)
+//                }
+//                R.styleable.SingleColChartView_hasAxesArrow -> {
+//                    hasAxesArrow = ta.getBoolean(attr, false)
+//                }
+//            }
+//        }
+
         normalColor = ta.getColor(R.styleable.SingleColChartView_normalColor, Color.BLACK)
         touchColor = ta.getColor(R.styleable.SingleColChartView_touchColor, Color.BLACK)
         background = ta.getColor(R.styleable.SingleColChartView_bgColor, Color.WHITE)

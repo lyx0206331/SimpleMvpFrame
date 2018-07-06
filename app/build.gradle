@@ -30,7 +30,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation project(':pickerlib')
-    implementation project(':viewpagerlib')
+    implementation project(':wheelviewpicker')
 }
 repositories {
     mavenCentral()
