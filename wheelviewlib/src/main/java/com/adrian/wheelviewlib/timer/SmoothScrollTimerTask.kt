@@ -12,10 +12,10 @@ class SmoothScrollTimerTask : TimerTask {
 
     private var realTotalOffset = 0
     private var realOffset = 0
-    private var offset = 0
+    private var offset = 0f
     private var wheelView: WheelView
 
-    constructor(wheelView: WheelView, offset: Int) : super() {
+    constructor(wheelView: WheelView, offset: Float) : super() {
         this.offset = offset
         this.wheelView = wheelView
         realTotalOffset = Int.MAX_VALUE

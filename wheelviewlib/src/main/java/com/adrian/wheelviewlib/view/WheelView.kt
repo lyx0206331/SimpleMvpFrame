@@ -2,9 +2,7 @@ package com.adrian.wheelviewlib.view
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.os.Handler
 import android.util.AttributeSet
 import android.util.DisplayMetrics
@@ -13,10 +11,13 @@ import android.view.Gravity
 import android.view.View
 import com.adrian.wheelviewlib.R
 import com.adrian.wheelviewlib.adapter.WheelAdapter
+import com.adrian.wheelviewlib.interfaces.IPickerViewData
 import com.adrian.wheelviewlib.listener.LoopViewGestureListener
 import com.adrian.wheelviewlib.listener.OnItemSelectedListener
 import com.adrian.wheelviewlib.timer.InertiaTimerTask
 import com.adrian.wheelviewlib.timer.MessageHandler
+import com.adrian.wheelviewlib.timer.SmoothScrollTimerTask
+import java.util.*
 import java.util.concurrent.*
 
 /**
@@ -58,17 +59,29 @@ class WheelView : View {
     private var isCenterLabel: Boolean = true
 
     private var mExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
-    private var mFuture: ScheduledFuture<Any>? = null
+    private var mFuture: ScheduledFuture<*>? = null
 
     private var paintOuterText = Paint()
     private var paintCenterText = Paint()
     private var paintIndicator = Paint()
 
     private var adapter: WheelAdapter<Any>? = null
+        set(value) {
+            field = value
+            remeasure()
+            invalidate()
+        }
 
     //附加单位
     var label: String? = null
     var textSize: Float = 12f
+        set(value) {
+            if (value > 0f) {
+                field = resources.displayMetrics.density * value
+                paintOuterText.textSize = field
+                paintCenterText.textSize = field
+            }
+        }
     private var maxTextWidth: Int = 0
     private var maxTextHeight: Int = 0
     private var textXOffset: Int = 0
@@ -76,7 +89,12 @@ class WheelView : View {
     private var itemHeight: Float = 0f
 
     //字体样式。等宽字体
-    private var typeface: Typeface = Typeface.MONOSPACE
+    var typeface: Typeface = Typeface.MONOSPACE
+        set(value) {
+            field = value
+            paintOuterText.typeface = value
+            paintCenterText.typeface = value
+        }
     var textColorOut = Color.BLACK
     var textColorCenter: Int = Color.BLACK
     var dividerColor: Int = Color.BLACK
@@ -107,14 +125,14 @@ class WheelView : View {
     var itemsVisible = 11
 
     //控件高度
-    private var measureHeight: Int = 0
+    private var measureHeight: Float = 0.0f
     //控件宽度
     private var measureWidth: Int = 0
 
     //半径
-    var radius: Int = 0
+    var radius: Float = 0.0f
 
-    private var mOffset: Int = 0
+    private var mOffset: Float = 0f
     private var previousY: Float = 0f
     private var startTime: Long = 0L
 
@@ -198,15 +216,126 @@ class WheelView : View {
         setLayerType(LAYER_TYPE_SOFTWARE, null)
     }
 
+    /**
+     * 重新测量
+     */
+    private fun remeasure() {
+        if (adapter == null) {
+            return
+        }
+        measureTextWidthHeight()
+
+        //半圆的周长 = item的高度乘以item数目减1
+        val halfCircumference = itemHeight * (itemsVisible - 1)
+        //整个圆的周长除以PI得到直径,为控件的总高度
+        measureHeight = (halfCircumference * 2 / Math.PI).toFloat()
+        //半径
+        radius = (halfCircumference / Math.PI).toFloat()
+        //控件宽度，支持weight
+        measureWidth = MeasureSpec.getSize(widthMeasureSpec)
+        //计算两条横线和选中项画笔的基线Y位置
+        firstLineY = (measureHeight - itemHeight) / 2f
+        secondLineY = (measureHeight + itemHeight) / 2f
+        centerY = secondLineY - (itemHeight - maxTextHeight) / 2 - CENTER_CONTENT_OFFSET
+
+        //初始化显示的item的position
+        if (initPosition == -1) {
+            initPosition = if (isLoop) (adapter!!.getItemCount() + 1) / 2 else 0
+        }
+
+        preCurrentIndex = initPosition
+    }
+
+    /**
+     * 计算最长Text的宽高
+     */
+    private fun measureTextWidthHeight() {
+        val rect = Rect()
+        val count: Int = if (adapter == null) 0 else adapter!!.getItemCount()
+        for (i in 0 until count) {
+            val s = getContentText(adapter?.getItem(i))
+            paintCenterText.getTextBounds(s, 0, s.length, rect)
+
+            val textWidth = rect.width()
+            if (textWidth > maxTextWidth) {
+                maxTextWidth = textWidth
+            }
+            //星期的标准编码(以它为标准高度)
+            paintCenterText.getTextBounds("\u661F\u671F", 0, 2, rect)
+
+            maxTextHeight = rect.height() + 2
+        }
+
+        itemHeight = lineSpacingMultiplier * maxTextHeight
+    }
+
+    /**
+     * 平滑滚动实现
+     */
+    fun smoothScroll(action: ACTION) {
+        cancelFuture()
+        if (action == ACTION.FLING || action == ACTION.DAGGLE) {
+            mOffset = (totalScrollY % itemHeight + itemHeight) % itemHeight
+            //如果超过item高度的一半，滚动到下一个item去
+            mOffset = if (mOffset > itemHeight / 2) itemHeight - mOffset else -mOffset
+        }
+        //停止的时候，位置有偏移，不是全部都能正确停止到中间位置，这里把文字位置挪回中间去
+        mFuture = mExecutor.scheduleWithFixedDelay(SmoothScrollTimerTask(this, mOffset), 0, 10, TimeUnit.MILLISECONDS)
+    }
+
     fun scrollBy(velocityY: Float) {
         cancelFuture()
-        mFuture = mExecutor.scheduleWithFixedDelay(InertiaTimerTask(this, velocityY), 0, VELOCITY_FLING, TimeUnit.MILLISECONDS) as ScheduledFuture<Any>?
+        mFuture = mExecutor.scheduleWithFixedDelay(InertiaTimerTask(this, velocityY), 0, VELOCITY_FLING, TimeUnit.MILLISECONDS)
     }
 
     fun cancelFuture() {
         if (mFuture != null && !mFuture!!.isCancelled) {
             mFuture!!.cancel(true)
             mFuture = null
+        }
+    }
+
+    fun setCurrentItem(currentItem: Int) {
+        //不添加这句,当这个wheelView不可见时,默认都是0,会导致获取到的时间错误
+        selectedItem = currentItem
+        initPosition = currentItem
+        //回归顶部，不然重设位置会偏移，显示出不对位置的数据
+        totalScrollY = 0f
+        invalidate()
+    }
+
+    fun getCurrentItem(): Int {
+        return if (adapter == null) 0 else Math.max(0, Math.min(selectedItem, adapter!!.getItemCount() - 1))
+    }
+
+    fun onItemSelected() {
+        if (onItemSelectedListener != null) {
+            postDelayed({
+                run {
+                    onItemSelectedListener?.onItemSelected(getCurrentItem())
+                }
+            }, 200)
+        }
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        if (adapter == null) {
+            return
+        }
+    }
+
+    /**
+     * 获取所显示的数据源
+     * @param item 数据源
+     * @return 对应显示的字符串
+     */
+    private fun getContentText(item: Any?): String {
+        return when (item) {
+            null -> ""
+            is IPickerViewData -> item.getPickerViewText()
+            is Int -> //如果为整形至少保留两位整数
+                String.format(Locale.getDefault(), "%02d", item)
+            else -> item.toString()
         }
     }
 }
