@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <com.adrian.simplemvpframe.views.chart_view.SingleColChartView
+    <com.adrian.chartviewlib.SingleColChartView
         android:id="@+id/sccv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         app:yAxesVisible="false"
         app:dashedVisible="true"
         app:dashedType="dashLine"
-        app:showValueType="clickShow|showMax" />
+        app:showValueType="clickShow" />
 
     <com.adrian.simplemvpframe.views.LightView
         android:layout_width="50dp"

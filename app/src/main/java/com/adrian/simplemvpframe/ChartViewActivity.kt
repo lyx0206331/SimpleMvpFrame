@@ -3,8 +3,8 @@ package com.adrian.simplemvpframe
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.LinearLayout
+import com.adrian.chartviewlib.SingleColChartView
 import com.adrian.simplemvpframe.views.chart_view.CustomChartView
-import com.adrian.simplemvpframe.views.chart_view.SingleColChartView
 
 /**
  * date:2018/6/13

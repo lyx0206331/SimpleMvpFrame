@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe.views.chart_view
+package com.adrian.chartviewlib
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
-import com.adrian.simplemvpframe.R
 import org.jetbrains.annotations.NotNull
 
 /**
