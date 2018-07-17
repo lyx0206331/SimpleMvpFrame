@@ -35,7 +35,7 @@ class ChartViewActivity : AppCompatActivity() {
 //        val data1 = intArrayOf(300, 500, 550, 500, 70, 700, 800, 750, 550, 600, 327, 300, 400, 600, 500, 700, 120, 500, 550, 900, 300, 700, 800, 750, 550, 600, 400, 300, 400, 600, 500)
         val xLabel = arrayOf("一", "二", "三", "四", "五", "六", "七")
         val yLabel = arrayOf("", "100", "200", "", "", "", "", "", "")
-        val data1 = intArrayOf(300, 500, 550, 500, 70, 700, 800)
+        val data1 = arrayListOf(300, 500, 550, 500, 70, 700, 800)
 //        val data = ArrayList<IntArray>()
 //        data.add(data1)
 //        val color = ArrayList<Int>()

@@ -17,7 +17,10 @@
         app:yAxesVisible="false"
         app:dashedVisible="true"
         app:dashedType="dashLine"
-        app:showValueType="clickShow" />
+        app:showValueType="showMax"
+        app:showValueWay="clickShow"
+        app:hasAxesArrow="false"
+        app:tartgetLineIndex="2" />
 
     <com.adrian.simplemvpframe.views.LightView
         android:layout_width="50dp"
