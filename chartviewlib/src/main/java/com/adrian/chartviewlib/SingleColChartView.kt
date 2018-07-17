@@ -1,4 +1,4 @@
-package com.adrian.simplemvpframe.views.chart_view
+package com.adrian.chartviewlib
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -11,8 +11,8 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
-import com.adrian.simplemvpframe.R
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 /**
  * date:2018/6/13
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull
  * description：
  */
 class SingleColChartView : View {
+
     companion object {
         const val DATA_LENGTH_EXCEPTION = "数据长度大于横轴坐标长度"
         const val CHART_DATA_EXCEPTION = "图表数据异常"
@@ -31,7 +32,7 @@ class SingleColChartView : View {
     private var yLabelList: Array<String>? = null
 
     //数据
-    private var dataList: IntArray? = null
+    private var dataList: ArrayList<Int>? = null
     //背景色
     var background: Int = Color.WHITE
         set(value) {
@@ -74,6 +75,11 @@ class SingleColChartView : View {
             field = value
             invalidate()
         }
+    var targetLineIndex = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
     //坐标轴颜色
     var axesColor: Int = Color.BLACK
         set(value) {
@@ -109,6 +115,11 @@ class SingleColChartView : View {
             field = value
             invalidate()
         }
+    var showValueWay: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
     //默认边距
     private val margin: Int = 40
     //距离左边偏移量
@@ -119,9 +130,9 @@ class SingleColChartView : View {
     //XY轴单位长度
     private var xUnit: Int = 0
     private var yUnit: Int = 0
-    var yUnitValue = 100f
+    var yUnitValue = 0f
         set(value) {
-            field = value
+            field = if (value == 0f) 2500f else value
             invalidate()
         }
 
@@ -136,60 +147,14 @@ class SingleColChartView : View {
     private var paintDashed = Paint()
 
     var listener: OnClickColumnListener? = null
+    var formater: ITextFormater? = null
+
+    private var isClicked = false
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         val ta: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.SingleColChartView, defStyleAttr, 0)
-
-//        val count = ta.indexCount
-//
-//        for (i in 0 until count) {
-//            val attr: Int = ta.getIndex(i)
-//            when(attr) {
-//                R.styleable.SingleColChartView_normalColor -> {
-//                    normalColor = ta.getColor(attr, Color.BLACK)
-//                }
-//                R.styleable.SingleColChartView_touchColor -> {
-//                    touchColor = ta.getColor(attr, Color.BLACK)
-//                }
-//                R.styleable.SingleColChartView_bgColor -> {
-//                    background = ta.getColor(attr, Color.WHITE)
-//                }
-//                R.styleable.SingleColChartView_xAxesVisible -> {
-//                    xAxesVisible = ta.getBoolean(attr, true)
-//                }
-//                R.styleable.SingleColChartView_yAxesVisible -> {
-//                    yAxesVisible = ta.getBoolean(attr, true)
-//                }
-//                R.styleable.SingleColChartView_axesColor -> {
-//                    axesColor = ta.getColor(attr, Color.BLACK)
-//                }
-//                R.styleable.SingleColChartView_txtColor -> {
-//                    txtColor = ta.getColor(attr, Color.BLACK)
-//                }
-//                R.styleable.SingleColChartView_txtSize -> {
-//                    txtSize = ta.getDimension(attr, 15f)
-//                }
-//                R.styleable.SingleColChartView_showValueType -> {
-//                    showValueType = ta.getInt(attr, 0)
-//                    Log.e("SHOWTYPE", "type:$showValueType")
-//                }
-//                R.styleable.SingleColChartView_yUnitValue -> {
-//                    yUnitValue = ta.getFloat(attr, 100f)
-//                }
-//                R.styleable.SingleColChartView_dashedVisible -> {
-//                    dashedVisible = ta.getBoolean(attr, false)
-//                }
-//                R.styleable.SingleColChartView_dashedType -> {
-//                    dashedType = ta.getInt(attr, 0)
-//                }
-//                R.styleable.SingleColChartView_hasAxesArrow -> {
-//                    hasAxesArrow = ta.getBoolean(attr, false)
-//                }
-//            }
-//        }
-
         normalColor = ta.getColor(R.styleable.SingleColChartView_normalColor, Color.BLACK)
         touchColor = ta.getColor(R.styleable.SingleColChartView_touchColor, Color.BLACK)
         background = ta.getColor(R.styleable.SingleColChartView_bgColor, Color.WHITE)
@@ -199,10 +164,12 @@ class SingleColChartView : View {
         txtColor = ta.getColor(R.styleable.SingleColChartView_txtColor, Color.BLACK)
         txtSize = ta.getDimension(R.styleable.SingleColChartView_txtSize, 15f)
         showValueType = ta.getInt(R.styleable.SingleColChartView_showValueType, 0)
+        showValueWay = ta.getInt(R.styleable.SingleColChartView_showValueWay, 0)
         yUnitValue = ta.getFloat(R.styleable.SingleColChartView_yUnitValue, 100f)
         dashedVisible = ta.getBoolean(R.styleable.SingleColChartView_dashedVisible, false)
         dashedType = ta.getInt(R.styleable.SingleColChartView_dashedType, 0)
         hasAxesArrow = ta.getBoolean(R.styleable.SingleColChartView_hasAxesArrow, false)
+        targetLineIndex = ta.getInt(R.styleable.SingleColChartView_tartgetLineIndex, 0)
         ta.recycle()
 
         initData()
@@ -277,7 +244,7 @@ class SingleColChartView : View {
      * 是否可绘制。轴坐标必须存在,y轴可以不显示
      */
     private fun isAvailable(): Boolean {
-        if (xLabelList == null || xLabelList!!.isEmpty() || yLabelList == null || yLabelList!!.isEmpty()) {
+        if (xLabelList == null || xLabelList!!.isEmpty() || yLabelList == null || yLabelList!!.size < 2) {
             return false
         }
         return true
@@ -291,8 +258,8 @@ class SingleColChartView : View {
 
         drawAxesLine(canvas!!)
         drawAxesTxt(canvas!!)
-        drawColumn(canvas!!, dataList!!)
-        drawValue(canvas!!, dataList!!)
+        drawColumn(canvas!!, dataList)
+        drawValue(canvas!!, dataList)
     }
 
     /**
@@ -335,12 +302,19 @@ class SingleColChartView : View {
         for ((index, value) in yLabelList!!.withIndex()) {
             paintAxesTxt.textAlign = Paint.Align.LEFT
             val startY = yPoint - index * yUnit
-            val offsetY = if (index == 0) 0 else margin / 5
-            canvas.drawText(value, margin.toFloat() + marginX, startY.toFloat() - offsetY, paintAxesTxt)
+            val offsetY = if (index == 0) 0 else margin / 3
+            canvas.drawText(value, 0f, startY.toFloat() + offsetY, paintAxesTxt)
 
             //绘制虚线
-            if (!TextUtils.isEmpty(value.trim())) {
+            if (!TextUtils.isEmpty(value?.trim())) {
                 drawDashed(index, startY, canvas)
+                if (targetLineIndex > 0 && index == targetLineIndex) {
+                    var targetTxt = "目标"
+                    if (yUnitValue == 2500f) {
+                        targetTxt = "默认目标"
+                    }
+                    canvas.drawText(targetTxt, 0f, startY.toFloat() - offsetY.shl(1), paintAxesTxt)
+                }
             }
         }
     }
@@ -355,6 +329,7 @@ class SingleColChartView : View {
                 1 -> drawDashDot(startY, canvas)
                 2 -> drawGradientDashDot(startY, canvas)
             }
+
         }
     }
 
@@ -362,7 +337,7 @@ class SingleColChartView : View {
      * 绘制线状虚线
      */
     private fun drawDashLine(startY: Int, canvas: Canvas) {
-        paintDashed.pathEffect = DashPathEffect(floatArrayOf(5f, 5f), 0f)
+        paintDashed.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
         val path = Path()
         path.moveTo(xPoint.toFloat(), startY.toFloat())
         path.lineTo(width - margin / 6f, startY.toFloat())
@@ -398,13 +373,16 @@ class SingleColChartView : View {
     /**
      * 绘制柱形
      */
-    private fun drawColumn(canvas: Canvas, data: IntArray) {
+    private fun drawColumn(canvas: Canvas, data: ArrayList<Int>?) {
+        if (data == null || data.isEmpty()) {
+            return
+        }
         try {
             val halfW = colWidth / 2
             for ((index, value) in data.withIndex()) {
                 val startX: Float = xPoint + (index + .5f) * xUnit
                 val rect = RectF(startX - halfW, toY(value), startX + halfW, height - margin - 2f)
-                paintRectF.color = if (showValueType == 1 && touchIndex == index) touchColor else normalColor
+                paintRectF.color = if (showValueWay == 1 && touchIndex == index && isClicked) touchColor else normalColor
                 canvas.drawRect(rect, paintRectF)
             }
         } catch (e: Exception) {
@@ -415,29 +393,41 @@ class SingleColChartView : View {
     /**
      * 绘制数值
      */
-    private fun drawValue(canvas: Canvas, data: IntArray) {
+    private fun drawValue(canvas: Canvas, data: ArrayList<Int>?) {
+        if (data == null || data.isEmpty()) {
+            return
+        }
         when (showValueType) {
+            1 -> showMin(canvas, data)
+            2 -> showMax(canvas, data)
+        }
+        when (showValueWay) {
             1 -> showClicked(canvas, data)
             2 -> showAlways(canvas, data)
-            3 -> showMax(canvas, data)
-            4 -> showMin(canvas, data)
-//            else -> showNever(canvas, data)
         }
     }
 
     /**
      * 点击显示数值
      */
-    private fun showClicked(canvas: Canvas, data: IntArray) {
+    private fun showClicked(canvas: Canvas, data: ArrayList<Int>) {
         if (touchIndex >= 0 && touchIndex < data.size && data[touchIndex] > 0) {
-            canvas.drawText("${data[touchIndex]}", xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - 5, paintValue)
+            if (isClicked) {
+                val txt = "${data[touchIndex]}"
+                if (formater != null) {
+                    canvas.drawText(formater?.formatClickedTxt(txt, touchIndex), xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - margin, paintValue)
+                }
+                canvas.drawText(txt, xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - 5, paintValue)
+            } /*else {
+                canvas.drawText("", xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - 5, paintValue)
+            }*/
         }
     }
 
     /**
      * 始终不显示数值
      */
-    private fun showNever(canvas: Canvas, data: IntArray) {
+    private fun showNever(canvas: Canvas, data: ArrayList<Int>) {
         for ((index, value) in data.withIndex()) {
             canvas.drawText("", xPoint + (index + .5f) * xUnit, toY(value) - 5, paintValue)
         }
@@ -446,7 +436,7 @@ class SingleColChartView : View {
     /**
      * 一直显示数值
      */
-    private fun showAlways(canvas: Canvas, data: IntArray) {
+    private fun showAlways(canvas: Canvas, data: ArrayList<Int>) {
         for ((index, value) in data.withIndex()) {
             if (value > 0) {
                 canvas.drawText("$value", xPoint + (index + .5f) * xUnit, toY(value) - 5, paintValue)
@@ -454,7 +444,10 @@ class SingleColChartView : View {
         }
     }
 
-    private fun showMax(canvas: Canvas, data: IntArray) {
+    /**
+     * 显示最大值
+     */
+    private fun showMax(canvas: Canvas, data: ArrayList<Int>) {
         var maxIndex = 0
         for (index in data.indices) {
             if (data[maxIndex] < data[index]) {
@@ -464,7 +457,10 @@ class SingleColChartView : View {
         canvas.drawText("${data[maxIndex]}", xPoint + (maxIndex + .5f) * xUnit, toY(data[maxIndex]) - 5, paintValue)
     }
 
-    private fun showMin(canvas: Canvas, data: IntArray) {
+    /**
+     * 显示最小值
+     */
+    private fun showMin(canvas: Canvas, data: ArrayList<Int>) {
         var minIndex = 0
         for (index in data.indices) {
             if (data[minIndex] > data[index]) {
@@ -475,15 +471,27 @@ class SingleColChartView : View {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val x = event!!.x
-        val y = event!!.y
+        if (dataList == null || dataList!!.isEmpty() || event == null) {
+            return true
+        }
+        val x = event.x
+        val y = event.y
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchIndex = ((x - xPoint) / xUnit).toInt()
 //                logE("touchIndex:$touchIndex")
-                if (showValueType == 1 && touchIndex >= 0 && touchIndex < dataList!!.size) {
+                if (showValueWay == 1 && touchIndex >= 0 && touchIndex < dataList!!.size) {
+                    isClicked = true
                     listener?.clickColumn(touchIndex, dataList!![touchIndex])
                 }
+                invalidate()
+            }
+            MotionEvent.ACTION_UP -> {
+                isClicked = false
+                invalidate()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                isClicked = false
                 invalidate()
             }
         }
@@ -493,17 +501,23 @@ class SingleColChartView : View {
     /**
      * 设置数据
      */
-    fun setData(@NotNull data: IntArray, @NotNull xLabels: Array<String>, @NotNull yLabels: Array<String>) {
+    fun setData(@Nullable data: ArrayList<Int>?, @NotNull xLabels: Array<String>, @NotNull yLabels: Array<String>) {
         this.dataList = data
         this.xLabelList = xLabels
         this.yLabelList = yLabels
 
+        requestLayout()
+
+        if (data == null) {
+            return
+        }
         if (data.size > xLabelList!!.size) {
             showToast(DATA_LENGTH_EXCEPTION)
             logE(DATA_LENGTH_EXCEPTION)
 //            throw IllegalArgumentException("数据长度大于横轴坐标长度")
             return
         }
+
         invalidate()
     }
 
@@ -536,4 +550,9 @@ class SingleColChartView : View {
     open interface OnClickColumnListener {
         fun clickColumn(index: Int, value: Int)
     }
+
+    interface ITextFormater {
+        fun formatClickedTxt(txt: String, index: Int): String
+    }
+
 }

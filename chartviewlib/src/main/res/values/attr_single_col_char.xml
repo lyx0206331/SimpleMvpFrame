@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SingleColChartView">
+        <attr name="normalColor" format="color|reference" />
+        <attr name="touchColor" format="color|reference" />
+        <attr name="bgColor" format="color|reference" />
+        <attr name="xAxesVisible" format="boolean" />
+        <attr name="yAxesVisible" format="boolean" />
+        <attr name="axesColor" format="color|reference" />
+        <attr name="txtColor" format="color|reference" />
+        <attr name="txtSize" format="dimension|reference" />
+        <attr name="yUnitValue" format="float" />
+        <attr name="dashedVisible" format="boolean" />
+        <attr name="hasAxesArrow" format="boolean" />
+        <attr name="tartgetLineIndex" format="integer" />
+        <attr name="dashedType">
+            <flag name="dashLine" value="0" />
+            <flag name="dashDot" value="1" />
+            <flag name="dashGradient" value="2" />
+        </attr>
+        <attr name="showValueType">
+            <flag name="none" value="0" />
+            <flag name="showMin" value="1" />
+            <flag name="showMax" value="2" />
+        </attr>
+        <attr name="showValueWay">
+            <flag name="neverShow" value="0" />
+            <flag name="clickShow" value="1" />
+            <flag name="allShow" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
