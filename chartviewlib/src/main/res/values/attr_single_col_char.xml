@@ -12,17 +12,21 @@
         <attr name="yUnitValue" format="float" />
         <attr name="dashedVisible" format="boolean" />
         <attr name="hasAxesArrow" format="boolean" />
+        <attr name="tartgetLineIndex" format="integer" />
         <attr name="dashedType">
             <flag name="dashLine" value="0" />
             <flag name="dashDot" value="1" />
             <flag name="dashGradient" value="2" />
         </attr>
         <attr name="showValueType">
+            <flag name="none" value="0" />
+            <flag name="showMin" value="1" />
+            <flag name="showMax" value="2" />
+        </attr>
+        <attr name="showValueWay">
             <flag name="neverShow" value="0" />
             <flag name="clickShow" value="1" />
-            <flag name="alwaysShow" value="2" />
-            <flag name="showMax" value="3" />
-            <flag name="showMin" value="4" />
+            <flag name="allShow" value="2" />
         </attr>
     </declare-styleable>
 </resources>
