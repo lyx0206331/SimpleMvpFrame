@@ -1,11 +1,14 @@
 package com.adrian.wheelviewlib.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.os.Handler
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.View
@@ -28,6 +31,8 @@ import java.util.concurrent.*
 class WheelView : View {
 
     companion object {
+        const val TAG = "WheelView"
+
         //滑行速度
         const val VELOCITY_FLING: Long = 5L
 
@@ -321,6 +326,78 @@ class WheelView : View {
     override fun onDraw(canvas: Canvas?) {
         if (adapter == null) {
             return
+        }
+        //initPosition越界会造成preCurrentIndex的值不正确
+        initPosition = Math.min(Math.max(0, initPosition), adapter!!.getItemCount() - 1)
+
+        //可见的Item数组
+        @SuppressLint("DrawAllocation")
+        val visibles = arrayOfNulls<Any>(itemsVisible)
+        //滚动的y值高度除去每行item的高度，得到滚动了多少个item，即change数
+        change = (totalScrollY / itemHeight).toInt()
+
+        try {
+            preCurrentIndex = initPosition + change % adapter!!.getItemCount()
+        } catch (e: ArithmeticException) {
+            Log.e(TAG, "出错了!adpter.getItemCount()为0,联动数据不匹配")
+        }
+
+        preCurrentIndex = if (!isLoop) {    //不循环
+            when {
+                preCurrentIndex < 0 -> 0
+                preCurrentIndex > adapter!!.getItemCount() - 1 -> adapter!!.getItemCount() - 1
+                else -> preCurrentIndex
+            }
+        } else {    //循环
+            when {
+                preCurrentIndex < 0 -> adapter!!.getItemCount() + preCurrentIndex
+                preCurrentIndex > adapter!!.getItemCount() - 1 -> preCurrentIndex - adapter!!.getItemCount()
+                else -> preCurrentIndex
+            }
+        }
+
+        //跟滚动流畅度有关，总滑动距离与每个item高度取余, 即并不是一格一格的滚动，每个item不一定滚动到对应的Rect里，这里对应格子的偏移值
+        val itemHeightOffset = totalScrollY % itemHeight
+
+        //设置数组中每个元素的值
+        var counter = 0
+        while (counter < itemsVisible) {
+            //索引值.即当前在控件中间的item看作数据源的中间，计算出相对原数据源的index的值。
+            var index = preCurrentIndex - (itemsVisible / 2 - counter)
+            //判断是否循环，如果循环数据源也使用相对循环的position获取对应的item的值，如果不循环且超出数据源范围使用空白字符串""填充
+            visibles[counter] = if (isLoop) {
+                index = getLoopMappingIndex(index)
+                adapter!!.getItem(index)
+            } else if (index < 0 || index > adapter!!.getItemCount() - 1) ""
+            else adapter!!.getItem(index)
+
+            counter++
+        }
+
+        //绘制中间两条横线
+        if (dividerType == DividerType.WRAP) {  //横线长度仅包裹内容
+            var startX: Float = if (TextUtils.isEmpty(label)) (measureWidth - maxTextWidth) / 2f - 12 //隐藏label的情况
+            else (measureHeight - maxTextWidth) / 4 - 12
+            if (startX <= 0) {  //如果超过wheelview的边缘
+                startX = 10f
+            }
+            var endX: Float = measureWidth - startX
+            canvas?.drawLine(startX, firstLineY, endX, firstLineY, paintIndicator)
+            canvas?.drawLine(startX, secondLineY, endX, secondLineY, paintIndicator)
+        } else {
+            canvas?.drawLine(0f, firstLineY, measureWidth.toFloat(), firstLineY, paintIndicator)
+            canvas?.drawLine(0f, secondLineY, measureWidth.toFloat(), secondLineY, paintIndicator)
+        }
+    }
+
+    /**
+     * 递归计算对应索引值
+     */
+    private fun getLoopMappingIndex(index: Int): Int {
+        return when {
+            index < 0 -> getLoopMappingIndex(index + adapter!!.getItemCount())
+            index > adapter!!.getItemCount() - 1 -> getLoopMappingIndex(index - adapter!!.getItemCount())
+            else -> index
         }
     }
 
