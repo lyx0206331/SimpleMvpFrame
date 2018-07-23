@@ -388,6 +388,23 @@ class WheelView : View {
             canvas?.drawLine(0f, firstLineY, measureWidth.toFloat(), firstLineY, paintIndicator)
             canvas?.drawLine(0f, secondLineY, measureWidth.toFloat(), secondLineY, paintIndicator)
         }
+
+        //只显示选中项label文字的模式，label不为空，则绘制
+        if (!TextUtils.isEmpty(label) && isCenterLabel) {
+            //绘制文字，靠右并留出空隙
+            val drawRightContentStart: Int = measureWidth - getTextWidth(paintCenterText, label!!)
+            canvas?.drawText(label, drawRightContentStart - CENTER_CONTENT_OFFSET, centerY, paintCenterText)
+        }
+
+        counter = 0
+        while (counter < itemsVisible) {
+            canvas?.save()
+            //弧长L = itemHeight * counter - itemHeightOffset
+            //求弧度 α = L / r (弧长/半径)[0,π]
+            val radian: Float = ((itemHeight * counter - itemHeightOffset)) / radius
+            //弧度转换成角度（把半圆以Y轴为轴心向右转90度，使其处于第一象限及第四象限).angle[-90°, 90°]
+            val angle: Float = (90 - (radian / Math.PI) * 180).toFloat()  //item第一项，从90度开始，逐渐递减到-90度
+        }
     }
 
     /**
@@ -413,6 +430,19 @@ class WheelView : View {
             is Int -> //如果为整形至少保留两位整数
                 String.format(Locale.getDefault(), "%02d", item)
             else -> item.toString()
+        }
+    }
+
+    private fun getTextWidth(paint: Paint, text: String): Int {
+        return if (TextUtils.isEmpty(text)) 0
+        else {
+            var w = 0
+            var widths = FloatArray(text.length)
+            paint.getTextWidths(text, widths)
+            widths.forEach {
+                w += Math.ceil(it.toDouble()).toInt()
+            }
+            w
         }
     }
 }
