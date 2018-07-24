@@ -11,6 +11,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import com.adrian.wheelviewlib.R
 import com.adrian.wheelviewlib.adapter.WheelAdapter
@@ -89,7 +90,13 @@ class WheelView : View {
         }
     private var maxTextWidth: Int = 0
     private var maxTextHeight: Int = 0
-    private var textXOffset: Int = 0
+    var textXOffset: Int = 0
+        set(value) {
+            field = value
+            if (value != 0) {
+                paintCenterText.textScaleX = 1f
+            }
+        }
     //每行高度
     private var itemHeight: Float = 0f
 
@@ -101,11 +108,35 @@ class WheelView : View {
             paintCenterText.typeface = value
         }
     var textColorOut = Color.BLACK
+        set(value) {
+            if (value != 0) {
+                field = value
+                paintOuterText.color = value
+            }
+        }
     var textColorCenter: Int = Color.BLACK
+        set(value) {
+            if (value != 0) {
+                field = value
+                paintCenterText.color = value
+            }
+        }
     var dividerColor: Int = Color.BLACK
+        set(value) {
+            if (value != 0) {
+                field = value
+                paintIndicator.color = value
+            }
+        }
 
     //条目间距倍数
-    private var lineSpacingMultiplier = 1.6f
+    var lineSpacingMultiplier = 1.6f
+        set(value) {
+            if (lineSpacingMultiplier != 0f) {
+                field = value
+                judgeLineSpace()
+            }
+        }
     var isLoop: Boolean = false
 
     //第一条线Y坐标值
@@ -143,7 +174,7 @@ class WheelView : View {
 
     private var widthMeasureSpec: Int = 0
 
-    private var mGravity: Int = Gravity.CENTER
+    var mGravity: Int = Gravity.CENTER
     //中间选中文字开始绘制位置
     private var drawCenterContentStart: Int = 0
     //非中间文字开始绘制位置
@@ -404,7 +435,104 @@ class WheelView : View {
             val radian: Float = ((itemHeight * counter - itemHeightOffset)) / radius
             //弧度转换成角度（把半圆以Y轴为轴心向右转90度，使其处于第一象限及第四象限).angle[-90°, 90°]
             val angle: Float = (90 - (radian / Math.PI) * 180).toFloat()  //item第一项，从90度开始，逐渐递减到-90度
+
+            //计算取值可能有细微差别，保证-90到90度以外的不绘制
+            if (angle >= 90 || angle <= -90) {
+                canvas?.restore()
+            } else {
+                //根据当前角度计算出偏差系数，用以在绘制时控制文字的水平移动，透明度，倾斜程度
+                val offsetCoefficient: Float = Math.pow(Math.abs(angle) / 90.0, 2.2).toFloat()
+                //获取内容文字
+                val contentText = if (!isCenterLabel && !TextUtils.isEmpty(label) && !TextUtils.isEmpty(getContentText(visibles[counter]))) {   //如果是label每项都显示的模式，且item内容不为空，label也不为空
+                    getContentText(visibles[counter]) + label
+                } else {
+                    getContentText(visibles[counter])
+                }
+
+                reMeasureTextSize(contentText)
+                //计算开始绘制的位置
+                measuredCenterContentStart(contentText)
+                measureOutContentStart(contentText)
+                val translateY: Float = (radian - Math.cos(radian.toDouble()) * radian - Math.sin(radian.toDouble()) * maxTextHeight / 2).toFloat()
+                //根据Math.sin(radian)来更改canvas坐标系原点,然后缩放画布，使得文字高度进行缩放，形成弧形3D视差
+                canvas?.translate(0f, translateY)
+//                canvas?.scale(1f, Math.sin(radian.toDouble()).toFloat())
+                when {
+                    translateY <= firstLineY && maxTextHeight + translateY >= firstLineY -> {   //条目经过第一条线
+                        canvas?.save()
+                        canvas?.clipRect(0f, 0f, measureWidth.toFloat(), firstLineY - translateY)
+                        canvas?.scale(1f, (Math.sin(radian.toDouble()) * SCALE_CONTENT).toFloat())
+                        canvas?.drawText(contentText, drawOutContentStart.toFloat(), maxTextHeight.toFloat(), paintOuterText)
+                        canvas?.restore()
+                        canvas?.save()
+                        canvas?.clipRect(0f, firstLineY - translateY, measureWidth.toFloat(), itemHeight)
+                        canvas?.scale(1f, Math.sin(radian.toDouble()).toFloat())
+                        canvas?.drawText(contentText, drawCenterContentStart.toFloat(), maxTextHeight - CENTER_CONTENT_OFFSET, paintCenterText)
+                        canvas?.restore()
+                    }
+                    translateY <= secondLineY && maxTextHeight + translateY >= secondLineY -> { //条目经过第二条线
+                        canvas?.save()
+                        canvas?.clipRect(0f, 0f, measureWidth.toFloat(), secondLineY - translateY)
+                        canvas?.scale(1f, Math.sin(radian.toDouble()).toFloat())
+                        canvas?.drawText(contentText, drawCenterContentStart.toFloat(), maxTextHeight - CENTER_CONTENT_OFFSET, paintCenterText)
+                        canvas?.restore()
+                        canvas?.save()
+                        canvas?.clipRect(0f, secondLineY - translateY, measureWidth.toFloat(), itemHeight)
+                        canvas?.scale(1f, (Math.sin(radian.toDouble()) * SCALE_CONTENT).toFloat())
+                        canvas?.drawText(contentText, drawOutContentStart.toFloat(), maxTextHeight.toFloat(), paintOuterText)
+                        canvas?.restore()
+                    }
+                    translateY >= firstLineY && maxTextHeight + translateY <= secondLineY -> {  //中间条目
+                        canvas?.clipRect(0, 0, measureWidth, maxTextHeight)
+                        //让文字居中
+                        val y: Float = maxTextHeight - CENTER_CONTENT_OFFSET    //因为圆弧角换算的向下取值，导致角度稍微有点偏差，加上画笔的基线会偏上，因此需要偏移量修正一下
+                        canvas?.drawText(contentText, drawCenterContentStart.toFloat(), y, paintCenterText)
+
+                        //设置选中项
+                        selectedItem = preCurrentIndex - (itemsVisible / 2 - counter)
+                    }
+                    else -> {   //其它条目
+                        canvas?.save()
+                        canvas?.clipRect(0f, 0f, measureWidth.toFloat(), itemHeight)
+                        canvas?.scale(1f, (Math.sin(radian.toDouble()) * SCALE_CONTENT).toFloat())
+                        //控制文字倾斜角度
+                        paintOuterText.textSkewX = if (textXOffset == 0) 0f
+                        else {
+                            val offset = if (textXOffset > 0) 1 else -1
+                            val angleX = if (angle > 0) -1 else 1
+                            offset * angleX * DEFAULT_TEXT_TARGET_SKEWX * offsetCoefficient
+                        }
+                        //控制透明度
+                        paintOuterText.alpha = ((1 - offsetCoefficient) * 255).toInt()
+                        //控制文字水平偏移距离
+                        canvas?.drawText(contentText, drawOutContentStart + textXOffset * offsetCoefficient, maxTextHeight.toFloat(), paintOuterText)
+                        canvas?.restore()
+                    }
+                }
+                canvas?.restore()
+                paintCenterText.textSize = textSize
+            }
+            counter++
         }
+    }
+
+    /**
+     * 重置文本尺寸以完整显示
+     */
+    private fun reMeasureTextSize(contentText: String) {
+        val rect: Rect = Rect()
+        paintCenterText.getTextBounds(contentText, 0, contentText.length, rect)
+        var width = rect.width()
+        var size = textSize
+        while (width > measureWidth) {
+            size--
+            //设置两条横线中间的文字大小
+            paintCenterText.textSize = size
+            paintCenterText.getTextBounds(contentText, 0, contentText.length, rect)
+            width = rect.width()
+        }
+        //设置2条横线外面的文字大小
+        paintOuterText.textSize = size
     }
 
     /**
@@ -433,6 +561,114 @@ class WheelView : View {
         }
     }
 
+    private fun measuredCenterContentStart(content: String) {
+        val rect = Rect()
+        paintCenterText.getTextBounds(content, 0, content.length, rect)
+        when (mGravity) {
+            Gravity.CENTER -> { //显示内容居中
+                drawCenterContentStart = if (isOptions || TextUtils.isEmpty(label) || !isCenterLabel) {
+                    (measureWidth - rect.width()) / 2
+                } else {    //只显示中间label时，选择器内容偏左一点，留出空间绘制单位标签
+                    (measureWidth - rect.width()) / 4
+                }
+            }
+            Gravity.LEFT -> drawCenterContentStart = 0
+            Gravity.RIGHT -> drawCenterContentStart = measureWidth - rect.width() - CENTER_CONTENT_OFFSET.toInt()
+        }
+    }
+
+    private fun measureOutContentStart(content: String) {
+        val rect = Rect()
+        paintOuterText.getTextBounds(content, 0, content.length, rect)
+        when (mGravity) {
+            Gravity.CENTER -> { //显示内容居中
+                drawOutContentStart = if (isOptions || TextUtils.isEmpty(label) || !isCenterLabel) {
+                    (measureWidth - rect.width()) / 2
+                } else {    //只显示中间label时，选择器内容偏左一点，留出空间绘制单位标签
+                    (measureWidth - rect.width()) / 4
+                }
+            }
+            Gravity.LEFT -> drawOutContentStart = 0
+            Gravity.RIGHT -> drawOutContentStart = measureWidth - rect.width() - CENTER_CONTENT_OFFSET.toInt()
+        }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        this.widthMeasureSpec = widthMeasureSpec
+        remeasure()
+        setMeasuredDimension(measuredWidth, measuredHeight)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val eventConsumed = gestureDetector.onTouchEvent(event)
+        //超过边界滑动时，不再绘制UI
+        var isIgnore = false
+
+        val top: Float = -initPosition * itemHeight
+        val bottom: Float = (adapter!!.getItemCount() - 1 - initPosition) * itemHeight
+        val ratio: Float = .25f
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                startTime = System.currentTimeMillis()
+                cancelFuture()
+                previousY = event.rawY
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dy: Float = previousY - event.rawY
+                previousY = event.rawY
+                totalScrollY += dy
+                if (!isLoop) {
+                    if ((totalScrollY - itemHeight * ratio < top && dy < 0) || (totalScrollY + itemHeight * ratio > bottom && dy > 0)) {
+                        //快滑动到边界了，设置已滑动到边界的标志
+                        totalScrollY -= dy
+                        isIgnore = true
+                    } else {
+                        isIgnore = false
+                    }
+                }
+            }
+            else -> {
+                if (!eventConsumed) {   //未消费事件
+                    /**
+                     * @describe <关于弧长的计算>
+                     *
+                     * 弧长公式:L = α*R
+                     * 反余弦公式: arccos(cosα) = α
+                     * 由于之前顺时针偏移90度，所以实际弧度范围α2的值：α2 = π/2 - α   (α=[0, π] α2=[-π/2, π/2])
+                     * 根据正弦余弦转换公式 cosα = sin(π/2 - α)
+                     * 代入得：cosα = sin(π/2 - α) = sinα2 = (R - y)/R
+                     * 所以弧长L = arccos(cosα)*R = arccos((R-y)/R)*R
+                     */
+                    val y: Float = event!!.y
+                    val L: Double = Math.acos(((radius - y) / radius).toDouble()) * radius
+                    //item0有一半是在不可见区域，所以需要加上itemHeight/2
+                    val circlePosition: Int = ((L + itemHeight / 2) / itemHeight).toInt()
+                    val extraOffset: Float = (totalScrollY % itemHeight + itemHeight) % itemHeight
+                    //忆滑动的弧长值
+                    mOffset = (circlePosition - itemsVisible / 2) * itemHeight - extraOffset
+
+                    if ((System.currentTimeMillis() - startTime) > 120) {   //处理拖拽事件
+                        smoothScroll(ACTION.DAGGLE)
+                    } else {    //处理条目点击事件
+                        smoothScroll(ACTION.CLICK)
+                    }
+                }
+            }
+        }
+        if (!isIgnore && event?.action != MotionEvent.ACTION_DOWN) {
+            invalidate()
+        }
+        return true
+    }
+
+    /**
+     * 获取item个数
+     */
+    public fun getItemsCount(): Int {
+        return if (adapter == null) 0 else adapter!!.getItemCount()
+    }
+
     private fun getTextWidth(paint: Paint, text: String): Int {
         return if (TextUtils.isEmpty(text)) 0
         else {
@@ -444,5 +680,9 @@ class WheelView : View {
             }
             w
         }
+    }
+
+    override fun getHandler(): Handler {
+        return mHandler
     }
 }
