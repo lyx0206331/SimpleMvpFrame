@@ -98,7 +98,7 @@ class WheelView : View {
             }
         }
     //每行高度
-    private var itemHeight: Float = 0f
+    var itemHeight: Float = 0f
 
     //字体样式。等宽字体
     var typeface: Typeface = Typeface.MONOSPACE
@@ -147,10 +147,10 @@ class WheelView : View {
     private var centerY: Float = 0f
 
     //当前滚动总高度y值
-    private var totalScrollY: Float = 0f
+    var totalScrollY: Float = 0f
 
     //初始化默认选中项
-    private var initPosition: Int = 0
+    var initPosition: Int = 0
     //选中的item是第几个
     private var selectedItem: Int = 0
     private var preCurrentIndex: Int = 0
@@ -665,7 +665,7 @@ class WheelView : View {
     /**
      * 获取item个数
      */
-    public fun getItemsCount(): Int {
+    fun getItemsCount(): Int {
         return if (adapter == null) 0 else adapter!!.getItemCount()
     }
 

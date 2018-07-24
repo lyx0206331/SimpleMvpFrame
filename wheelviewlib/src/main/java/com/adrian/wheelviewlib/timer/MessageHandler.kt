@@ -9,18 +9,12 @@ import com.adrian.wheelviewlib.view.WheelView
  * date:2018/7/11 0011
  * description:
  **/
-class MessageHandler : Handler {
+class MessageHandler(private val wheelView: WheelView) : Handler() {
 
     companion object {
         var WHAT_INVALIDATE_LOOP_VIEW = 1000
         var WHAT_SMOOTH_SCROLL = 2000
         var WHAT_ITEM_SELECTED = 3000
-    }
-
-    private var wheelView: WheelView
-
-    constructor(wheelView: WheelView) {
-        this.wheelView = wheelView
     }
 
     override fun handleMessage(msg: Message?) {
