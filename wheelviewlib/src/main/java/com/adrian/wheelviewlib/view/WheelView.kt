@@ -316,7 +316,7 @@ class WheelView : View {
             mOffset = if (mOffset > itemHeight / 2) itemHeight - mOffset else -mOffset
         }
         //停止的时候，位置有偏移，不是全部都能正确停止到中间位置，这里把文字位置挪回中间去
-        mFuture = mExecutor.scheduleWithFixedDelay(SmoothScrollTimerTask(this, mOffset), 0, 10, TimeUnit.MILLISECONDS)
+        mFuture = mExecutor.scheduleWithFixedDelay(SmoothScrollTimerTask(this, mOffset.toInt()), 0, 10, TimeUnit.MILLISECONDS)
     }
 
     fun scrollBy(velocityY: Float) {
@@ -326,7 +326,7 @@ class WheelView : View {
 
     fun cancelFuture() {
         if (mFuture != null && !mFuture!!.isCancelled) {
-            mFuture!!.cancel(true)
+            mFuture?.cancel(true)
             mFuture = null
         }
     }
@@ -341,7 +341,9 @@ class WheelView : View {
     }
 
     fun getCurrentItem(): Int {
-        return if (adapter == null) 0 else Math.max(0, Math.min(selectedItem, adapter!!.getItemCount() - 1))
+        return if (adapter == null) 0
+        else if (isLoop && (selectedItem < 0 || selectedItem >= adapter!!.getItemCount())) Math.max(0, Math.min(Math.abs(Math.abs(selectedItem) - adapter!!.getItemCount()), adapter!!.getItemCount() - 1))
+        else Math.max(0, Math.min(selectedItem, adapter!!.getItemCount() - 1))
     }
 
     fun onItemSelected() {

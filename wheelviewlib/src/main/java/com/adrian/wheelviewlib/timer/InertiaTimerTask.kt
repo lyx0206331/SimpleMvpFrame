@@ -2,7 +2,6 @@ package com.adrian.wheelviewlib.timer
 
 import com.adrian.wheelviewlib.view.WheelView
 import java.util.*
-import kotlin.Int.Companion.MAX_VALUE
 
 /**
  * author:RanQing

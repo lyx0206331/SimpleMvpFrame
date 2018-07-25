@@ -10,7 +10,7 @@ import com.adrian.wheelviewlib.view.WheelView
  * date:2018/7/11 0011
  * description:
  **/
-class LoopViewGestureListener(val wheelView: WheelView) : SimpleOnGestureListener() {
+class LoopViewGestureListener(private val wheelView: WheelView) : SimpleOnGestureListener() {
     override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
         wheelView.scrollBy(velocityY)
         return true
