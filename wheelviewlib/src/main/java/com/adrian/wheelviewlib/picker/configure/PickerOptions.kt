@@ -18,10 +18,10 @@ import java.util.*
 class PickerOptions {
     //常量
     companion object {
-        private const val PICKER_VIEW_BTN_COLOR_NORMAL = -0xfa8201
-        private const val PICKER_VIEW_BG_COLOR_TITLE = -0xa0a0b
-        private const val PICKER_VIEW_COLOR_TITLE = -0x1000000
-        private const val PICKER_VIEW_BG_COLOR_DEFAULT = -0x1
+        private const val PICKER_VIEW_BTN_COLOR_NORMAL = 0xFF057dff
+        private const val PICKER_VIEW_BG_COLOR_TITLE = 0xFFf5f5f5
+        private const val PICKER_VIEW_COLOR_TITLE = 0xFF000000
+        private const val PICKER_VIEW_BG_COLOR_DEFAULT = 0xFFFFFFFF
 
         const val TYPE_PICKER_OPTIONS = 1
         const val TYPE_PICKER_TIME = 2

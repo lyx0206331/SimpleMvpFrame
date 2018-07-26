@@ -45,12 +45,12 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
         return this
     }
 
-    fun setSubmitColor(confirmTxtColor: Int): OptionsPickerBuilder {
+    fun setSubmitColor(confirmTxtColor: Long): OptionsPickerBuilder {
         mPickerOptions.textColorConfirm = confirmTxtColor
         return this
     }
 
-    fun setCancelColor(cancelTxtColor: Int): OptionsPickerBuilder {
+    fun setCancelColor(cancelTxtColor: Long): OptionsPickerBuilder {
         mPickerOptions.textColorCancel = cancelTxtColor
         return this
     }
@@ -84,17 +84,17 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
         return this
     }
 
-    fun setBgColor(bgColorWheel: Int): OptionsPickerBuilder {
+    fun setBgColor(bgColorWheel: Long): OptionsPickerBuilder {
         mPickerOptions.bgColorWheel = bgColorWheel
         return this
     }
 
-    fun setTitleBgColor(bgColorTitle: Int): OptionsPickerBuilder {
+    fun setTitleBgColor(bgColorTitle: Long): OptionsPickerBuilder {
         mPickerOptions.bgColorTitle = bgColorTitle
         return this
     }
 
-    fun setTitleColor(textColorTitle: Int): OptionsPickerBuilder {
+    fun setTitleColor(textColorTitle: Long): OptionsPickerBuilder {
         mPickerOptions.textColorTitle = textColorTitle
         return this
     }
