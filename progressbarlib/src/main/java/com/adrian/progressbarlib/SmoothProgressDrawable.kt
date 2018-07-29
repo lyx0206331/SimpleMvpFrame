@@ -468,11 +468,25 @@ class SmoothProgressDrawable : Drawable, Animatable {
     }
 
     override fun start() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (mIsProgressiveStartActivated) {
+            resetProgressiveStart(0)
+        }
+        if (mIsRunning) return
+
+        callbacks?.onStart()
+
+        scheduleSelf(mUpdater, SystemClock.uptimeMillis() + FRAME_DURATION)
+        invalidateSelf()
     }
 
     override fun stop() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (!mIsRunning) return
+
+        callbacks?.onStop()
+
+        mIsRunning = false
+
+        unscheduleSelf(mUpdater)
     }
 
     override fun scheduleSelf(what: Runnable?, `when`: Long) {
