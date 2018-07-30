@@ -1,10 +1,14 @@
 package com.adrian.progressbarlib
 
+import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
 import android.support.annotation.UiThread
+import android.support.v4.content.ContextCompat
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.Interpolator
 import org.jetbrains.annotations.NotNull
 import java.util.*
@@ -138,10 +142,10 @@ class SmoothProgressDrawable : Drawable, Animatable {
         fun onStop()
     }
 
-    constructor(callbacks: Callbacks?, @NotNull interpolator: Interpolator, @NotNull mColors: IntArray?,
-                mSeparatorLength: Int, mSectionsCount: Int, mSpeed: Float, mProgressiveStartSpeed: Float,
-                mProgressiveStopSpeed: Float, mIsReversed: Boolean, mIsMirrorMode: Boolean,
-                mIsProgressiveStartActivated: Boolean, mStrokeWidth: Float, mBackgroundDrawable: Drawable, mUseGradients: Boolean) : super() {
+    constructor(@NotNull interpolator: Interpolator, mSectionsCount: Int, mSeparatorLength: Int, @NotNull mColors: IntArray?,
+                mStrokeWidth: Float, mSpeed: Float, mProgressiveStartSpeed: Float, mProgressiveStopSpeed: Float,
+                mIsReversed: Boolean, mIsMirrorMode: Boolean, callbacks: Callbacks?, mIsProgressiveStartActivated: Boolean,
+                mBackgroundDrawable: Drawable?, mUseGradients: Boolean) : super() {
         this.callbacks = callbacks
         this.interpolator = interpolator
         this.mColors = mColors
@@ -163,10 +167,22 @@ class SmoothProgressDrawable : Drawable, Animatable {
         mPaint.style = Paint.Style.STROKE
         mPaint.isDither = false
         mPaint.isAntiAlias = false
+
+        refreshLinearGradientOptions()
     }
 
     fun setColor(color: Int) {
-        mColors = intArrayOf(color)
+        setColors(intArrayOf(color))
+    }
+
+    fun setColors(colors: IntArray) {
+        if (colors == null || colors.isEmpty()) {
+            throw IllegalArgumentException("Colors cannot be null or empty")
+        }
+        mColorsIndex = 0
+        mColors = colors
+        refreshLinearGradientOptions()
+        invalidateSelf()
     }
 
     private fun refreshLinearGradientOptions() {
@@ -290,7 +306,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
     private fun drawLine(canvas: Canvas, canvasWidth: Int, startX: Float, startY: Float, stopX: Float, stopY: Float, currentIndexColor: Int) {
         mPaint.color = mColors!![currentIndexColor]
 
-        if (mIsMirrorMode) {
+        if (!mIsMirrorMode) {
             canvas.drawLine(startX, startY, stopX, stopY, mPaint)
         } else {
             if (mIsReversed) {
@@ -439,7 +455,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
     private fun drawBackground(canvas: Canvas, fromX: Float, toX: Float) {
         val count = canvas.save()
         canvas.clipRect(fromX, (canvas.height - mStrokeWidth) / 2, toX, (canvas.height + mStrokeWidth) / 2)
-        mBackgroundDrawable!!.draw(canvas)
+        mBackgroundDrawable?.draw(canvas)
         canvas.restoreToCount(count)
     }
 
@@ -448,7 +464,29 @@ class SmoothProgressDrawable : Drawable, Animatable {
     }
 
     override fun draw(canvas: Canvas?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        mBounds = bounds
+        canvas?.clipRect(mBounds)
+
+        //new turn
+        if (mIsNewTurn) {
+            mColorsIndex = decrementColor(mColorsIndex)
+            mIsNewTurn = false
+
+            if (mIsFinishing) {
+                mStartSection++
+                if (mStartSection > mSectionsCount) {
+                    stop()
+                    return
+                }
+            }
+            if (mCurrentSections < mSectionsCount) {
+                mCurrentSections++
+            }
+        }
+
+        if (mUseGradients) prepareGradient()
+
+        drawStrokes(canvas!!)
     }
 
     override fun setAlpha(alpha: Int) {
@@ -518,6 +556,158 @@ class SmoothProgressDrawable : Drawable, Animatable {
             }
 
             invalidateSelf()
+        }
+    }
+
+    /**
+     * Builder for SmoothProgressDrawable! You must use it!
+     */
+    public class Builder {
+        private var interpolator: Interpolator = AccelerateInterpolator()
+        private var mSectionsCount: Int = 0
+        private var mColors: IntArray? = null
+        private var mSpeed: Float = 0f
+        private var mProgressiveStartSpeed: Float = 0f
+        private var mProgressiveStopSpeed: Float = 0f
+        private var mIsReversed: Boolean = false
+        private var mIsMirrorMode: Boolean = false
+        private var mStrokeWidth: Float = 0f
+        private var mStrokeSeparatorLength: Int = 0
+        private var mIsProgressiveStartActivated: Boolean = false
+        private var mIsGenerateBackgroundUsingColors: Boolean = false
+        private var mIsGradients: Boolean = false
+        private var mBackgroundDrawableWhenHidden: Drawable? = null
+
+        var mOnProgressiveStopEndedListener: Callbacks? = null
+
+        constructor(context: Context) : this(context, false)
+        constructor(context: Context, editMode: Boolean) {
+            initValues(context, editMode)
+        }
+
+        fun build(): SmoothProgressDrawable {
+            if (mIsGenerateBackgroundUsingColors) {
+                mBackgroundDrawableWhenHidden = SmoothProgressBarUtils.generateDrawableWithColors(mColors, mStrokeWidth)
+            }
+            return SmoothProgressDrawable(interpolator, mSectionsCount, mStrokeSeparatorLength, mColors,
+                    mStrokeWidth, mSpeed, mProgressiveStartSpeed, mProgressiveStopSpeed, mIsReversed,
+                    mIsMirrorMode, mOnProgressiveStopEndedListener, mIsProgressiveStartActivated, mBackgroundDrawableWhenHidden, mIsGradients)
+        }
+
+        private fun initValues(context: Context, editMode: Boolean) {
+            val res: Resources = context.resources
+            if (!editMode) {
+                mSectionsCount = res.getInteger(R.integer.spb_default_sections_count)
+                mSpeed = res.getString(R.string.spb_default_speed).toFloat()
+                mIsReversed = res.getBoolean(R.bool.spb_default_reversed)
+                mIsProgressiveStartActivated = res.getBoolean(R.bool.spb_default_progressiveStart_activated)
+                mColors = intArrayOf(ContextCompat.getColor(context, R.color.spb_default_color))
+                mStrokeSeparatorLength = res.getDimensionPixelSize(R.dimen.spb_default_stroke_separator_length)
+                mStrokeWidth = res.getDimensionPixelOffset(R.dimen.spb_default_stroke_width).toFloat()
+            } else {
+                mSectionsCount = 4
+                mSpeed = 1f
+                mIsReversed = false
+                mIsProgressiveStartActivated = false
+                mColors = intArrayOf(0x33b5e5)
+                mStrokeSeparatorLength = 4
+                mStrokeWidth = 4f
+            }
+            mProgressiveStartSpeed = mSpeed
+            mProgressiveStopSpeed = mSpeed
+            mIsGradients = false
+        }
+
+        fun interpolator(interpolator: Interpolator): Builder {
+            SmoothProgressBarUtils.checkNotNull(interpolator, "Interpolator")
+            this.interpolator = interpolator
+            return this
+        }
+
+        fun sectionsCount(sectionsCount: Int): Builder {
+            SmoothProgressBarUtils.checkPositive(sectionsCount.toFloat(), "Sections count")
+            mSectionsCount = sectionsCount
+            return this
+        }
+
+        fun separatorLength(separatorLenght: Int): Builder {
+            SmoothProgressBarUtils.checkPositiveOrZero(separatorLenght.toFloat(), "Separator length")
+            mStrokeSeparatorLength = separatorLenght
+            return this
+        }
+
+        fun color(color: Int): Builder {
+            mColors = intArrayOf(color)
+            return this
+        }
+
+        fun colors(colors: IntArray): Builder {
+            SmoothProgressBarUtils.checkColors(colors)
+            mColors = colors
+            return this
+        }
+
+        fun strokeWidth(width: Float): Builder {
+            SmoothProgressBarUtils.checkPositiveOrZero(width, "Width")
+            mStrokeWidth = width
+            return this
+        }
+
+        fun speed(speed: Float): Builder {
+            SmoothProgressBarUtils.checkSpeed(speed)
+            mSpeed = speed
+            return this
+        }
+
+        fun progressiveStartSpeed(progressiveStartSpeed: Float): Builder {
+            SmoothProgressBarUtils.checkSpeed(progressiveStartSpeed)
+            mProgressiveStartSpeed = progressiveStartSpeed
+            return this
+        }
+
+        fun progressiveStopSpeed(progressiveStopSpeed: Float): Builder {
+            SmoothProgressBarUtils.checkSpeed(progressiveStopSpeed)
+            mProgressiveStopSpeed = progressiveStopSpeed
+            return this
+        }
+
+        fun reversed(reversed: Boolean): Builder {
+            mIsReversed = reversed
+            return this
+        }
+
+        fun mirrorMode(mirrorMode: Boolean): Builder {
+            mIsMirrorMode = mirrorMode
+            return this
+        }
+
+        fun progressiveStart(progressiveStartActivated: Boolean): Builder {
+            mIsProgressiveStartActivated = progressiveStartActivated
+            return this
+        }
+
+        fun callbacks(onProgressiveStopEndedListener: Callbacks): Builder {
+            mOnProgressiveStopEndedListener = onProgressiveStopEndedListener
+            return this
+        }
+
+        fun backgroundDrawable(backgroundDrawableWhenHidden: Drawable): Builder {
+            mBackgroundDrawableWhenHidden = backgroundDrawableWhenHidden
+            return this
+        }
+
+        fun generateBackgroundUsingColors(): Builder {
+            mIsGenerateBackgroundUsingColors = true
+            return this
+        }
+
+        fun gradients(): Builder {
+            return gradients(true)
+        }
+
+        fun gradients(useGradients: Boolean): Builder {
+            mIsGradients = useGradients
+            return this
         }
     }
 }

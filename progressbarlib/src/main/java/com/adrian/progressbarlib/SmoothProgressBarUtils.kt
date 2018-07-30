@@ -6,7 +6,7 @@ import java.util.*
 
 object SmoothProgressBarUtils {
 
-    fun generateDrawableWithColors(colors: IntArray, strokeWidth: Float): Drawable? {
+    fun generateDrawableWithColors(colors: IntArray?, strokeWidth: Float): Drawable? {
         return if (colors == null || colors.isEmpty()) null else ShapeDrawable(ColorsShape(strokeWidth, colors))
     }
 
@@ -16,7 +16,7 @@ object SmoothProgressBarUtils {
         }
     }
 
-    fun checkColors(colors: IntArray) {
+    fun checkColors(colors: IntArray?) {
         if (colors == null || colors.isEmpty()) {
             throw IllegalArgumentException("You must provide at least 1 color")
         }
@@ -40,7 +40,7 @@ object SmoothProgressBarUtils {
         }
     }
 
-    fun checkNotNull(any: Any, name: String) {
+    fun checkNotNull(any: Any?, name: String) {
         if (any == null) {
             throw IllegalArgumentException(String.format(Locale.US, "%s must be not null", name))
         }

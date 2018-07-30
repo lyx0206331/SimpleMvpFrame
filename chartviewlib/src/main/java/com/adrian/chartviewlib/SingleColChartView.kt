@@ -75,6 +75,7 @@ class SingleColChartView : View {
             field = value
             invalidate()
         }
+    //目标参考线
     var targetLineIndex = 0
         set(value) {
             field = value
@@ -124,6 +125,8 @@ class SingleColChartView : View {
     private val margin: Int = 40
     //距离左边偏移量
     private val marginX: Int = 30
+    //距离底部的距离
+    private val marginY: Int = 80
     //原点坐标
     private var xPoint = 0
     private var yPoint = 0
@@ -180,7 +183,7 @@ class SingleColChartView : View {
         paintAxes = Paint()
         paintAxes.isAntiAlias = true
         paintAxes.style = Paint.Style.STROKE
-        paintAxes.strokeWidth = 4f
+        paintAxes.strokeWidth = 2f
         paintAxes.isDither = true
         paintAxes.color = axesColor
 
@@ -233,9 +236,9 @@ class SingleColChartView : View {
 
         if (isAvailable()) {
             xPoint = margin + marginX
-            yPoint = height - margin
+            yPoint = height - marginY
             xUnit = (width - 2 * margin - marginX) / (xLabelList!!.size)
-            yUnit = (height - 2 * margin) / (yLabelList!!.size - 1)
+            yUnit = (height - 2 * margin - marginY) / (yLabelList!!.size - 1)
             colWidth = xUnit / 2f
         }
     }
@@ -295,7 +298,7 @@ class SingleColChartView : View {
         for ((index, value) in xLabelList!!.withIndex()) {
             paintAxesTxt.textAlign = Paint.Align.CENTER
             val startX = xPoint + (index + .5f) * xUnit
-            canvas.drawText(value, startX, height - margin / 6f, paintAxesTxt)
+            canvas.drawText(value, startX, height - marginY / 2f, paintAxesTxt)
         }
 
         //Y
@@ -381,7 +384,7 @@ class SingleColChartView : View {
             val halfW = colWidth / 2
             for ((index, value) in data.withIndex()) {
                 val startX: Float = xPoint + (index + .5f) * xUnit
-                val rect = RectF(startX - halfW, toY(value), startX + halfW, height - margin - 2f)
+                val rect = RectF(startX - halfW, toY(value), startX + halfW, height - marginY - 1f)
                 paintRectF.color = if (showValueWay == 1 && touchIndex == index && isClicked) touchColor else normalColor
                 canvas.drawRect(rect, paintRectF)
             }
@@ -418,18 +421,7 @@ class SingleColChartView : View {
                     canvas.drawText(formater?.formatClickedTxt(txt, touchIndex), xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - margin, paintValue)
                 }
                 canvas.drawText(txt, xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - 5, paintValue)
-            } /*else {
-                canvas.drawText("", xPoint + (touchIndex + .5f) * xUnit, toY(data[touchIndex]) - 5, paintValue)
-            }*/
-        }
-    }
-
-    /**
-     * 始终不显示数值
-     */
-    private fun showNever(canvas: Canvas, data: ArrayList<Int>) {
-        for ((index, value) in data.withIndex()) {
-            canvas.drawText("", xPoint + (index + .5f) * xUnit, toY(value) - 5, paintValue)
+            }
         }
     }
 
@@ -482,6 +474,14 @@ class SingleColChartView : View {
 //                logE("touchIndex:$touchIndex")
                 if (showValueWay == 1 && touchIndex >= 0 && touchIndex < dataList!!.size) {
                     isClicked = true
+                    listener?.clickColumn(touchIndex, dataList!![touchIndex])
+                }
+                invalidate()
+            }
+            MotionEvent.ACTION_MOVE -> {
+                touchIndex = ((x - xPoint) / xUnit).toInt()
+//                logE("touchIndex:$touchIndex")
+                if (showValueWay == 1 && touchIndex >= 0 && touchIndex < dataList!!.size) {
                     listener?.clickColumn(touchIndex, dataList!![touchIndex])
                 }
                 invalidate()
