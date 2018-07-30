@@ -3,7 +3,11 @@ package com.adrian.progressbarlib
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.TypedArray
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.support.annotation.ColorInt
+import android.support.annotation.StyleRes
+import android.support.annotation.StyleableRes
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.animation.*
@@ -88,5 +92,49 @@ class SmoothProgressBar : ProgressBar {
 
         val d: SmoothProgressDrawable = builder.build()
         indeterminateDrawable = d
+    }
+
+    fun applyStyle(@StyleRes styleResId: Int) {
+        val a: TypedArray = context.obtainStyledAttributes(null, R.styleable.SmoothProgressBar, 0, styleResId)
+
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_color)) {
+            setSmoothProgressDrawableColor(a.getColor(R.styleable.SmoothProgressBar_spb_color, 0))
+        }
+    }
+
+    @Synchronized
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+        if (isIndeterminate && indeterminateDrawable is SmoothProgressDrawable && !(indeterminateDrawable as SmoothProgressDrawable).isRunning) {
+            indeterminateDrawable.draw(canvas)
+        }
+    }
+
+    private fun checkIndeterminateDrawable(): SmoothProgressDrawable {
+        val ret: Drawable = indeterminateDrawable
+        if (ret == null || ret !is SmoothProgressDrawable) {
+            throw RuntimeException("The drawable is not a SmoothProgressDrawble")
+        }
+        return ret
+    }
+
+    override fun setInterpolator(interpolator: Interpolator?) {
+        super.setInterpolator(interpolator)
+        val ret: Drawable = indeterminateDrawable
+        if (ret != null && ret is SmoothProgressDrawable) {
+            ret.interpolator = interpolator
+        }
+    }
+
+    fun setSmoothProgressDrawableInterpolator(interpolator: Interpolator?) {
+        checkIndeterminateDrawable().interpolator = interpolator
+    }
+
+    fun setSmoothProgressDrawableColors(colors: IntArray) {
+        checkIndeterminateDrawable().setColors(colors)
+    }
+
+    fun setSmoothProgressDrawableColor(@ColorInt color: Int) {
+        checkIndeterminateDrawable().setColor(color)
     }
 }
