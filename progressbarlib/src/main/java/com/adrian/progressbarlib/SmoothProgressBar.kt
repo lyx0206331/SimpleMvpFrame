@@ -12,13 +12,19 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.animation.*
 import android.widget.ProgressBar
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.LinearInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.AccelerateDecelerateInterpolator
+
+
 
 /**
  * date:2018/7/27
  * author：RanQing
  * description：
  */
-class SmoothProgressBar : ProgressBar {
+open class SmoothProgressBar : ProgressBar {
 
     companion object {
         const val INTERPOLATOR_ACCELERATE = 0
@@ -100,6 +106,70 @@ class SmoothProgressBar : ProgressBar {
         if (a.hasValue(R.styleable.SmoothProgressBar_spb_color)) {
             setSmoothProgressDrawableColor(a.getColor(R.styleable.SmoothProgressBar_spb_color, 0))
         }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_colors)) {
+            val colorsId = a.getResourceId(R.styleable.SmoothProgressBar_spb_colors, 0)
+            if (colorsId != 0) {
+                val colors = resources.getIntArray(colorsId)
+                if (colors != null && colors.isNotEmpty()) {
+                    setSmoothProgressDrawableColors(colors)
+                }
+            }
+        }
+
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_sections_count)) {
+            setSmoothProgressDrawableSectionsCount(a.getInteger(R.styleable.SmoothProgressBar_spb_sections_count, 0))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_stroke_separator_length)) {
+            setSmoothProgressDrawableSeparatorLength(a.getDimensionPixelSize(R.styleable.SmoothProgressBar_spb_stroke_separator_length, 0))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_stroke_width)) {
+            setSmoothProgressDrawableStrokeWidth(a.getDimension(R.styleable.SmoothProgressBar_spb_stroke_width, 0f))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_speed)) {
+            setSmoothProgressDrawableSpeed(a.getFloat(R.styleable.SmoothProgressBar_spb_speed, 0f))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_progressiveStart_speed)) {
+            setSmoothProgressDrawableProgressiveStartSpeed(a.getFloat(R.styleable.SmoothProgressBar_spb_progressiveStart_speed, 0f))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_progressiveStop_speed)) {
+            setSmoothProgressDrawableProgressiveStopSpeed(a.getFloat(R.styleable.SmoothProgressBar_spb_progressiveStop_speed, 0f))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_reversed)) {
+            setSmoothProgressDrawableReversed(a.getBoolean(R.styleable.SmoothProgressBar_spb_reversed, false))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_mirror_mode)) {
+            setSmoothProgressDrawableMirrorMode(a.getBoolean(R.styleable.SmoothProgressBar_spb_mirror_mode, false))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_progressiveStart_activated)) {
+            setProgressiveStartActivated(a.getBoolean(R.styleable.SmoothProgressBar_spb_progressiveStart_activated, false))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_progressiveStart_activated)) {
+            setProgressiveStartActivated(a.getBoolean(R.styleable.SmoothProgressBar_spb_progressiveStart_activated, false))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_gradients)) {
+            setSmoothProgressDrawableUseGradients(a.getBoolean(R.styleable.SmoothProgressBar_spb_gradients, false))
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_generate_background_with_colors)) {
+            if (a.getBoolean(R.styleable.SmoothProgressBar_spb_generate_background_with_colors, false)) {
+                setSmoothProgressDrawableBackgroundDrawable(
+                        SmoothProgressBarUtils.generateDrawableWithColors(checkIndeterminateDrawable().mColors, checkIndeterminateDrawable().mStrokeWidth))
+            }
+        }
+        if (a.hasValue(R.styleable.SmoothProgressBar_spb_interpolator)) {
+            val iInterpolator = a.getInteger(R.styleable.SmoothProgressBar_spb_interpolator, -1)
+            val interpolator: Interpolator?
+            when (iInterpolator) {
+                INTERPOLATOR_ACCELERATEDECELERATE -> interpolator = AccelerateDecelerateInterpolator()
+                INTERPOLATOR_DECELERATE -> interpolator = DecelerateInterpolator()
+                INTERPOLATOR_LINEAR -> interpolator = LinearInterpolator()
+                INTERPOLATOR_ACCELERATE -> interpolator = AccelerateInterpolator()
+                else -> interpolator = null
+            }
+            if (interpolator != null) {
+                setInterpolator(interpolator)
+            }
+        }
+        a.recycle()
     }
 
     @Synchronized
@@ -178,7 +248,7 @@ class SmoothProgressBar : ProgressBar {
         checkIndeterminateDrawable().callbacks = listener
     }
 
-    fun setSmoothProgressDrawableBackgroundDrawable(drawable: Drawable) {
+    fun setSmoothProgressDrawableBackgroundDrawable(drawable: Drawable?) {
         checkIndeterminateDrawable().mBackgroundDrawable = drawable
     }
 
