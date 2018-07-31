@@ -336,7 +336,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
      * Calls progressiveStart(0)
      */
     @UiThread
-    private fun progressiveStart() {
+    fun progressiveStart() {
         progressiveStart(0)
     }
 
@@ -372,7 +372,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
      * finish the animation by animating the remaining sections.
      */
     @UiThread
-    private fun progressiveStop() {
+    fun progressiveStop() {
         mIsFinishing = true
         mStartSection = 0
     }

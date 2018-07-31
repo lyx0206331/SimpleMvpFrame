@@ -113,7 +113,7 @@ class SmoothProgressBar : ProgressBar {
     private fun checkIndeterminateDrawable(): SmoothProgressDrawable {
         val ret: Drawable = indeterminateDrawable
         if (ret == null || ret !is SmoothProgressDrawable) {
-            throw RuntimeException("The drawable is not a SmoothProgressDrawble")
+            throw RuntimeException("The drawable is not a SmoothProgressDrawable")
         }
         return ret
     }
@@ -136,5 +136,61 @@ class SmoothProgressBar : ProgressBar {
 
     fun setSmoothProgressDrawableColor(@ColorInt color: Int) {
         checkIndeterminateDrawable().setColor(color)
+    }
+
+    fun setSmoothProgressDrawableSpeed(speed: Float) {
+        checkIndeterminateDrawable().mSpeed = speed
+    }
+
+    fun setSmoothProgressDrawableProgressiveStartSpeed(speed: Float) {
+        checkIndeterminateDrawable().mProgressiveStartSpeed = speed
+    }
+
+    fun setSmoothProgressDrawableProgressiveStopSpeed(speed: Float) {
+        checkIndeterminateDrawable().mProgressiveStopSpeed = speed
+    }
+
+    fun setSmoothProgressDrawableSectionsCount(sectionsCount: Int) {
+        checkIndeterminateDrawable().mSectionsCount = sectionsCount
+    }
+
+    fun setSmoothProgressDrawableSeparatorLength(separatorLength: Int) {
+        checkIndeterminateDrawable().mSeparatorLength = separatorLength
+    }
+
+    fun setSmoothProgressDrawableStrokeWidth(strokeWidth: Float) {
+        checkIndeterminateDrawable().mStrokeWidth = strokeWidth
+    }
+
+    fun setSmoothProgressDrawableReversed(reversed: Boolean) {
+        checkIndeterminateDrawable().mIsReversed = reversed
+    }
+
+    fun setSmoothProgressDrawableMirrorMode(mirrorMode: Boolean) {
+        checkIndeterminateDrawable().mIsMirrorMode = mirrorMode
+    }
+
+    fun setProgressiveStartActivated(progressiveStartActivated: Boolean) {
+        checkIndeterminateDrawable().mIsProgressiveStartActivated = progressiveStartActivated
+    }
+
+    fun setSmoothProgressDrawableCallbacks(listener: SmoothProgressDrawable.Callbacks) {
+        checkIndeterminateDrawable().callbacks = listener
+    }
+
+    fun setSmoothProgressDrawableBackgroundDrawable(drawable: Drawable) {
+        checkIndeterminateDrawable().mBackgroundDrawable = drawable
+    }
+
+    fun setSmoothProgressDrawableUseGradients(useGradients: Boolean) {
+        checkIndeterminateDrawable().mUseGradients = useGradients
+    }
+
+    fun progressiveStart() {
+        checkIndeterminateDrawable().progressiveStart()
+    }
+
+    fun progressiveStop() {
+        checkIndeterminateDrawable().progressiveStop()
     }
 }
