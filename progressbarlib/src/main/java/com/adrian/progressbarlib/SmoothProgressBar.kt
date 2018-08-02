@@ -158,12 +158,12 @@ open class SmoothProgressBar : ProgressBar {
         if (a.hasValue(R.styleable.SmoothProgressBar_spb_interpolator)) {
             val iInterpolator = a.getInteger(R.styleable.SmoothProgressBar_spb_interpolator, -1)
             val interpolator: Interpolator?
-            when (iInterpolator) {
-                INTERPOLATOR_ACCELERATEDECELERATE -> interpolator = AccelerateDecelerateInterpolator()
-                INTERPOLATOR_DECELERATE -> interpolator = DecelerateInterpolator()
-                INTERPOLATOR_LINEAR -> interpolator = LinearInterpolator()
-                INTERPOLATOR_ACCELERATE -> interpolator = AccelerateInterpolator()
-                else -> interpolator = null
+            interpolator = when (iInterpolator) {
+                INTERPOLATOR_ACCELERATEDECELERATE -> AccelerateDecelerateInterpolator()
+                INTERPOLATOR_DECELERATE -> DecelerateInterpolator()
+                INTERPOLATOR_LINEAR -> LinearInterpolator()
+                INTERPOLATOR_ACCELERATE -> AccelerateInterpolator()
+                else -> null
             }
             if (interpolator != null) {
                 setInterpolator(interpolator)

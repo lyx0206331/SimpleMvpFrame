@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">ProgressbarTest</string>
+
     <string-array name="interpolators">
         <item>Accelerate</item>
         <item>Linear</item>
@@ -7,5 +8,4 @@
         <item>Decelerate</item>
         <item>FastOutSlowIn</item>
     </string-array>
-
 </resources>
