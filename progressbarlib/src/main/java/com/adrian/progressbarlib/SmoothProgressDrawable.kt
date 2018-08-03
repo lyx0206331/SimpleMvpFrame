@@ -25,7 +25,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
         private const val OFFSET_PER_FRAME: Float = .01f
     }
 
-    val fBackgroundRect = Rect()
+    private val fBackgroundRect = Rect()
     var callbacks: Callbacks? = null
     var interpolator: Interpolator? = null
         set(value) {
@@ -61,8 +61,8 @@ class SmoothProgressDrawable : Drawable, Animatable {
         }
     var mSectionsCount: Int = 0
         set(value) {
-            if (value < 0) {
-                throw IllegalArgumentException("SectionsCount must be >= 0")
+            if (value <= 0) {
+                throw IllegalArgumentException("SectionsCount must be > 0")
             }
             field = value
             mMaxOffset = 1f / value
@@ -148,9 +148,12 @@ class SmoothProgressDrawable : Drawable, Animatable {
                 mBackgroundDrawable: Drawable?, mUseGradients: Boolean) : super() {
         this.callbacks = callbacks
         this.interpolator = interpolator
+        this.mSectionsCount = mSectionsCount
+        mStartSection = 0
         this.mColors = mColors
+        mColorsIndex = 0
         this.mSeparatorLength = mSeparatorLength
-        this.mCurrentSections = mSectionsCount
+        mCurrentSections = mSectionsCount
         this.mSpeed = mSpeed
         this.mProgressiveStartSpeed = mProgressiveStartSpeed
         this.mProgressiveStopSpeed = mProgressiveStopSpeed
@@ -160,6 +163,9 @@ class SmoothProgressDrawable : Drawable, Animatable {
         this.mStrokeWidth = mStrokeWidth
         this.mBackgroundDrawable = mBackgroundDrawable
         this.mUseGradients = mUseGradients
+
+        mIsRunning = false
+        mIsFinishing = false
 
         mMaxOffset = 1f / mSectionsCount
 
@@ -172,18 +178,19 @@ class SmoothProgressDrawable : Drawable, Animatable {
     }
 
     fun setColor(color: Int) {
-        setColors(intArrayOf(color))
+//        setColors(intArrayOf(color))
+        mColors = intArrayOf(color)
     }
 
-    fun setColors(colors: IntArray) {
-        if (colors == null || colors.isEmpty()) {
-            throw IllegalArgumentException("Colors cannot be null or empty")
-        }
-        mColorsIndex = 0
-        mColors = colors
-        refreshLinearGradientOptions()
-        invalidateSelf()
-    }
+//    fun setColors(colors: IntArray) {
+//        if (colors == null || colors.isEmpty()) {
+//            throw IllegalArgumentException("Colors cannot be null or empty")
+//        }
+//        mColorsIndex = 0
+//        mColors = colors
+//        refreshLinearGradientOptions()
+//        invalidateSelf()
+//    }
 
     private fun refreshLinearGradientOptions() {
         if (mUseGradients) {
@@ -388,7 +395,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
         mBackgroundDrawable!!.bounds = fBackgroundRect
 
         //draw the background if the animation is over
-        if (!mIsRunning) {
+        if (!isRunning) {
             if (mIsMirrorMode) {
                 canvas.save()
                 canvas.translate(canvas.width / 2f, 0f)
@@ -404,30 +411,30 @@ class SmoothProgressDrawable : Drawable, Animatable {
 
         if (!mIsFinishing && !isStarting()) return
 
-        var tmpfirstX = firstX
+        var tmpFirstX = firstX
         var tmpLastX = lastX
-        if (tmpfirstX > tmpLastX) {
-            val temp: Float = tmpfirstX
-            tmpfirstX = tmpLastX
+        if (tmpFirstX > tmpLastX) {
+            val temp: Float = tmpFirstX
+            tmpFirstX = tmpLastX
             tmpLastX = temp
         }
 
-        if (tmpfirstX > 0) {
+        if (tmpFirstX > 0) {
             if (mIsMirrorMode) {
                 canvas.save()
                 canvas.translate(canvas.width / 2f, 0f)
                 if (mIsReversed) {
-                    drawBackground(canvas, 0f, tmpfirstX)
+                    drawBackground(canvas, 0f, tmpFirstX)
                     canvas.scale(-1f, 1f)
-                    drawBackground(canvas, 0f, tmpfirstX)
+                    drawBackground(canvas, 0f, tmpFirstX)
                 } else {
-                    drawBackground(canvas, canvas.width / 2 - tmpfirstX, canvas.width / 2f)
+                    drawBackground(canvas, canvas.width / 2 - tmpFirstX, canvas.width / 2f)
                     canvas.scale(-1f, 1f)
-                    drawBackground(canvas, canvas.width / 2 - tmpfirstX, canvas.width / 2f)
+                    drawBackground(canvas, canvas.width / 2 - tmpFirstX, canvas.width / 2f)
                 }
                 canvas.restore()
             } else {
-                drawBackground(canvas, 0f, tmpfirstX)
+                drawBackground(canvas, 0f, tmpFirstX)
             }
         }
 
@@ -509,7 +516,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
         if (mIsProgressiveStartActivated) {
             resetProgressiveStart(0)
         }
-        if (mIsRunning) return
+        if (isRunning) return
 
         callbacks?.onStart()
 
@@ -518,7 +525,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
     }
 
     override fun stop() {
-        if (!mIsRunning) return
+        if (!isRunning) return
 
         callbacks?.onStop()
 
@@ -551,7 +558,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
                 mCurrentOffset -= mMaxOffset
             }
 
-            if (mIsRunning) {
+            if (isRunning) {
                 scheduleSelf(mUpdater, SystemClock.uptimeMillis() + FRAME_DURATION)
             }
 
@@ -562,7 +569,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
     /**
      * Builder for SmoothProgressDrawable! You must use it!
      */
-    public class Builder {
+    class Builder {
         private var interpolator: Interpolator = AccelerateInterpolator()
         private var mSectionsCount: Int = 0
         private var mColors: IntArray? = null
