@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SmoothProgressBar">
-        <attr name="spbStyle" format="reference" />
+        <!--<attr name="spbStyle" format="reference" />-->
         <attr name="spb_color" format="color" />
         <attr name="spb_stroke_width" format="dimension" />
         <attr name="spb_stroke_separator_length" format="dimension" />

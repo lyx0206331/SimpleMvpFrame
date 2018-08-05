@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
 import android.support.annotation.StyleRes
-import android.support.annotation.StyleableRes
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
@@ -33,15 +32,14 @@ open class SmoothProgressBar : ProgressBar {
         const val INTERPOLATOR_DECELERATE = 3
     }
 
-    private fun logE(msg: String) {
+    private fun logE(msg: String?) {
         Log.e("SmoothProgressBar", msg)
     }
 
     constructor(context: Context?) : this(context, null)
-    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, R.attr.spbStyle)
+    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         if (isInEditMode) {
-            logE("is in editMode")
             indeterminateDrawable = SmoothProgressDrawable.Builder(context!!, true).build()
             return
         }
@@ -62,7 +60,7 @@ open class SmoothProgressBar : ProgressBar {
         val mirrorMode: Boolean = a.getBoolean(R.styleable.SmoothProgressBar_spb_mirror_mode, res.getBoolean(R.bool.spb_default_mirror_mode))
         val colorsId: Int = a.getResourceId(R.styleable.SmoothProgressBar_spb_colors, 0)
         val progressiveStartActivated: Boolean = a.getBoolean(R.styleable.SmoothProgressBar_spb_progressiveStart_activated, res.getBoolean(R.bool.spb_default_progressiveStart_activated))
-        val backgroundDrawable: Drawable = a.getDrawable(R.styleable.SmoothProgressBar_spb_background)
+        val backgroundDrawable: Drawable? = a.getDrawable(R.styleable.SmoothProgressBar_spb_background)
         val generateBackgroundWithColors: Boolean = a.getBoolean(R.styleable.SmoothProgressBar_spb_generate_background_with_colors, false)
         val gradients: Boolean = a.getBoolean(R.styleable.SmoothProgressBar_spb_gradients, false)
         a.recycle()
@@ -103,7 +101,6 @@ open class SmoothProgressBar : ProgressBar {
 
         val d: SmoothProgressDrawable = builder.build()
         indeterminateDrawable = d
-        logE("indeterminateDrawable1 is null:${indeterminateDrawable == null}")
     }
 
     fun applyStyle(@StyleRes styleResId: Int) {
@@ -196,10 +193,11 @@ open class SmoothProgressBar : ProgressBar {
 
     override fun setInterpolator(interpolator: Interpolator?) {
         super.setInterpolator(interpolator)
-        logE("indeterminateDrawable2 is null:${indeterminateDrawable == null}")
-        val ret: Drawable = indeterminateDrawable
-        if (ret != null && ret is SmoothProgressDrawable) {
-            ret.interpolator = interpolator
+        if (indeterminateDrawable != null) {
+            val ret: Drawable = indeterminateDrawable
+            if (ret != null && ret is SmoothProgressDrawable) {
+                ret.interpolator = interpolator
+            }
         }
     }
 

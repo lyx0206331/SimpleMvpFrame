@@ -79,17 +79,6 @@
             style="@style/GradientProgressBar"
             android:indeterminate="true" />
 
-        <!--<TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Circular"/>-->
-
-        <!--<fr.castorflex.android.circularprogressbar.CircularProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            app:cpb_colors="@array/gplus_colors"/>-->
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

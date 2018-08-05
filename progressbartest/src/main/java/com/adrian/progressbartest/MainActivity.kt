@@ -3,6 +3,7 @@ package com.adrian.progressbartest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.widget.ProgressBar
@@ -10,7 +11,7 @@ import com.adrian.progressbarlib.SmoothProgressBar
 import com.adrian.progressbarlib.SmoothProgressBarUtils
 import com.adrian.progressbarlib.SmoothProgressDrawable
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
     private var mProgressBar1: ProgressBar? = null
     private var mGoogleNow: SmoothProgressBar? = null
@@ -23,10 +24,10 @@ class MainActivity : Activity() {
         mProgressBar1 = findViewById(R.id.progressbar2)
         mPocketBar = findViewById(R.id.pocket)
 
-        mProgressBar1!!.indeterminateDrawable = SmoothProgressDrawable.Builder(this).interpolator(AccelerateInterpolator()).build()
+        mProgressBar1?.indeterminateDrawable = SmoothProgressDrawable.Builder(this).interpolator(AccelerateInterpolator()).build()
 
         mGoogleNow = findViewById(R.id.google_now)
-        mPocketBar!!.setSmoothProgressDrawableBackgroundDrawable(
+        mPocketBar?.setSmoothProgressDrawableBackgroundDrawable(
                 SmoothProgressBarUtils.generateDrawableWithColors(
                         resources.getIntArray(R.array.pocket_background_colors),
                         (mPocketBar!!.indeterminateDrawable as SmoothProgressDrawable).mStrokeWidth))
