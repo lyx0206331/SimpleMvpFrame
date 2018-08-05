@@ -11,7 +11,7 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <com.adrian.progressbarlib.SmoothProgressBar
+        <com.adrian.progressbarlib.MaterialProgressBar
             android:id="@+id/progressbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -22,17 +22,6 @@
             android:layout_weight="1"
             android:indeterminate="true"
             android:indeterminateOnly="false" />
-
-        <!--<fr.castorflex.android.circularprogressbar.CircularProgressBar
-            android:id="@+id/progressbar_circular"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:indeterminate="true"
-            android:indeterminateOnly="false"/>-->
     </LinearLayout>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"

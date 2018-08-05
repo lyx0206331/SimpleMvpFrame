@@ -6,7 +6,7 @@
 
     <style name="SPB" parent="android:Widget.ProgressBar.Horizontal"></style>
 
-    <style name="SmoothProgressBar" parent="SPB">
+    <style name="MaterialProgressBar" parent="SPB">
         <item name="spb_color">@color/spb_default_color</item>
         <item name="spb_sections_count">@integer/spb_default_sections_count</item>
         <item name="spb_speed">@string/spb_default_speed</item>

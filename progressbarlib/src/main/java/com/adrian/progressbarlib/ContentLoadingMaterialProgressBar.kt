@@ -9,7 +9,7 @@ import android.view.View
  * date:2018/8/1 0001
  * description:
  **/
-class ContentLoadingSmoothProgressBar : SmoothProgressBar {
+class ContentLoadingMaterialProgressBar : MaterialProgressBar {
 
     companion object {
         const val MIN_SHOW_TIME = 500L   //ms

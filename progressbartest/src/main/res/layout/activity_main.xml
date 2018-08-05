@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="GPlus" />
 
-        <com.adrian.progressbarlib.SmoothProgressBar
+        <com.adrian.progressbarlib.MaterialProgressBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:text="Google now" />
 
-        <com.adrian.progressbarlib.SmoothProgressBar
+        <com.adrian.progressbarlib.MaterialProgressBar
             android:id="@+id/google_now"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:text="Gradient" />
 
-        <com.adrian.progressbarlib.SmoothProgressBar
+        <com.adrian.progressbarlib.MaterialProgressBar
             android:id="@+id/gradient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:text="Pocket" />
 
-        <com.adrian.progressbarlib.SmoothProgressBar
+        <com.adrian.progressbarlib.MaterialProgressBar
             android:id="@+id/pocket"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

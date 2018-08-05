@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
 import java.util.*
 
-object SmoothProgressBarUtils {
+object MaterialProgressBarUtils {
 
     fun generateDrawableWithColors(colors: IntArray?, strokeWidth: Float): Drawable? {
         return if (colors == null || colors.isEmpty()) null else ShapeDrawable(ColorsShape(strokeWidth, colors))

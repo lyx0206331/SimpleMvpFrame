@@ -6,13 +6,13 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.*
 import android.widget.*
-import com.adrian.progressbarlib.SmoothProgressBar
+import com.adrian.progressbarlib.MaterialProgressBar
 import com.adrian.simplemvpframe.progressbar.FastOutSlowInInterpolator
 import java.util.*
 
 class MakeCustomActivity : AppCompatActivity() {
 
-    private var mProgressBar: SmoothProgressBar? = null
+    private var mProgressBar: MaterialProgressBar? = null
     private var mCheckBoxMirror: CheckBox? = null
     private var mCheckBoxReversed: CheckBox? = null
     private var mCheckBoxGradients: CheckBox? = null
@@ -83,9 +83,9 @@ class MakeCustomActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mSpeed = (progress.toFloat() + 1) / 10
                 mTextViewSpeed?.text = "Speed: $mSpeed"
-                mProgressBar?.setSmoothProgressDrawableSpeed(mSpeed)
-                mProgressBar?.setSmoothProgressDrawableProgressiveStartSpeed(mSpeed)
-                mProgressBar?.setSmoothProgressDrawableProgressiveStopSpeed(mSpeed)
+                mProgressBar?.setMaterialProgressDrawableSpeed(mSpeed)
+                mProgressBar?.setMaterialProgressDrawableProgressiveStartSpeed(mSpeed)
+                mProgressBar?.setMaterialProgressDrawableProgressiveStopSpeed(mSpeed)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -101,7 +101,7 @@ class MakeCustomActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mSectionsCount = progress + 1
                 mTextViewSectionsCount?.text = "Sections count: $mSectionsCount"
-                mProgressBar?.setSmoothProgressDrawableSectionsCount(mSectionsCount)
+                mProgressBar?.setMaterialProgressDrawableSectionsCount(mSectionsCount)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -117,7 +117,7 @@ class MakeCustomActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mSeparatorLength = progress
                 mTextViewSeparatorLength?.text = String.format(Locale.US, "Separator length: %ddp", mSeparatorLength)
-                mProgressBar?.setSmoothProgressDrawableSeparatorLength(dpToPx(mSeparatorLength))
+                mProgressBar?.setMaterialProgressDrawableSeparatorLength(dpToPx(mSeparatorLength))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -133,7 +133,7 @@ class MakeCustomActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mStrokeWidth = progress
                 mTextViewStrokeWidth?.text = String.format(Locale.US, "Stroke width: %ddp", mStrokeWidth)
-                mProgressBar?.setSmoothProgressDrawableStrokeWidth(dpToPx(mStrokeWidth).toFloat())
+                mProgressBar?.setMaterialProgressDrawableStrokeWidth(dpToPx(mStrokeWidth).toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -145,11 +145,11 @@ class MakeCustomActivity : AppCompatActivity() {
             }
         })
 
-        mCheckBoxGradients?.setOnCheckedChangeListener { _, isChecked -> mProgressBar?.setSmoothProgressDrawableUseGradients(isChecked) }
+        mCheckBoxGradients?.setOnCheckedChangeListener { _, isChecked -> mProgressBar?.setMaterialProgressDrawableUseGradients(isChecked) }
 
-        mCheckBoxMirror?.setOnCheckedChangeListener { _, isChecked -> mProgressBar?.setSmoothProgressDrawableMirrorMode(isChecked) }
+        mCheckBoxMirror?.setOnCheckedChangeListener { _, isChecked -> mProgressBar?.setMaterialProgressDrawableMirrorMode(isChecked) }
 
-        mCheckBoxReversed?.setOnCheckedChangeListener { _, isChecked -> mProgressBar?.setSmoothProgressDrawableReversed(isChecked) }
+        mCheckBoxReversed?.setOnCheckedChangeListener { _, isChecked -> mProgressBar?.setMaterialProgressDrawableReversed(isChecked) }
 
         mSeekBarSeparatorLength?.progress = 4
         mSeekBarSectionsCount?.progress = 4
@@ -199,8 +199,8 @@ class MakeCustomActivity : AppCompatActivity() {
             }
         }
 
-        mProgressBar?.setSmoothProgressDrawableInterpolator(mCurrentInterpolator)
-        mProgressBar?.setSmoothProgressDrawableColors(resources.getIntArray(R.array.gplus_colors))
+        mProgressBar?.setMaterialProgressDrawableInterpolator(mCurrentInterpolator)
+        mProgressBar?.setMaterialProgressDrawableColors(resources.getIntArray(R.array.gplus_colors))
     }
 
     fun dpToPx(dp: Int): Int {

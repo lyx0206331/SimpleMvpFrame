@@ -18,7 +18,7 @@ import java.util.*
  * author：RanQing
  * description：
  */
-class SmoothProgressDrawable : Drawable, Animatable {
+class MaterialProgressDrawable : Drawable, Animatable {
 
     companion object {
         private const val FRAME_DURATION: Long = 1000 / 60
@@ -567,7 +567,7 @@ class SmoothProgressDrawable : Drawable, Animatable {
     }
 
     /**
-     * Builder for SmoothProgressDrawable! You must use it!
+     * Builder for MaterialProgressDrawable! You must use it!
      */
     class Builder {
         private var interpolator: Interpolator = AccelerateInterpolator()
@@ -592,11 +592,11 @@ class SmoothProgressDrawable : Drawable, Animatable {
             initValues(context, editMode)
         }
 
-        fun build(): SmoothProgressDrawable {
+        fun build(): MaterialProgressDrawable {
             if (mIsGenerateBackgroundUsingColors) {
-                mBackgroundDrawableWhenHidden = SmoothProgressBarUtils.generateDrawableWithColors(mColors, mStrokeWidth)
+                mBackgroundDrawableWhenHidden = MaterialProgressBarUtils.generateDrawableWithColors(mColors, mStrokeWidth)
             }
-            return SmoothProgressDrawable(interpolator, mSectionsCount, mStrokeSeparatorLength, mColors,
+            return MaterialProgressDrawable(interpolator, mSectionsCount, mStrokeSeparatorLength, mColors,
                     mStrokeWidth, mSpeed, mProgressiveStartSpeed, mProgressiveStopSpeed, mIsReversed,
                     mIsMirrorMode, mOnProgressiveStopEndedListener, mIsProgressiveStartActivated, mBackgroundDrawableWhenHidden, mIsGradients)
         }
@@ -626,19 +626,19 @@ class SmoothProgressDrawable : Drawable, Animatable {
         }
 
         fun interpolator(interpolator: Interpolator): Builder {
-            SmoothProgressBarUtils.checkNotNull(interpolator, "Interpolator")
+            MaterialProgressBarUtils.checkNotNull(interpolator, "Interpolator")
             this.interpolator = interpolator
             return this
         }
 
         fun sectionsCount(sectionsCount: Int): Builder {
-            SmoothProgressBarUtils.checkPositive(sectionsCount.toFloat(), "Sections count")
+            MaterialProgressBarUtils.checkPositive(sectionsCount.toFloat(), "Sections count")
             mSectionsCount = sectionsCount
             return this
         }
 
         fun separatorLength(separatorLenght: Int): Builder {
-            SmoothProgressBarUtils.checkPositiveOrZero(separatorLenght.toFloat(), "Separator length")
+            MaterialProgressBarUtils.checkPositiveOrZero(separatorLenght.toFloat(), "Separator length")
             mStrokeSeparatorLength = separatorLenght
             return this
         }
@@ -649,31 +649,31 @@ class SmoothProgressDrawable : Drawable, Animatable {
         }
 
         fun colors(colors: IntArray): Builder {
-            SmoothProgressBarUtils.checkColors(colors)
+            MaterialProgressBarUtils.checkColors(colors)
             mColors = colors
             return this
         }
 
         fun strokeWidth(width: Float): Builder {
-            SmoothProgressBarUtils.checkPositiveOrZero(width, "Width")
+            MaterialProgressBarUtils.checkPositiveOrZero(width, "Width")
             mStrokeWidth = width
             return this
         }
 
         fun speed(speed: Float): Builder {
-            SmoothProgressBarUtils.checkSpeed(speed)
+            MaterialProgressBarUtils.checkSpeed(speed)
             mSpeed = speed
             return this
         }
 
         fun progressiveStartSpeed(progressiveStartSpeed: Float): Builder {
-            SmoothProgressBarUtils.checkSpeed(progressiveStartSpeed)
+            MaterialProgressBarUtils.checkSpeed(progressiveStartSpeed)
             mProgressiveStartSpeed = progressiveStartSpeed
             return this
         }
 
         fun progressiveStopSpeed(progressiveStopSpeed: Float): Builder {
-            SmoothProgressBarUtils.checkSpeed(progressiveStopSpeed)
+            MaterialProgressBarUtils.checkSpeed(progressiveStopSpeed)
             mProgressiveStopSpeed = progressiveStopSpeed
             return this
         }

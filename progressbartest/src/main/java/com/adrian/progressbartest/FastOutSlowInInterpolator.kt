@@ -5,7 +5,7 @@ package com.adrian.simplemvpframe.progressbar
  * author：RanQing
  * description：
  */
-class FastOutSlowInInterpolator() : LookupTableInterpolator(VALUES) {
+class FastOutSlowInInterpolator : LookupTableInterpolator(VALUES) {
 
     companion object {
         private val VALUES: FloatArray = floatArrayOf(
