@@ -604,13 +604,13 @@ class MaterialProgressDrawable : Drawable, Animatable {
         private fun initValues(context: Context, editMode: Boolean) {
             val res: Resources = context.resources
             if (!editMode) {
-                mSectionsCount = res.getInteger(R.integer.spb_default_sections_count)
-                mSpeed = res.getString(R.string.spb_default_speed).toFloat()
-                mIsReversed = res.getBoolean(R.bool.spb_default_reversed)
-                mIsProgressiveStartActivated = res.getBoolean(R.bool.spb_default_progressiveStart_activated)
-                mColors = intArrayOf(ContextCompat.getColor(context, R.color.spb_default_color))
-                mStrokeSeparatorLength = res.getDimensionPixelSize(R.dimen.spb_default_stroke_separator_length)
-                mStrokeWidth = res.getDimensionPixelOffset(R.dimen.spb_default_stroke_width).toFloat()
+                mSectionsCount = res.getInteger(R.integer.mpb_default_sections_count)
+                mSpeed = res.getString(R.string.mpb_default_speed).toFloat()
+                mIsReversed = res.getBoolean(R.bool.mpb_default_reversed)
+                mIsProgressiveStartActivated = res.getBoolean(R.bool.mpb_default_progressiveStart_activated)
+                mColors = intArrayOf(ContextCompat.getColor(context, R.color.mpb_default_color))
+                mStrokeSeparatorLength = res.getDimensionPixelSize(R.dimen.mpb_default_stroke_separator_length)
+                mStrokeWidth = res.getDimensionPixelOffset(R.dimen.mpb_default_stroke_width).toFloat()
             } else {
                 mSectionsCount = 4
                 mSpeed = 1f

@@ -48,21 +48,21 @@ open class MaterialProgressBar : ProgressBar {
         val res: Resources = context.resources
         val a: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.MaterialProgressBar, defStyleAttr, 0)
 
-        val color: Int = a.getColor(R.styleable.MaterialProgressBar_spb_color, ContextCompat.getColor(context!!, R.color.spb_default_color))
-        val sectionsCount: Int = a.getInteger(R.styleable.MaterialProgressBar_spb_sections_count, res.getInteger(R.integer.spb_default_sections_count))
-        val separatorLength: Int = a.getDimensionPixelSize(R.styleable.MaterialProgressBar_spb_stroke_separator_length, res.getDimensionPixelSize(R.dimen.spb_default_stroke_separator_length))
-        val strokeWidth: Float = a.getDimension(R.styleable.MaterialProgressBar_spb_stroke_width, res.getDimension(R.dimen.spb_default_stroke_width))
-        val speed: Float = a.getFloat(R.styleable.MaterialProgressBar_spb_speed, res.getString(R.string.spb_default_speed).toFloat())
-        val speedProgressiveStart: Float = a.getFloat(R.styleable.MaterialProgressBar_spb_progressiveStart_speed, speed)
-        val speedProgressiveStop: Float = a.getFloat(R.styleable.MaterialProgressBar_spb_progressiveStop_speed, speed)
-        val iInterpolator: Int = a.getInteger(R.styleable.MaterialProgressBar_spb_interpolator, -1)
-        val reversed = a.getBoolean(R.styleable.MaterialProgressBar_spb_reversed, res.getBoolean(R.bool.spb_default_reversed))
-        val mirrorMode: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_spb_mirror_mode, res.getBoolean(R.bool.spb_default_mirror_mode))
-        val colorsId: Int = a.getResourceId(R.styleable.MaterialProgressBar_spb_colors, 0)
-        val progressiveStartActivated: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_spb_progressiveStart_activated, res.getBoolean(R.bool.spb_default_progressiveStart_activated))
-        val backgroundDrawable: Drawable? = a.getDrawable(R.styleable.MaterialProgressBar_spb_background)
-        val generateBackgroundWithColors: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_spb_generate_background_with_colors, false)
-        val gradients: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_spb_gradients, false)
+        val color: Int = a.getColor(R.styleable.MaterialProgressBar_mpb_color, ContextCompat.getColor(context!!, R.color.mpb_default_color))
+        val sectionsCount: Int = a.getInteger(R.styleable.MaterialProgressBar_mpb_sections_count, res.getInteger(R.integer.mpb_default_sections_count))
+        val separatorLength: Int = a.getDimensionPixelSize(R.styleable.MaterialProgressBar_mpb_stroke_separator_length, res.getDimensionPixelSize(R.dimen.mpb_default_stroke_separator_length))
+        val strokeWidth: Float = a.getDimension(R.styleable.MaterialProgressBar_mpb_stroke_width, res.getDimension(R.dimen.mpb_default_stroke_width))
+        val speed: Float = a.getFloat(R.styleable.MaterialProgressBar_mpb_speed, res.getString(R.string.mpb_default_speed).toFloat())
+        val speedProgressiveStart: Float = a.getFloat(R.styleable.MaterialProgressBar_mpb_progressiveStart_speed, speed)
+        val speedProgressiveStop: Float = a.getFloat(R.styleable.MaterialProgressBar_mpb_progressiveStop_speed, speed)
+        val iInterpolator: Int = a.getInteger(R.styleable.MaterialProgressBar_mpb_interpolator, -1)
+        val reversed = a.getBoolean(R.styleable.MaterialProgressBar_mpb_reversed, res.getBoolean(R.bool.mpb_default_reversed))
+        val mirrorMode: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_mpb_mirror_mode, res.getBoolean(R.bool.mpb_default_mirror_mode))
+        val colorsId: Int = a.getResourceId(R.styleable.MaterialProgressBar_mpb_colors, 0)
+        val progressiveStartActivated: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_mpb_progressiveStart_activated, res.getBoolean(R.bool.mpb_default_progressiveStart_activated))
+        val backgroundDrawable: Drawable? = a.getDrawable(R.styleable.MaterialProgressBar_mpb_background)
+        val generateBackgroundWithColors: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_mpb_generate_background_with_colors, false)
+        val gradients: Boolean = a.getBoolean(R.styleable.MaterialProgressBar_mpb_gradients, false)
         a.recycle()
 
         var interpolator: Interpolator? = null
@@ -106,11 +106,11 @@ open class MaterialProgressBar : ProgressBar {
     fun applyStyle(@StyleRes styleResId: Int) {
         val a: TypedArray = context.obtainStyledAttributes(null, R.styleable.MaterialProgressBar, 0, styleResId)
 
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_color)) {
-            setMaterialProgressDrawableColor(a.getColor(R.styleable.MaterialProgressBar_spb_color, 0))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_color)) {
+            setMaterialProgressDrawableColor(a.getColor(R.styleable.MaterialProgressBar_mpb_color, 0))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_colors)) {
-            val colorsId = a.getResourceId(R.styleable.MaterialProgressBar_spb_colors, 0)
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_colors)) {
+            val colorsId = a.getResourceId(R.styleable.MaterialProgressBar_mpb_colors, 0)
             if (colorsId != 0) {
                 val colors = resources.getIntArray(colorsId)
                 if (colors != null && colors.isNotEmpty()) {
@@ -119,47 +119,47 @@ open class MaterialProgressBar : ProgressBar {
             }
         }
 
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_sections_count)) {
-            setMaterialProgressDrawableSectionsCount(a.getInteger(R.styleable.MaterialProgressBar_spb_sections_count, 0))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_sections_count)) {
+            setMaterialProgressDrawableSectionsCount(a.getInteger(R.styleable.MaterialProgressBar_mpb_sections_count, 0))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_stroke_separator_length)) {
-            setMaterialProgressDrawableSeparatorLength(a.getDimensionPixelSize(R.styleable.MaterialProgressBar_spb_stroke_separator_length, 0))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_stroke_separator_length)) {
+            setMaterialProgressDrawableSeparatorLength(a.getDimensionPixelSize(R.styleable.MaterialProgressBar_mpb_stroke_separator_length, 0))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_stroke_width)) {
-            setMaterialProgressDrawableStrokeWidth(a.getDimension(R.styleable.MaterialProgressBar_spb_stroke_width, 0f))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_stroke_width)) {
+            setMaterialProgressDrawableStrokeWidth(a.getDimension(R.styleable.MaterialProgressBar_mpb_stroke_width, 0f))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_speed)) {
-            setMaterialProgressDrawableSpeed(a.getFloat(R.styleable.MaterialProgressBar_spb_speed, 0f))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_speed)) {
+            setMaterialProgressDrawableSpeed(a.getFloat(R.styleable.MaterialProgressBar_mpb_speed, 0f))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_progressiveStart_speed)) {
-            setMaterialProgressDrawableProgressiveStartSpeed(a.getFloat(R.styleable.MaterialProgressBar_spb_progressiveStart_speed, 0f))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_progressiveStart_speed)) {
+            setMaterialProgressDrawableProgressiveStartSpeed(a.getFloat(R.styleable.MaterialProgressBar_mpb_progressiveStart_speed, 0f))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_progressiveStop_speed)) {
-            setMaterialProgressDrawableProgressiveStopSpeed(a.getFloat(R.styleable.MaterialProgressBar_spb_progressiveStop_speed, 0f))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_progressiveStop_speed)) {
+            setMaterialProgressDrawableProgressiveStopSpeed(a.getFloat(R.styleable.MaterialProgressBar_mpb_progressiveStop_speed, 0f))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_reversed)) {
-            setMaterialProgressDrawableReversed(a.getBoolean(R.styleable.MaterialProgressBar_spb_reversed, false))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_reversed)) {
+            setMaterialProgressDrawableReversed(a.getBoolean(R.styleable.MaterialProgressBar_mpb_reversed, false))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_mirror_mode)) {
-            setMaterialProgressDrawableMirrorMode(a.getBoolean(R.styleable.MaterialProgressBar_spb_mirror_mode, false))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_mirror_mode)) {
+            setMaterialProgressDrawableMirrorMode(a.getBoolean(R.styleable.MaterialProgressBar_mpb_mirror_mode, false))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_progressiveStart_activated)) {
-            setProgressiveStartActivated(a.getBoolean(R.styleable.MaterialProgressBar_spb_progressiveStart_activated, false))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_progressiveStart_activated)) {
+            setProgressiveStartActivated(a.getBoolean(R.styleable.MaterialProgressBar_mpb_progressiveStart_activated, false))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_progressiveStart_activated)) {
-            setProgressiveStartActivated(a.getBoolean(R.styleable.MaterialProgressBar_spb_progressiveStart_activated, false))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_progressiveStart_activated)) {
+            setProgressiveStartActivated(a.getBoolean(R.styleable.MaterialProgressBar_mpb_progressiveStart_activated, false))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_gradients)) {
-            setMaterialProgressDrawableUseGradients(a.getBoolean(R.styleable.MaterialProgressBar_spb_gradients, false))
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_gradients)) {
+            setMaterialProgressDrawableUseGradients(a.getBoolean(R.styleable.MaterialProgressBar_mpb_gradients, false))
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_generate_background_with_colors)) {
-            if (a.getBoolean(R.styleable.MaterialProgressBar_spb_generate_background_with_colors, false)) {
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_generate_background_with_colors)) {
+            if (a.getBoolean(R.styleable.MaterialProgressBar_mpb_generate_background_with_colors, false)) {
                 setMaterialProgressDrawableBackgroundDrawable(
                         MaterialProgressBarUtils.generateDrawableWithColors(checkIndeterminateDrawable().mColors, checkIndeterminateDrawable().mStrokeWidth))
             }
         }
-        if (a.hasValue(R.styleable.MaterialProgressBar_spb_interpolator)) {
-            val iInterpolator = a.getInteger(R.styleable.MaterialProgressBar_spb_interpolator, -1)
+        if (a.hasValue(R.styleable.MaterialProgressBar_mpb_interpolator)) {
+            val iInterpolator = a.getInteger(R.styleable.MaterialProgressBar_mpb_interpolator, -1)
             val interpolator: Interpolator?
             interpolator = when (iInterpolator) {
                 INTERPOLATOR_ACCELERATEDECELERATE -> AccelerateDecelerateInterpolator()
