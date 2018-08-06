@@ -35,8 +35,8 @@ class MaterialProgressDrawable : Drawable, Animatable {
             field = value
             invalidateSelf()
         }
-    var mBounds: Rect? = null
-    var mPaint: Paint = Paint()
+    private var mBounds: Rect? = null
+    private var mPaint: Paint = Paint()
     var mColors: IntArray? = null
         set(value) {
             if (value == null || value.isEmpty()) {
@@ -47,9 +47,9 @@ class MaterialProgressDrawable : Drawable, Animatable {
             refreshLinearGradientOptions()
             invalidateSelf()
         }
-    var mColorsIndex: Int = 0
-    var mIsRunning: Boolean = false
-    var mCurrentOffset: Float = 0f
+    private var mColorsIndex: Int = 0
+    private var mIsRunning: Boolean = false
+    private var mCurrentOffset: Float = 0f
     var mFinishingOffset: Float = 0f
     var mSeparatorLength: Int = 0
         set(value) {
