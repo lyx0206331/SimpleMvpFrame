@@ -266,8 +266,8 @@ class MaterialProgressDrawable : Drawable, Animatable {
 
         var startX: Float
         var endX: Float
-        var firstX: Float = 0f
-        var lastX: Float = 0f
+        var firstX = 0f
+        var lastX = 0f
         var prev: Float
         var end: Float
         var spaceLength: Float
