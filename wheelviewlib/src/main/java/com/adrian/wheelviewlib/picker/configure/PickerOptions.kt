@@ -18,10 +18,10 @@ import java.util.*
 class PickerOptions {
     //常量
     companion object {
-        private const val PICKER_VIEW_BTN_COLOR_NORMAL = 0xFF057dff
-        private const val PICKER_VIEW_BG_COLOR_TITLE = 0xFFf5f5f5
-        private const val PICKER_VIEW_COLOR_TITLE = 0xFF000000
-        private const val PICKER_VIEW_BG_COLOR_DEFAULT = 0xFFFFFFFF
+        private const val PICKER_VIEW_BTN_COLOR_NORMAL = 0x057dff
+        private const val PICKER_VIEW_BG_COLOR_TITLE = 0xf5f5f5
+        private const val PICKER_VIEW_COLOR_TITLE = 0x000000
+        private const val PICKER_VIEW_BG_COLOR_DEFAULT = 0xFFFFFF
 
         const val TYPE_PICKER_OPTIONS = 1
         const val TYPE_PICKER_TIME = 2
@@ -115,9 +115,9 @@ class PickerOptions {
     var textSizeTitle = 18//标题文字大小
     var textSizeContent = 18//内容文字大小
 
-    var textColorOut: Long = 0xFFa8a8a8 //分割线以外的文字颜色
-    var textColorCenter: Long = 0xFF2a2a2a //分割线之间的文字颜色
-    var dividerColor: Long = 0xFFd5d5d5 //分割线的颜色
+    var textColorOut: Int = 0xa8a8a8 //分割线以外的文字颜色
+    var textColorCenter: Int = 0x2a2a2a //分割线之间的文字颜色
+    var dividerColor: Int = 0xd5d5d5 //分割线的颜色
     var backgroundId = -1 //显示时的外部背景色颜色,默认是灰色
 
     var lineSpacingMultiplier = 1.6f // 条目间距倍数 默认1.6

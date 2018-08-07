@@ -5,6 +5,8 @@ import com.adrian.wheelviewlib.picker.configure.PickerOptions
 import com.adrian.wheelviewlib.picker.listener.OnOptionsSelectListener
 import com.adrian.wheelviewlib.picker.listener.OnOptionsSelectChangeListener
 import android.graphics.Typeface
+import android.support.annotation.ColorInt
+import android.support.annotation.ColorRes
 import com.adrian.wheelviewlib.picker.listener.CustomListener
 import android.view.ViewGroup
 import com.adrian.wheelviewlib.picker.view.OptionsPickerView
@@ -18,7 +20,7 @@ import com.adrian.wheelviewlib.view.WheelView
  */
 class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) {
     //配置类
-    private val mPickerOptions: PickerOptions = PickerOptions(PickerOptions.TYPE_PICKER_OPTIONS)
+    private var mPickerOptions: PickerOptions = PickerOptions(PickerOptions.TYPE_PICKER_OPTIONS)
 
     init {
         mPickerOptions.context = context
@@ -45,12 +47,12 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
         return this
     }
 
-    fun setSubmitColor(confirmTxtColor: Long): OptionsPickerBuilder {
+    fun setSubmitColor(@ColorInt confirmTxtColor: Int): OptionsPickerBuilder {
         mPickerOptions.textColorConfirm = confirmTxtColor
         return this
     }
 
-    fun setCancelColor(cancelTxtColor: Long): OptionsPickerBuilder {
+    fun setCancelColor(@ColorInt cancelTxtColor: Int): OptionsPickerBuilder {
         mPickerOptions.textColorCancel = cancelTxtColor
         return this
     }
@@ -58,11 +60,11 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
     /**
      * 显示时的外部背景色颜色,默认是灰色
      *
-     * @param backgroundId color resId.
+     * @param backgroundColorId color resId.
      * @return
      */
-    fun setBackgroundId(backgroundId: Int): OptionsPickerBuilder {
-        mPickerOptions.backgroundId = backgroundId
+    fun setBackgroundId(@ColorRes backgroundColorId: Int): OptionsPickerBuilder {
+        mPickerOptions.backgroundId = backgroundColorId
         return this
     }
 
@@ -84,17 +86,17 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
         return this
     }
 
-    fun setBgColor(bgColorWheel: Long): OptionsPickerBuilder {
+    fun setBgColor(@ColorInt bgColorWheel: Int): OptionsPickerBuilder {
         mPickerOptions.bgColorWheel = bgColorWheel
         return this
     }
 
-    fun setTitleBgColor(bgColorTitle: Long): OptionsPickerBuilder {
+    fun setTitleBgColor(@ColorInt bgColorTitle: Int): OptionsPickerBuilder {
         mPickerOptions.bgColorTitle = bgColorTitle
         return this
     }
 
-    fun setTitleColor(textColorTitle: Long): OptionsPickerBuilder {
+    fun setTitleColor(@ColorInt textColorTitle: Int): OptionsPickerBuilder {
         mPickerOptions.textColorTitle = textColorTitle
         return this
     }
@@ -142,7 +144,7 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
      *
      * @param dividerColor color resId.
      */
-    fun setDividerColor(dividerColor: Long): OptionsPickerBuilder {
+    fun setDividerColor(@ColorInt dividerColor: Int): OptionsPickerBuilder {
         mPickerOptions.dividerColor = dividerColor
         return this
     }
@@ -162,7 +164,7 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
      *
      * @param textColorCenter color res.
      */
-    fun setTextColorCenter(textColorCenter: Long): OptionsPickerBuilder {
+    fun setTextColorCenter(@ColorInt textColorCenter: Int): OptionsPickerBuilder {
         mPickerOptions.textColorCenter = textColorCenter
         return this
     }
@@ -170,9 +172,9 @@ class OptionsPickerBuilder(context: Context, listener: OnOptionsSelectListener) 
     /**
      * Set the textColor of outside item.
      *
-     * @param textColorOut color resId.
+     * @param textColorOut color value.
      */
-    fun setTextColorOut(textColorOut: Long): OptionsPickerBuilder {
+    fun setTextColorOut(@ColorInt textColorOut: Int): OptionsPickerBuilder {
         mPickerOptions.textColorOut = textColorOut
         return this
     }

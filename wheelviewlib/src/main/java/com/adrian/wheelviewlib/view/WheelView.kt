@@ -46,32 +46,32 @@ class WheelView : View {
         var CENTER_CONTENT_OFFSET: Float = 0f
     }
 
-    enum class ACTION {
+    enum class ACTION { // 点击，滑翔(滑到尽头)，拖拽事件
         CLICK, FLING, DAGGLE
     }
 
-    enum class DividerType {
+    enum class DividerType {    // 分隔线类型
         FILL, WRAP
     }
 
     //分隔线类型
     var dividerType: DividerType = DividerType.FILL
 
-    private var mHandler: Handler = MessageHandler(this)
-    private var gestureDetector: GestureDetector = GestureDetector(context, LoopViewGestureListener(this))
+    private val mHandler: Handler by lazy { MessageHandler(this) }
+    private val gestureDetector: GestureDetector by lazy { GestureDetector(context, LoopViewGestureListener(this)) }
     var onItemSelectedListener: OnItemSelectedListener? = null
 
     private var isOptions: Boolean = false
     private var isCenterLabel: Boolean = true
 
-    private var mExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+    private val mExecutor: ScheduledExecutorService by lazy { Executors.newSingleThreadScheduledExecutor() }
     private var mFuture: ScheduledFuture<*>? = null
 
     private var paintOuterText = Paint()
     private var paintCenterText = Paint()
     private var paintIndicator = Paint()
 
-    private var adapter: WheelAdapter<Any>? = null
+    private var adapter: WheelAdapter<*>? = null
         set(value) {
             field = value
             remeasure()
@@ -109,24 +109,18 @@ class WheelView : View {
         }
     var textColorOut = Color.BLACK
         set(value) {
-            if (value != 0) {
-                field = value
-                paintOuterText.color = value
-            }
+            field = value
+            paintOuterText.color = value
         }
     var textColorCenter: Int = Color.BLACK
         set(value) {
-            if (value != 0) {
-                field = value
-                paintCenterText.color = value
-            }
+            field = value
+            paintCenterText.color = value
         }
     var dividerColor: Int = Color.BLACK
         set(value) {
-            if (value != 0) {
-                field = value
-                paintIndicator.color = value
-            }
+            field = value
+            paintIndicator.color = value
         }
 
     //条目间距倍数
@@ -184,6 +178,10 @@ class WheelView : View {
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
 
+        if (context == null) return
+
+        textSize = resources.getDimension(R.dimen.pv_textsize)
+
         val dm: DisplayMetrics = resources.displayMetrics
         val density: Float = dm.density //屏幕密度比(0.75/1.0/1.5/2.0/3.0)
 
@@ -199,7 +197,7 @@ class WheelView : View {
             density * 2.5f
         }
 
-        if (attrs != null && context != null) {
+        if (attrs != null) {
             val a: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.wheelView, defStyleAttr, 0)
             mGravity = a.getInt(R.styleable.wheelView_wv_gravity, Gravity.CENTER)
             textColorOut = a.getColor(R.styleable.wheelView_wv_textColorOut, Color.GRAY)
@@ -319,6 +317,9 @@ class WheelView : View {
         mFuture = mExecutor.scheduleWithFixedDelay(SmoothScrollTimerTask(this, mOffset.toInt()), 0, 10, TimeUnit.MILLISECONDS)
     }
 
+    /**
+     * 惯性滚动
+     */
     fun scrollBy(velocityY: Float) {
         cancelFuture()
         mFuture = mExecutor.scheduleWithFixedDelay(InertiaTimerTask(this, velocityY), 0, VELOCITY_FLING, TimeUnit.MILLISECONDS)
@@ -485,7 +486,7 @@ class WheelView : View {
                         canvas?.restore()
                     }
                     translateY >= firstLineY && maxTextHeight + translateY <= secondLineY -> {  //中间条目
-                        canvas?.clipRect(0, 0, measureWidth, maxTextHeight)
+//                        canvas?.clipRect(0, 0, measureWidth, maxTextHeight)
                         //让文字居中
                         val y: Float = maxTextHeight - CENTER_CONTENT_OFFSET    //因为圆弧角换算的向下取值，导致角度稍微有点偏差，加上画笔的基线会偏上，因此需要偏移量修正一下
                         canvas?.drawText(contentText, drawCenterContentStart.toFloat(), y, paintCenterText)
@@ -522,7 +523,7 @@ class WheelView : View {
      * 重置文本尺寸以完整显示
      */
     private fun reMeasureTextSize(contentText: String) {
-        val rect: Rect = Rect()
+        val rect = Rect()
         paintCenterText.getTextBounds(contentText, 0, contentText.length, rect)
         var width = rect.width()
         var size = textSize
@@ -609,7 +610,7 @@ class WheelView : View {
 
         val top: Float = -initPosition * itemHeight
         val bottom: Float = (adapter!!.getItemCount() - 1 - initPosition) * itemHeight
-        val ratio: Float = .25f
+        val ratio = .25f
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 startTime = System.currentTimeMillis()
