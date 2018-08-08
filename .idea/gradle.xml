@@ -12,7 +12,9 @@
             <option value="$PROJECT_DIR$/chartviewlib" />
             <option value="$PROJECT_DIR$/pickerlib" />
             <option value="$PROJECT_DIR$/progressbarlib" />
+            <option value="$PROJECT_DIR$/progressbartest" />
             <option value="$PROJECT_DIR$/simplemvp" />
+            <option value="$PROJECT_DIR$/transitionanimlib" />
             <option value="$PROJECT_DIR$/wheelviewlib" />
             <option value="$PROJECT_DIR$/wheelviewpicker" />
           </set>

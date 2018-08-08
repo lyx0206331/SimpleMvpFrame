@@ -19,7 +19,7 @@ import com.adrian.wheelviewlib.picker.listener.OnDismissListener
  * author：RanQing
  * description：
  */
-open class BasePickerView(private val context: Context) {
+open class BasePickerView(private val context: Context?) {
     protected var contentContainer: ViewGroup? = null
     private var rootView: ViewGroup? = null//附加View 的 根View
     private var dialogView: ViewGroup? = null//附加Dialog 的 根View
