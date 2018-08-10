@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TransitionAnimTest</string>
+    <string name="startactivityforresult">startActivityForResult</string>
+</resources>

@@ -70,6 +70,7 @@ class TransitionsHeleper {
         private val sInfoMap = HashMap<String, InfoBean<Any>>()
         private val sTransitionMap = HashMap<String, WeakReference<TransitionsHeleper>>()
 
+        @JvmStatic
         fun build(activity: Activity?): TransitionBuilder {
             if (activity == null) {
                 throw IllegalArgumentException("You cannot start a load on a null Activity")
@@ -77,57 +78,70 @@ class TransitionsHeleper {
             return TransitionBuilder(activity)
         }
 
+        @JvmStatic
         private fun create(builder: TransitionBuilder): TransitionsHeleper {
             return TransitionsHeleper(builder)
         }
 
+        @JvmStatic
         fun startActivity(activity: Activity, intent: Intent, view: View) {
             startActivity(activity, intent, view, null)
         }
 
+        @JvmStatic
         fun startActivity(activity: Activity, intent: Intent, view: View, load: Any?) {
             startEngine(activity, null, intent, view, load, false, -1, null, false, null)
         }
 
 
+        @JvmStatic
         fun startActivity(activity: Activity, cls: Class<*>, view: View) {
             startActivity(activity, cls, view, null)
         }
 
+        @JvmStatic
         fun startActivity(activity: Activity, cls: Class<*>, view: View, load: Any?) {
             startEngine(activity, cls, null, view, load, false, -1, null, false, null)
         }
 
         //Activity ForResult
+        @JvmStatic
         fun startActivityForResult(activity: Activity, intent: Intent, requestCode: Int, options: Bundle, view: View) {
             startActivityForResult(activity, intent, requestCode, options, view, null)
         }
 
+        @JvmStatic
         fun startActivityForResult(activity: Activity, intent: Intent, requestCode: Int, options: Bundle, view: View, load: Any?) {
             startEngine(activity, null, intent, view, load, true, requestCode, options, false, null)
         }
 
+        @JvmStatic
         fun startActivityForResult(activity: Activity, cls: Class<*>, requestCode: Int, options: Bundle, view: View) {
             startActivityForResult(activity, cls, requestCode, options, view, null)
         }
 
+        @JvmStatic
         fun startActivityForResult(activity: Activity, cls: Class<*>, requestCode: Int, options: Bundle, view: View, load: Any?) {
             startEngine(activity, cls, null, view, load, true, requestCode, options, false, null)
         }
 
         //Fragment ForResult
+        @JvmStatic
         fun startActivityForResult(fragment: Fragment, intent: Intent, requestCode: Int, options: Bundle, view: View) {
             startActivityForResult(fragment, intent, requestCode, options, view, null)
         }
 
+        @JvmStatic
         fun startActivityForResult(fragment: Fragment, intent: Intent, requestCode: Int, options: Bundle, view: View, load: Any?) {
             startEngine(fragment.activity, null, intent, view, load, true, requestCode, options, true, fragment)
         }
 
+        @JvmStatic
         fun startActivityForResult(fragment: Fragment, cls: Class<*>, requestCode: Int, options: Bundle, view: View) {
             startActivityForResult(fragment, cls, requestCode, options, view, null)
         }
 
+        @JvmStatic
         fun startActivityForResult(fragment: Fragment, cls: Class<*>, requestCode: Int, options: Bundle, view: View, load: Any?) {
             startEngine(fragment.activity, cls, null, view, load, true, requestCode, options, true, fragment)
         }
@@ -187,6 +201,7 @@ class TransitionsHeleper {
             }
         }
 
+        @JvmStatic
         fun unbind(activity: Activity) {
             if (sTransitionMap[activity.javaClass.name] != null) {
                 val weakT = sTransitionMap[activity.javaClass.name]
