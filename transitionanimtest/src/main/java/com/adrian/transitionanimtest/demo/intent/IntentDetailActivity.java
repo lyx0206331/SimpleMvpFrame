@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.TextView;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
+
 import butterknife.Bind;
 import immortalz.me.library.TransitionsHeleper;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2016/11/1.

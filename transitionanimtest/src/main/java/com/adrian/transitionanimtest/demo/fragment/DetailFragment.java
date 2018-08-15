@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import immortalz.me.transitionhelper.R;
+import com.adrian.transitionanimtest.R;
+
 
 /**
  * Created by Mr_immortalZ on 2016/10/29.

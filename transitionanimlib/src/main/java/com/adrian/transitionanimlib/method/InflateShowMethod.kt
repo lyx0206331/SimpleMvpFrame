@@ -17,7 +17,7 @@ abstract class InflateShowMethod(activity: Activity, layoutId: Int) : ShowMethod
 
     val inflateView: View = LayoutInflater.from(activity).inflate(layoutId, null)
 
-    override fun translate(bean: InfoBean<Any>, parent: ExposeView, child: View) {
+    override fun translate(bean: InfoBean<Any>, parent: ExposeView?, child: View?) {
         set.playTogether(
                 ObjectAnimator.ofFloat(child, "translationX", 0f, -bean.translationX.toFloat()),
                 ObjectAnimator.ofFloat(child, "translationY", 0f, -bean.translationY.toFloat()),

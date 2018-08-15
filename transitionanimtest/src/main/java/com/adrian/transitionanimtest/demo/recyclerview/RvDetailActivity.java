@@ -4,14 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
 import com.bumptech.glide.Glide;
 
 import butterknife.Bind;
 import immortalz.me.library.TransitionsHeleper;
 import immortalz.me.library.bean.InfoBean;
 import immortalz.me.library.method.InflateShowMethod;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2016/10/29.
@@ -39,7 +39,7 @@ public class RvDetailActivity extends BaseActivity {
                     public void loadPlaceholder(InfoBean bean, ImageView placeholder) {
                         Glide.with(RvDetailActivity.this)
                                 .load(bean.getLoad())
-                                .fitCenter()
+//                                .fitCenter()
                                 .into(placeholder);
                     }
 
@@ -47,7 +47,7 @@ public class RvDetailActivity extends BaseActivity {
                     public void loadTargetView(InfoBean bean, View targetView) {
                         Glide.with(RvDetailActivity.this)
                                 .load(bean.getLoad())
-                                .fitCenter()
+//                                .fitCenter()
                                 .into((ImageView) targetView);
                     }
                 })

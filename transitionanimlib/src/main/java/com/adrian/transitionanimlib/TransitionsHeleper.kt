@@ -54,14 +54,14 @@ class TransitionsHeleper {
 
     constructor(builder: TransitionBuilder) {
         activity = builder.activity
-        showMethod = builder.showMethod
-        exposeView = builder.exposeView
-        exposeColor = builder.exposeColor
-        exposeAcceleration = builder.exposeAcceleration
-        useInflateExpose = builder.useInflateExpose
-        transitionListener = builder.transitionListener
-        transitionDuration = builder.transitionDuration
-        targetView = builder.targetView
+        showMethod = builder.mShowMethod
+        exposeView = builder.mExposeView
+        exposeColor = builder.mExposeColor
+        exposeAcceleration = builder.mExposeAcceleration
+        useInflateExpose = builder.mUseInflateExpose
+        transitionListener = builder.mTransitionListener
+        transitionDuration = builder.mTransitionDuration
+        targetView = builder.mTargetView
         sTransitionMap[activity?.javaClass!!.name] = WeakReference(this)
     }
 
@@ -344,24 +344,24 @@ class TransitionsHeleper {
 
     class TransitionBuilder(val activity: Activity) {
 
-        var showMethod: ShowMethod? = null
+        var mShowMethod: ShowMethod? = null
 
-        var transitionListener: TransitionListener? = null
+        var mTransitionListener: TransitionListener? = null
 
-        var transitionDuration = ShowMethod.DEFAULT_DURATION
+        var mTransitionDuration = ShowMethod.DEFAULT_DURATION
 
-        var exposeView: ExposeView? = null
+        var mExposeView: ExposeView? = null
 
-        var exposeColor: Int = 0
+        var mExposeColor: Int = 0
 
-        var exposeAcceleration: Int = 0
+        var mExposeAcceleration: Int = 0
 
-        var useInflateExpose: Boolean = false
+        var mUseInflateExpose: Boolean = false
 
-        var targetView: View? = null
+        var mTargetView: View? = null
 
         fun setExposeView(exposeView: ExposeView): TransitionBuilder {
-            this.exposeView = exposeView
+            this.mExposeView = exposeView
             return this
         }
 
@@ -370,33 +370,33 @@ class TransitionsHeleper {
         }
 
         fun setExposeColor(exposeColor: Int, useInflateExpose: Boolean): TransitionBuilder {
-            this.exposeColor = exposeColor
-            this.useInflateExpose = useInflateExpose
+            this.mExposeColor = exposeColor
+            this.mUseInflateExpose = useInflateExpose
             return this
         }
 
         fun setShowMethod(showMethod: ShowMethod): TransitionBuilder {
-            this.showMethod = showMethod
+            this.mShowMethod = showMethod
             return this
         }
 
         fun intoTargetView(targetView: View): TransitionBuilder {
-            this.targetView = targetView
+            this.mTargetView = targetView
             return this
         }
 
         fun setTransitionDuration(transitionDuration: Long): TransitionBuilder {
-            this.transitionDuration = Math.max(transitionDuration, 0L)
+            this.mTransitionDuration = Math.max(transitionDuration, 0L)
             return this
         }
 
         fun setTransitionListener(transitionListener: TransitionListener): TransitionBuilder {
-            this.transitionListener = transitionListener
+            this.mTransitionListener = transitionListener
             return this
         }
 
         fun setExposeAcceleration(exposeAcceleration: Int): TransitionBuilder {
-            this.exposeAcceleration = exposeAcceleration
+            this.mExposeAcceleration = exposeAcceleration
             return this
         }
 

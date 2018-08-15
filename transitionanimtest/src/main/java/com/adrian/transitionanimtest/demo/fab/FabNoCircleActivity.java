@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import immortalz.me.library.TransitionsHeleper;
 import immortalz.me.library.bean.InfoBean;
 import immortalz.me.library.method.NoneShowMethod;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2016/10/29.
@@ -30,8 +31,8 @@ public class FabNoCircleActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TransitionsHeleper.build(this)
-                .setShowMethod(new NoneShowMethod() {
+        final TransitionsHeleper.TransitionBuilder builder = TransitionsHeleper.build(this);
+        builder.setShowMethod(new NoneShowMethod() {
                     @Override
                     public void loadPlaceholder(InfoBean bean, ImageView placeholder) {
                         AnimatorSet set = new AnimatorSet();

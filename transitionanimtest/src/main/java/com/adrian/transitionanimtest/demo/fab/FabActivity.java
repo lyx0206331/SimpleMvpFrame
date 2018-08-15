@@ -4,11 +4,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import immortalz.me.library.TransitionsHeleper;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2016/10/29.

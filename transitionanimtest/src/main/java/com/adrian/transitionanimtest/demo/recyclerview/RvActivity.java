@@ -5,12 +5,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2016/10/29.

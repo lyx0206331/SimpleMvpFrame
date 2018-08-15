@@ -5,9 +5,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.adrian.transitionanimlib.TransitionsHeleper;
 
 import butterknife.ButterKnife;
+import immortalz.me.library.TransitionsHeleper;
 
 /**
  * Created by Mr_immortalZ on 2016/10/28.

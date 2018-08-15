@@ -13,8 +13,8 @@ import com.adrian.transitionanimlib.expose.base.ExposeView
  * author：RanQing
  * description：
  */
-class NoneShowMethod() : ShowMethod() {
-    override fun translate(bean: InfoBean<Any>, parent: ExposeView, child: View) {
+open class NoneShowMethod : ShowMethod() {
+    override fun translate(bean: InfoBean<Any>, parent: ExposeView?, child: View?) {
         set.playTogether(ObjectAnimator.ofFloat(child, "scaleY", 1f))
         set.interpolator = AccelerateInterpolator()
         set.setDuration(showDuration).start()
@@ -31,5 +31,5 @@ class NoneShowMethod() : ShowMethod() {
         set.setDuration(showDuration / 4 * 5).start()
     }
 
-    override fun loadTargetView(bean: InfoBean<Any>, targetView: View) {}
+    override fun loadTargetView(bean: InfoBean<Any>, targetView: View?) {}
 }

@@ -10,11 +10,12 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 
-import com.adrian.transitionanimlib.TransitionsHeleper;
-import com.adrian.transitionanimlib.bean.InfoBean;
-import com.adrian.transitionanimlib.method.ColorShowMethod;
 import com.adrian.transitionanimtest.R;
 import com.adrian.transitionanimtest.base.BaseActivity;
+
+import immortalz.me.library.TransitionsHeleper;
+import immortalz.me.library.bean.InfoBean;
+import immortalz.me.library.method.ColorShowMethod;
 
 
 /**
@@ -32,8 +33,8 @@ public class ButtonActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TransitionsHeleper.build(this)
-                .setShowMethod(new ColorShowMethod(R.color.bg_purple, R.color.bg_teal) {
+        final TransitionsHeleper.TransitionBuilder builder = TransitionsHeleper.build(this);
+        builder.setShowMethod(new ColorShowMethod(R.color.bg_purple, R.color.bg_teal) {
                     @Override
                     public void loadPlaceholder(InfoBean bean, ImageView placeholder) {
                         AnimatorSet set = new AnimatorSet();

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.adrian.transitionanimtest.R;
 import com.bumptech.glide.Glide;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -12,7 +13,6 @@ import com.zhy.adapter.recyclerview.base.ViewHolder;
 import java.util.List;
 
 import immortalz.me.library.TransitionsHeleper;
-import immortalz.me.transitionhelper.R;
 
 /**
  * Created by Mr_immortalZ on 2016/10/29.

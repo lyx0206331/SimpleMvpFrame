@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
 import com.bumptech.glide.Glide;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import immortalz.me.library.TransitionsHeleper;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2016/10/27.
@@ -31,7 +31,7 @@ public class ImageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Glide.with(this)
                 .load(imgUrl)
-                .centerCrop()
+//                .centerCrop()
                 .into(iv1);
     }
 

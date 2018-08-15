@@ -11,14 +11,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.adrian.transitionanimtest.R;
+import com.adrian.transitionanimtest.base.BaseActivity;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import immortalz.me.library.TransitionsHeleper;
 import immortalz.me.library.bean.InfoBean;
 import immortalz.me.library.expose.FoldExposeView;
 import immortalz.me.library.method.ColorShowMethod;
-import immortalz.me.transitionhelper.R;
-import immortalz.me.transitionhelper.base.BaseActivity;
 
 /**
  * Created by Mr_immortalZ on 2017/11/27.
@@ -42,8 +43,8 @@ public class ForResultDetailActivity extends BaseActivity {
         if (intent != null) {
             tv.setText(intent.getStringExtra(TRANSITION_DATA));
         }
-        TransitionsHeleper.build(this)
-                .setShowMethod(new ColorShowMethod(R.color.bg_teal_light, R.color.bg_teal) {
+        final TransitionsHeleper.TransitionBuilder builder = TransitionsHeleper.build(this);
+        builder.setShowMethod(new ColorShowMethod(R.color.bg_teal_light, R.color.bg_teal) {
                     @Override
                     public void loadPlaceholder(InfoBean bean, ImageView placeholder) {
                         AnimatorSet set = new AnimatorSet();

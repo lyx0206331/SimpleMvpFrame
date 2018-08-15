@@ -15,11 +15,11 @@ import com.adrian.transitionanimlib.expose.base.ExposeView
  */
 abstract class ColorShowMethod(var startColor: Int, var endColor: Int) : ShowMethod() {
 
-    override fun translate(bean: InfoBean<Any>, parent: ExposeView, child: View) {
+    override fun translate(bean: InfoBean<Any>, parent: ExposeView?, child: View?) {
         startColor = if (startColor != 0) {
-            parent.resources.getColor(startColor)
+            parent?.resources!!.getColor(startColor)
         } else {
-            parent.resources.getColor(R.color.transitionhelper_showmethod_start_color)
+            parent?.resources!!.getColor(R.color.transitionhelper_showmethod_start_color)
         }
 
         endColor = if (endColor != 0) {
