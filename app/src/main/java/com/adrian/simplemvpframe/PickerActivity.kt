@@ -8,8 +8,11 @@ import android.view.View
 import android.widget.Button
 import com.adrian.pickerlib.AddressPicker
 import com.adrian.pickerlib.CustomPicker
+import com.adrian.pickerlib.CustomWheelGroup
+import com.adrian.pickerlib.CustomWheelGroup.OnDataGroupChangeListener
 import com.adrian.pickerlib.DatePicker
 import com.adrian.pickerlib.wheelview.WheelView
+import kotlinx.android.synthetic.main.activity_picker.*
 import org.jetbrains.anko.toast
 
 class PickerActivity : AppCompatActivity() {
@@ -18,6 +21,7 @@ class PickerActivity : AppCompatActivity() {
     private var btnDate: Button? = null
     private var customPicker: CustomPicker? = null
     private var btnShowData: Button? = null
+    private var wheelViewGroup: CustomWheelGroup? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,5 +77,23 @@ class PickerActivity : AppCompatActivity() {
 //        wv0.currentItem = 0
 //        wv1.currentItem = 1
 //        wv2.currentItem = 2
+
+        val data0 = arrayListOf("赵", "钱", "孙", "李", "周", "吴", "郑", "王")
+        val data1 = arrayListOf("a", "b", "c", "d", "e")
+        val data2 = arrayListOf("1", "2", "3", "4")
+        val data3 = arrayListOf("1km", "2km", "3km", "4km", "5km", "10km")
+        val data4 = arrayListOf("1kj", "5kj", "10kj", "1000kj")
+        val datas2 = arrayListOf(data0, /*data1, data2,*/ data3, data4)
+        wheelViewGroup = findViewById(R.id.cwg)
+        wheelViewGroup?.setDate(datas2, 5, "单位")
+        wheelViewGroup?.isRecyclable = true
+        wheelViewGroup?.dataChangedListener = object : OnDataGroupChangeListener {
+            override fun onChanged(changedDataBean: ArrayList<CustomWheelGroup.ChangedDataBean>) {
+                val sb = StringBuilder()
+                changedDataBean.forEach { sb.append(it.data) }
+                btnShowData?.text = sb
+            }
+
+        }
     }
 }
