@@ -85,7 +85,7 @@ class PickerActivity : AppCompatActivity() {
         val data4 = arrayListOf("1kj", "5kj", "10kj", "1000kj")
         val datas2 = arrayListOf(data0, /*data1, data2,*/ data3, data4)
         wheelViewGroup = findViewById(R.id.cwg)
-        wheelViewGroup?.setDate(datas2, 5, "单位")
+        wheelViewGroup?.setData(datas2, 5, "单位")
         wheelViewGroup?.isRecyclable = true
         wheelViewGroup?.dataChangedListener = object : OnDataGroupChangeListener {
             override fun onChanged(changedDataBean: ArrayList<CustomWheelGroup.ChangedDataBean>) {

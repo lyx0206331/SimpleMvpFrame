@@ -175,7 +175,7 @@ class CustomWheelGroup : RelativeLayout {
         invalidate()
     }
 
-    fun setDate(dataGroup: ArrayList<ArrayList<String>>, visibleCount: Int, unit: String) {
+    fun setData(dataGroup: ArrayList<ArrayList<String>>, visibleCount: Int, unit: String) {
         if (dataGroup.size > 5) {
             throw IllegalArgumentException("数据异常,请不要超过5组数据")
         } else if (dataGroup == null || dataGroup.isEmpty()) {
