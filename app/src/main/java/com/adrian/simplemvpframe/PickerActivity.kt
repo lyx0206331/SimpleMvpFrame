@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import com.adrian.pickerlib.AddressPicker
-import com.adrian.pickerlib.CustomPicker
-import com.adrian.pickerlib.CustomWheelGroup
+import android.widget.Toast
+import com.adrian.pickerlib.*
 import com.adrian.pickerlib.CustomWheelGroup.OnDataGroupChangeListener
-import com.adrian.pickerlib.DatePicker
 import com.adrian.pickerlib.wheelview.WheelView
 import kotlinx.android.synthetic.main.activity_picker.*
 import org.jetbrains.anko.toast
@@ -22,22 +20,15 @@ class PickerActivity : AppCompatActivity() {
     private var customPicker: CustomPicker? = null
     private var btnShowData: Button? = null
     private var wheelViewGroup: CustomWheelGroup? = null
+    private var switchablePicker2: SwitchablePicker2? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_picker)
 
-        btnAddress = findViewById(R.id.btn_address)
+        testSwitcherPicker2()
+
         btnDate = findViewById(R.id.btn_date)
-
-        btnAddress!!.setOnClickListener {
-            val picker = AddressPicker(this)
-
-            picker.setAddressListener { province, city, area -> btnAddress!!.text = "$province-$city-$area" }
-
-            picker.show()
-        }
-
         btnDate!!.setOnClickListener {
             val picker = DatePicker(this)
 
@@ -92,6 +83,32 @@ class PickerActivity : AppCompatActivity() {
                 val sb = StringBuilder()
                 changedDataBean.forEach { sb.append(it.data) }
                 btnShowData?.text = sb
+            }
+
+        }
+    }
+
+    private fun testSwitcherPicker2() {
+        btnAddress = findViewById(R.id.btn_address)
+        switchablePicker2 = findViewById(R.id.sp2)
+        switchablePicker2?.setSwitcherBtnText(btnAddress!!, "single", "multiple")
+
+        val data0 = arrayListOf("赵", "钱", "孙", "李", "周", "吴", "郑", "王")
+        val data1 = arrayListOf("a", "b", "c", "d", "e")
+        val data2 = arrayListOf("1", "2", "3", "4")
+        val data3 = arrayListOf("1km", "2km", "3km", "4km", "5km", "10km")
+        val data4 = arrayListOf("1kj", "5kj", "10kj", "1000kj")
+        val datas2 = arrayListOf(data0, data1, data2, data3, data4)
+
+        switchablePicker2?.setData(data4, datas2, 3, "测试")
+
+        switchablePicker2?.onDataChangedListener = object : SwitchablePicker2.OnDataGroupChangeListener {
+            override fun onChanged(changedDataBean: ArrayList<SwitchablePicker2.ChangedDataBean>) {
+                val sb = StringBuilder()
+                changedDataBean.forEach {
+                    sb.append(it.data)
+                }
+                Toast.makeText(this@PickerActivity, sb, Toast.LENGTH_SHORT).show()
             }
 
         }

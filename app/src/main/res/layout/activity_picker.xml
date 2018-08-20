@@ -13,6 +13,11 @@
         android:layout_centerHorizontal="true"
         android:text="地址" />
 
+    <com.adrian.pickerlib.SwitchablePicker2
+        android:id="@+id/sp2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/btn_date"
         android:layout_width="match_parent"
@@ -35,6 +40,6 @@
     <com.adrian.pickerlib.CustomWheelGroup
         android:id="@+id/cwg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></com.adrian.pickerlib.CustomWheelGroup>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

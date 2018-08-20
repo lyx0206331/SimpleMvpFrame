@@ -9,6 +9,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.adrian.pickerlib.wheelview.WheelView
 import org.jetbrains.anko.backgroundColor
+import org.jetbrains.annotations.NotNull
 
 /**
  * date:2018/8/15 10:13
@@ -175,7 +176,7 @@ class CustomWheelGroup : RelativeLayout {
         invalidate()
     }
 
-    fun setData(dataGroup: ArrayList<ArrayList<String>>, visibleCount: Int, unit: String) {
+    fun setData(@NotNull dataGroup: ArrayList<ArrayList<String>>, visibleCount: Int, unit: String) {
         if (dataGroup.size > 5) {
             throw IllegalArgumentException("数据异常,请不要超过5组数据")
         } else if (dataGroup == null || dataGroup.isEmpty()) {
