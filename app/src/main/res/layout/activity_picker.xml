@@ -6,12 +6,41 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_address"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="地址" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_init"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:layout_centerHorizontal="true"
+            android:text="init" />
+
+        <Button
+            android:id="@+id/btn_hasValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="value" />
+
+        <Button
+            android:id="@+id/btn_hasBakValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="bakvalue" />
+
+        <Button
+            android:id="@+id/btn_NoValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="noValue" />
+
+    </LinearLayout>
 
     <com.adrian.pickerlib.SwitchablePicker2
         android:id="@+id/sp2"

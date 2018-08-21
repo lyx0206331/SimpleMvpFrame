@@ -70,12 +70,8 @@ class SwitchablePicker2 : RelativeLayout {
                 it.setDividerColor(value)
             }
         }
-    //单位
-    var unit: String = "步"
-        set(value) {
-            field = value
-            tvUnit.text = value
-        }
+    private var singleUnit = ""
+    private var multipleUnit = ""
     //单位大小
     var unitSize: Float = 11f
         set(value) {
@@ -88,6 +84,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setTextLabelSize(value)
             }
+            singleWheelView.setTextLabelSize(value)
         }
     var txtLabelColor: Int = Color.BLACK
         set(value) {
@@ -95,9 +92,15 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setTextLabelColor(value)
             }
+            singleWheelView.setTextLabelColor(value)
         }
     //可见条目数
-    var visibleCount = 3
+    var singleVisibleCount = 3
+        set(value) {
+            field = value
+            singleWheelView.setVisibleItemCount(value + 2)
+        }
+    var multipleVisibleCount = 3
         set(value) {
             field = value
             wheelGroup.forEach {
@@ -108,13 +111,16 @@ class SwitchablePicker2 : RelativeLayout {
     var defaultSelected: Int = 0
         set(value) {
             field = value
-            wheelGroup.forEach {
-                it.currentItem = value
+            singleWheelView.currentItem = value
+            if (!singleGroup.isEmpty()) {
+                selectedSingleData = ChangedDataBean(0, singleWheelView.currentItem, singleGroup[singleWheelView.currentItem])
             }
             for ((i, v) in multipleGroup.withIndex()) {
-                selectedDatas.add(ChangedDataBean(i, value, v[value]))
+                wheelGroup[i].let {
+                    it.currentItem = value
+                    selectedDatas.add(ChangedDataBean(i, it.currentItem, v[it.currentItem]))
+                }
             }
-            invalidate()
         }
     //是否可循环
     var isRecyclable: Boolean = true
@@ -172,11 +178,19 @@ class SwitchablePicker2 : RelativeLayout {
         setBackgroundColor(bgColor)
     }
 
-    fun setWheelPosByValue(value: String) {
-        if (TextUtils.isEmpty(value)) {
+    /**
+     * 根据传入的值调整刷新滚轮UI
+     * @param value 待查询值。
+     * @param bakValue 备用值。当待查询值查询不到时，查询备用值.当value与bakValue单位不一致时，此参数有效
+     */
+    fun setWheelPosByValue(@NotNull value: String, bakValue: String?) {
+        //空值，无历史数据
+        if (TextUtils.isEmpty(value) || TextUtils.isEmpty(value.replace("0", ""))) {
             isSingleWheel = true
             refreshUI()
             singleWheelView.currentItem = 0
+            selectedSingleData = ChangedDataBean(0, 0, singleGroup[0])
+
             wheelGroup.forEach {
                 it.currentItem = 0
             }
@@ -184,42 +198,46 @@ class SwitchablePicker2 : RelativeLayout {
                 v.dataIndex = 0
                 v.data = multipleGroup[i][0]
             }
-            selectedSingleData = ChangedDataBean(0, 0, singleGroup[0])
             return
         }
-        if (isSingleWheel && multipleGroup[0].contains(value)) {
-            for ((i, v) in multipleGroup[0].withIndex()) {
-                if (value == v) {
-                    selectedDatas[0].let {
-                        it.wheelViewIndex = 0
-                        it.data = v
-                        it.dataIndex = i
-                    }
-                    break
-                }
-            }
 
-        } else {
-            val data = arrayListOf<String>()
-            for (i in 0 until value!!.length) {
-                data.add(value[i].toString())
+        //首先查询单滚轮数据
+        for ((i, v) in singleGroup.withIndex()) {
+            if (v == value) {
+                isSingleWheel = true
+                refreshUI()
+                singleWheelView.currentItem = i
+                selectedSingleData = ChangedDataBean(0, i, value)
+                return
             }
-            setGroupPosByValue(data)
         }
+
+        //若单滚轮中未找到传入数据，进入多滚轮查询
+        isSingleWheel = false
+        refreshUI()
+        //备用值存在时，多滚轮先查询备用值
+        setMultipleWheelData(bakValue ?: value)
     }
 
-    fun setGroupPosByValue(valueArray: ArrayList<String>?) {
+    /**
+     * 根据传入值设置滚轮
+     */
+    private fun setMultipleWheelData(value: String) {
+        val valueArray = arrayListOf<String>()
+        for (i in 0 until value.length) {
+            valueArray.add("${value[i]}")
+        }
         var visibleViews: ArrayList<WheelView> = ArrayList()
         wheelGroup.forEach {
             if (it.visibility == View.VISIBLE) {
                 visibleViews.add(it)
             }
         }
-        if (valueArray != null && valueArray.size > visibleViews.size) {
+        if (valueArray.size > visibleViews.size) {
             throw IllegalArgumentException("参数长度过长")
         }
         val wvLen = visibleViews.size
-        val valueSize = valueArray?.size ?: 0
+        val valueSize = valueArray?.size
         for ((i, value) in visibleViews.withIndex()) {
             if (valueArray != null && wvLen - i - 1 < valueSize) {
                 val item = valueArray[valueSize - (wvLen - i)]
@@ -239,54 +257,6 @@ class SwitchablePicker2 : RelativeLayout {
             } else {
                 value.currentItem = 0
             }
-        }
-    }
-
-    /**
-     * 根据已有数据还原滚轮位置
-     * @param valueArray 已存在数据。为空时，数据置为滚轮索引为0的数据
-     */
-    fun setWheelPosByValue(valueArray: ArrayList<String>?) {
-        try {
-            var visibleViews: ArrayList<WheelView> = ArrayList()
-            if (isSingleWheel) {
-                visibleViews.add(singleWheelView)
-            } else {
-                wheelGroup.forEach {
-                    if (it.visibility == View.VISIBLE) {
-                        visibleViews.add(it)
-                    }
-                }
-            }
-            if (valueArray != null && valueArray.size > visibleViews.size) {
-                throw IllegalArgumentException("参数长度过长")
-            }
-            val wvLen = visibleViews.size
-            val valueSize = valueArray?.size ?: 0
-            for ((i, value) in visibleViews.withIndex()) {
-                if (valueArray != null && wvLen - i - 1 < valueSize) {  //数据索引与滚轮排列顺序相反，所以最右边的滚轮，对应最低位的数据
-                    val item = valueArray[valueSize - (wvLen - i)]
-                    var tmpIndex = 0
-                    for ((j, k) in multipleGroup[i].withIndex()) {
-                        if (k == item) {
-                            tmpIndex = j
-                            selectedDatas[i].let {
-                                it.wheelViewIndex = i
-                                it.dataIndex = j
-                                it.data = k
-                            }
-                            break
-                        }
-                    }
-                    value.currentItem = tmpIndex
-                } else {
-                    value.currentItem = 0
-                }
-            }
-        } catch (e: IllegalArgumentException) {
-            logE(e.message)
-        } catch (e: Exception) {
-            logE(e.message)
         }
     }
 
@@ -334,34 +304,38 @@ class SwitchablePicker2 : RelativeLayout {
         switcherView?.text = if (isSingleWheel) singleTxt else multipleTxt
         singleWheelView.visibility = if (isSingleWheel) View.VISIBLE else View.GONE
         llGroup.visibility = if (isSingleWheel) View.GONE else View.VISIBLE
+        tvUnit.text = if (isSingleWheel) singleUnit else multipleUnit
     }
 
     /**
      * 设置数据源
      * @param singleGroup 单滚轮数据源
-     * @param multipleGroup 多滚轮数据源。每个滚轮包含一组数据
+     * @param multipleCount 多滚轮数据组数量。每个滚轮包含一组数据,分别为0-9
      * @param visibleCount 可见条目数
      * @param unit 单位
      */
-    fun setData(@NotNull singleGroup: ArrayList<String>, @NotNull multipleGroup: ArrayList<ArrayList<String>>, visibleCount: Int, unit: String) {
+    fun setData(@NotNull singleGroup: ArrayList<String>, multipleCount: Int, singleVisibleCount: Int, multipleVisibleCount: Int, @NotNull singleUnit: String, @NotNull multipleUnit: String) {
         try {
-            if (multipleGroup.size > 5) {
+            if (multipleCount > 5) {
                 throw IllegalArgumentException("数据异常,多组数据请不要超过5组")
-            } else if (multipleGroup.isEmpty() || singleGroup.isEmpty()) {
-                return
             }
             this.singleGroup = singleGroup
-            this.multipleGroup = multipleGroup
-            val size = multipleGroup.size
+            this.singleUnit = singleUnit
+            this.multipleUnit = multipleUnit
+            val data = arrayListOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+            multipleGroup.clear()
+            for (i in 0..multipleCount) {
+                multipleGroup.add(data)
+            }
             selectedDatas.clear()
             for (i in 0 until 5) {
                 wheelGroup[i].let {
-                    if (i < size) {
+                    if (i < multipleCount) {
                         it.visibility = View.VISIBLE
                         it.setItems(multipleGroup[i])
                         it.setLoop(isRecyclable)
                         it.currentItem = defaultSelected
-                        it.setVisibleItemCount(visibleCount + 2)
+                        it.setVisibleItemCount(multipleVisibleCount + 2)
                         selectedDatas.add(ChangedDataBean(i, defaultSelected, multipleGroup[i][defaultSelected]))
                         it.setOnItemSelectedListener { index ->
                             selectedDatas[i].let {
@@ -380,7 +354,7 @@ class SwitchablePicker2 : RelativeLayout {
             singleWheelView.setItems(singleGroup)
             singleWheelView.setLoop(isRecyclable)
             singleWheelView.currentItem = defaultSelected
-            singleWheelView.setVisibleItemCount(visibleCount + 2)
+            singleWheelView.setVisibleItemCount(singleVisibleCount + 2)
             selectedSingleData = ChangedDataBean(0, defaultSelected, singleGroup[defaultSelected])
             singleWheelView.setOnItemSelectedListener { index ->
                 selectedSingleData.wheelViewIndex = 0
@@ -388,8 +362,69 @@ class SwitchablePicker2 : RelativeLayout {
                 selectedSingleData.data = singleGroup[index]
                 onDataChangedListener?.onChanged(arrayListOf(selectedSingleData))
             }
-            this.unit = unit
-//            invalidate()
+            isSingleWheel = true
+            refreshUI()
+        } catch (e: IllegalArgumentException) {
+            logE(e.message)
+        } catch (e: Exception) {
+            logE(e.message)
+        }
+    }
+
+    /**
+     * 设置数据源
+     * @param singleGroup 单滚轮数据源
+     * @param multipleGroup 多滚轮数据源。每个滚轮包含一组数据
+     * @param visibleCount 可见条目数
+     * @param unit 单位
+     */
+    fun setData(@NotNull singleGroup: ArrayList<String>, @NotNull multipleGroup: ArrayList<ArrayList<String>>, singleVisibleCount: Int, multipleVisibleCount: Int, @NotNull singleUnit: String, @NotNull multipleUnit: String) {
+        try {
+            if (multipleGroup.size > 5) {
+                throw IllegalArgumentException("数据异常,多组数据请不要超过5组")
+            } else if (multipleGroup.isEmpty() || singleGroup.isEmpty()) {
+                return
+            }
+            this.singleGroup = singleGroup
+            this.multipleGroup = multipleGroup
+            this.singleUnit = singleUnit
+            this.multipleUnit = multipleUnit
+            val size = multipleGroup.size
+            selectedDatas.clear()
+            for (i in 0 until 5) {
+                wheelGroup[i].let {
+                    if (i < size) {
+                        it.visibility = View.VISIBLE
+                        it.setItems(multipleGroup[i])
+                        it.setLoop(isRecyclable)
+                        it.currentItem = defaultSelected
+                        it.setVisibleItemCount(multipleVisibleCount + 2)
+                        selectedDatas.add(ChangedDataBean(i, defaultSelected, multipleGroup[i][defaultSelected]))
+                        it.setOnItemSelectedListener { index ->
+                            selectedDatas[i].let {
+                                it.wheelViewIndex = i
+                                it.dataIndex = index
+                                it.data = multipleGroup[i][index]
+                            }
+                            onDataChangedListener?.onChanged(selectedDatas)
+                        }
+                    } else {
+                        it.visibility = View.GONE
+                        it.setOnItemSelectedListener(null)
+                    }
+                }
+            }
+            singleWheelView.setItems(singleGroup)
+            singleWheelView.setLoop(isRecyclable)
+            singleWheelView.currentItem = defaultSelected
+            singleWheelView.setVisibleItemCount(singleVisibleCount + 2)
+            selectedSingleData = ChangedDataBean(0, defaultSelected, singleGroup[defaultSelected])
+            singleWheelView.setOnItemSelectedListener { index ->
+                selectedSingleData.wheelViewIndex = 0
+                selectedSingleData.dataIndex = index
+                selectedSingleData.data = singleGroup[index]
+                onDataChangedListener?.onChanged(arrayListOf(selectedSingleData))
+            }
             isSingleWheel = true
             refreshUI()
         } catch (e: IllegalArgumentException) {
