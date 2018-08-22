@@ -12,6 +12,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.adrian.pickerlib.wheelview.WheelView
 import org.jetbrains.annotations.NotNull
+import java.util.regex.Pattern
 
 /**
  * date:2018/8/17 9:00
@@ -131,7 +132,7 @@ class SwitchablePicker2 : RelativeLayout {
             }
         }
     //是否单滚轮
-    private var isSingleWheel: Boolean = true
+    var isSingleWheel: Boolean = true
         set(value) {
             field = value
             llGroup.visibility = if (value) View.GONE else View.VISIBLE
@@ -179,11 +180,11 @@ class SwitchablePicker2 : RelativeLayout {
     }
 
     /**
-     * 根据传入的值调整刷新滚轮UI
+     * 初始化选中数据.根据传入的值调整刷新滚轮UI.执行此方法前请先初始化数据源initDataSource(...)
      * @param value 待查询值。
      * @param bakValue 备用值。当待查询值查询不到时，查询备用值.当value与bakValue单位不一致时，此参数有效
      */
-    fun setWheelPosByValue(@NotNull value: String, bakValue: String?) {
+    fun initSelectedValue(@NotNull value: String, bakValue: Int = 0) {
         //空值，无历史数据
         if (TextUtils.isEmpty(value) || TextUtils.isEmpty(value.replace("0", ""))) {
             isSingleWheel = true
@@ -208,6 +209,8 @@ class SwitchablePicker2 : RelativeLayout {
                 refreshUI()
                 singleWheelView.currentItem = i
                 selectedSingleData = ChangedDataBean(0, i, value)
+                //单滚轮有数据时，也要保证多滚轮定位同步
+                setMultipleWheelData(if (bakValue == 0) value else "$bakValue")
                 return
             }
         }
@@ -216,13 +219,18 @@ class SwitchablePicker2 : RelativeLayout {
         isSingleWheel = false
         refreshUI()
         //备用值存在时，多滚轮先查询备用值
-        setMultipleWheelData(bakValue ?: value)
+        setMultipleWheelData(if (bakValue == 0) value else "$bakValue")
+        //当单滚轮中不存在value时，单滚轮重置为0
+        singleWheelView.currentItem = 0
+        selectedSingleData = ChangedDataBean(0, 0, singleGroup[0])
     }
 
     /**
      * 根据传入值设置滚轮
+     * @param value 传入值.纯数字组成字符串
      */
     private fun setMultipleWheelData(value: String) {
+        if (!isNumeric(value)) return
         val valueArray = arrayListOf<String>()
         for (i in 0 until value.length) {
             valueArray.add("${value[i]}")
@@ -261,6 +269,17 @@ class SwitchablePicker2 : RelativeLayout {
     }
 
     /**
+     * 利用正则表达式判断字符串是否是数字
+     * @param str
+     * @return
+     */
+    private fun isNumeric(str: String): Boolean {
+        val pattern = Pattern.compile("[0-9]*")
+        val isNum = pattern.matcher(str)
+        return isNum.matches()
+    }
+
+    /**
      * 设置滚轮文字属性
      * @param selectedSize 选中文字大小
      * @param unSelectedSize 未选中文字大小
@@ -277,10 +296,18 @@ class SwitchablePicker2 : RelativeLayout {
     }
 
     /**
-     * 获取结果数据
+     * 获取当前可见滚轮选中数据
      */
     fun getDataResult(): ArrayList<ChangedDataBean> {
         return if (isSingleWheel) arrayListOf(selectedSingleData) else selectedDatas
+    }
+
+    /**
+     * 获取单滚轮或多滚轮选中数据
+     * @param isSingle true为单滚轮,false为多滚轮
+     */
+    fun getDataResult(isSingle: Boolean): ArrayList<ChangedDataBean> {
+        return if (isSingle) arrayListOf(selectedSingleData) else selectedDatas
     }
 
     /**
@@ -308,13 +335,15 @@ class SwitchablePicker2 : RelativeLayout {
     }
 
     /**
-     * 设置数据源
+     * 初始化数据源
      * @param singleGroup 单滚轮数据源
      * @param multipleCount 多滚轮数据组数量。每个滚轮包含一组数据,分别为0-9
-     * @param visibleCount 可见条目数
-     * @param unit 单位
+     * @param singleVisibleCount 单滚轮可见条目数
+     * @param multipleVisibleCount 多滚轮可见条目数
+     * @param singleUnit 单滚轮显示单位
+     * @param multipleUnit 多滚轮显示单位
      */
-    fun setData(@NotNull singleGroup: ArrayList<String>, multipleCount: Int, singleVisibleCount: Int, multipleVisibleCount: Int, @NotNull singleUnit: String, @NotNull multipleUnit: String) {
+    fun initDataSource(@NotNull singleGroup: ArrayList<String>, multipleCount: Int, singleVisibleCount: Int, multipleVisibleCount: Int, @NotNull singleUnit: String, @NotNull multipleUnit: String) {
         try {
             if (multipleCount > 5) {
                 throw IllegalArgumentException("数据异常,多组数据请不要超过5组")
@@ -372,13 +401,15 @@ class SwitchablePicker2 : RelativeLayout {
     }
 
     /**
-     * 设置数据源
+     * 初始化数据源
      * @param singleGroup 单滚轮数据源
      * @param multipleGroup 多滚轮数据源。每个滚轮包含一组数据
-     * @param visibleCount 可见条目数
-     * @param unit 单位
+     * @param singleVisibleCount 单滚轮可见条目数
+     * @param multipleVisibleCount 多滚轮可见条目数
+     * @param singleUnit 单滚轮显示单位
+     * @param multipleUnit 多滚轮显示单位
      */
-    fun setData(@NotNull singleGroup: ArrayList<String>, @NotNull multipleGroup: ArrayList<ArrayList<String>>, singleVisibleCount: Int, multipleVisibleCount: Int, @NotNull singleUnit: String, @NotNull multipleUnit: String) {
+    fun initDataSource(@NotNull singleGroup: ArrayList<String>, @NotNull multipleGroup: ArrayList<ArrayList<String>>, singleVisibleCount: Int, multipleVisibleCount: Int, @NotNull singleUnit: String, @NotNull multipleUnit: String) {
         try {
             if (multipleGroup.size > 5) {
                 throw IllegalArgumentException("数据异常,多组数据请不要超过5组")

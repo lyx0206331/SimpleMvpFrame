@@ -106,7 +106,7 @@ class PickerActivity : AppCompatActivity() {
         val data4 = arrayListOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
         val datas = arrayListOf(data0, data1, data2, data4)
 
-        switchablePicker2?.setData(data3, datas, 5, 3, "unit1", "unit2")
+        switchablePicker2?.initDataSource(data3, datas, 5, 3, "unit1", "unit2")
 
         switchablePicker2?.onDataChangedListener = object : SwitchablePicker2.OnDataGroupChangeListener {
             override fun onChanged(changedDataBean: ArrayList<SwitchablePicker2.ChangedDataBean>) {
@@ -120,13 +120,13 @@ class PickerActivity : AppCompatActivity() {
         }
 
         btnHasValue?.setOnClickListener {
-            switchablePicker2?.setWheelPosByValue("10km", null)
+            switchablePicker2?.initSelectedValue("10km")
         }
         btnHasBakValue?.setOnClickListener {
-            switchablePicker2?.setWheelPosByValue("b35km", "379")
+            switchablePicker2?.initSelectedValue("b35km", 379)
         }
         btnNoValue?.setOnClickListener {
-            switchablePicker2?.setWheelPosByValue("asdf", "asdf")
+            switchablePicker2?.initSelectedValue("", 257)
         }
     }
 }
