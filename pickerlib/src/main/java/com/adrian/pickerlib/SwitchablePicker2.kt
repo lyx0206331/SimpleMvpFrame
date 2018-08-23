@@ -135,8 +135,7 @@ class SwitchablePicker2 : RelativeLayout {
     var isSingleWheel: Boolean = true
         set(value) {
             field = value
-            llGroup.visibility = if (value) View.GONE else View.VISIBLE
-            singleWheelView.visibility = if (value) View.VISIBLE else View.GONE
+            refreshUI()
         }
     //单复数滚轮切换按钮
     private var switcherView: TextView? = null
@@ -188,7 +187,6 @@ class SwitchablePicker2 : RelativeLayout {
         //空值，无历史数据
         if (TextUtils.isEmpty(value) || TextUtils.isEmpty(value.replace("0", ""))) {
             isSingleWheel = true
-            refreshUI()
             singleWheelView.currentItem = 0
             selectedSingleData = ChangedDataBean(0, 0, singleGroup[0])
 
@@ -206,7 +204,7 @@ class SwitchablePicker2 : RelativeLayout {
         for ((i, v) in singleGroup.withIndex()) {
             if (v == value) {
                 isSingleWheel = true
-                refreshUI()
+//                refreshUI()
                 singleWheelView.currentItem = i
                 selectedSingleData = ChangedDataBean(0, i, value)
                 //单滚轮有数据时，也要保证多滚轮定位同步
@@ -217,7 +215,6 @@ class SwitchablePicker2 : RelativeLayout {
 
         //若单滚轮中未找到传入数据，进入多滚轮查询
         isSingleWheel = false
-        refreshUI()
         //备用值存在时，多滚轮先查询备用值
         setMultipleWheelData(if (bakValue == 0) value else "$bakValue")
         //当单滚轮中不存在value时，单滚轮重置为0
@@ -319,7 +316,7 @@ class SwitchablePicker2 : RelativeLayout {
         this.multipleTxt = multipleTxt
         switcherView.setOnClickListener {
             isSingleWheel = !isSingleWheel
-            refreshUI()
+//            refreshUI()
         }
         refreshUI()
     }
@@ -392,7 +389,6 @@ class SwitchablePicker2 : RelativeLayout {
                 onDataChangedListener?.onChanged(arrayListOf(selectedSingleData))
             }
             isSingleWheel = true
-            refreshUI()
         } catch (e: IllegalArgumentException) {
             logE(e.message)
         } catch (e: Exception) {
@@ -457,7 +453,6 @@ class SwitchablePicker2 : RelativeLayout {
                 onDataChangedListener?.onChanged(arrayListOf(selectedSingleData))
             }
             isSingleWheel = true
-            refreshUI()
         } catch (e: IllegalArgumentException) {
             logE(e.message)
         } catch (e: Exception) {
