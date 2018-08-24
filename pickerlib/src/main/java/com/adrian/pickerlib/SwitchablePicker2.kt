@@ -38,6 +38,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setTextColorCenter(value)
             }
+            singleWheelView.setTextColorCenter(value)
         }
     //选中文字大小
     var txtSelectedSize = 24f
@@ -46,6 +47,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setSelectedTextSize(value)
             }
+            singleWheelView.setSelectedTextSize(value)
         }
     //未选中文字颜色
     var txtUnselectedColor = Color.GRAY
@@ -54,6 +56,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setTextColorOut(value)
             }
+            singleWheelView.setTextColorOut(value)
         }
     //未选中文字大小
     var txtUnselectedSize = 10f
@@ -62,6 +65,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setUnselectedTextSize(value)
             }
+            singleWheelView.setUnselectedTextSize(value)
         }
     //分隔线颜色
     var dividerColor = Color.GRAY
@@ -70,6 +74,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setDividerColor(value)
             }
+            singleWheelView.setDividerColor(value)
         }
     private var singleUnit = ""
     private var multipleUnit = ""
@@ -130,6 +135,7 @@ class SwitchablePicker2 : RelativeLayout {
             wheelGroup.forEach {
                 it.setLoop(value)
             }
+            singleWheelView.setLoop(value)
         }
     //是否单滚轮
     var isSingleWheel: Boolean = true
