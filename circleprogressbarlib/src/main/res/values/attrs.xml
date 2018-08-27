@@ -9,7 +9,7 @@
         <attr name="progress_text_size" format="dimension|reference" />
         <attr name="progress_stroke_width" format="dimension|reference" />
         <attr name="progress_background_color" format="color|reference" />
-        <attr name="progress_start_degree" format="integer|reference" />
+        <attr name="progress_start_degree" format="float|reference" />
         <attr name="drawBackgroundOutsideProgress" format="boolean|reference" />
 
         <attr name="style">

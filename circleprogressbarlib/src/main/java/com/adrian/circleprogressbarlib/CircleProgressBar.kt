@@ -30,7 +30,7 @@ class CircleProgressBar : View {
         const val RADIAL = 1
         const val SWEEP = 2
 
-        const val DEFAULT_START_DEGREE = -90
+        const val DEFAULT_START_DEGREE = -90f
         const val DEFAULT_LINE_COUNT = 45
         const val DEFAULT_LINE_WIDTH = 4f
         const val DEFAULT_PROGRESS_TEXT_SIZE = 11f
@@ -51,33 +51,89 @@ class CircleProgressBar : View {
     private var mCenterX = 0f
     private var mCenterY = 0f
 
-    private var mProgress = 0
+    var mProgress = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
     private var mMax = DEFAULT_MAX
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     //Only work well in the Line Style,represents the line count of the rings included
-    private var mLineCount = 0
+    var mLineCount = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
     //Only work well in the Line Style,Height of the line of the progress bar
-    private var mLineWidth = 0f
+    var mLineWidth = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     //进度条宽度
-    private var mProgressStrokeWidth = 0f
+    var mProgressStrokeWidth = 0f
+        set(value) {
+            field = value
+            mProgressRectF.inset(value / 2, value / 2)
+            invalidate()
+        }
     //进度条文字大小
-    private var mProgressTextSize = 0f
+    var mProgressTextSize = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
     //进度条进度开始颜色
-    private var mProgressStartColor = Color.BLACK
+    var mProgressStartColor = Color.BLACK
+        set(value) {
+            field = value
+            updateProgressShader()
+            invalidate()
+        }
     //进度条进度结束颜色
-    private var mProgressEndColor = Color.BLACK
+    var mProgressEndColor = Color.BLACK
+        set(value) {
+            field = value
+            updateProgressShader()
+            invalidate()
+        }
     //进度条文字颜色
-    private var mProgressTextColor = Color.BLACK
+    var mProgressTextColor = Color.BLACK
+        set(value) {
+            field = value
+            invalidate()
+        }
     //进度条背景色
-    private var mProgressBackgroundColor = Color.WHITE
+    var mProgressBackgroundColor = Color.WHITE
+        set(value) {
+            field = value
+            mProgressBackgroundPaint.color = value
+            invalidate()
+        }
 
     //进度条旋转起始角度.默认-90
-    private var mStartDegree = 0
+    var mStartDegree = -90f
+        set(value) {
+            field = value
+            invalidate()
+        }
     //是否只在进度条之外绘制背景色
-    private var mDrawBackgroundOutsideProgress = false
+    var mDrawBackgroundOutsideProgress = false
+        set(value) {
+            field = value
+            invalidate()
+        }
     //格式化进度值为特殊格式
-    private var mProgressFormatter = DefaultProgressFormatter()
+    var mProgressFormatter = DefaultProgressFormatter()
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(LINE, SOLID, SOLID_LINE)
@@ -86,6 +142,12 @@ class CircleProgressBar : View {
     //进度条颜色样式
     @Style
     var mStyle = LINE
+        set(value) {
+            field = value
+            mProgressPaint.style = if (value == SOLID) Paint.Style.FILL else Paint.Style.STROKE
+            mProgressBackgroundPaint.style = if (value == SOLID) Paint.Style.FILL else Paint.Style.STROKE
+            invalidate()
+        }
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(LINEAR, RADIAL, SWEEP)
@@ -94,8 +156,19 @@ class CircleProgressBar : View {
     //画笔形状
     @ShaderMode
     var mShader = LINEAR
+        set(value) {
+            field = value
+            updateProgressShader()
+            invalidate()
+        }
     //The Stroke cap of mProgressPaint and mProgressBackgroundPaint
-    private var mCap: Paint.Cap = Paint.Cap.ROUND
+    var mCap: Paint.Cap = Paint.Cap.BUTT
+        set(value) {
+            field = value
+            mProgressPaint.strokeCap = value
+            mProgressBackgroundPaint.strokeCap = value
+            invalidate()
+        }
 
     constructor(context: Context?) : this(context, null)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -115,7 +188,7 @@ class CircleProgressBar : View {
         mProgressEndColor = a.getColor(R.styleable.CircleProgressBar_progress_end_color, Color.parseColor(COLOR_FFF2A670))
         mProgressTextColor = a.getColor(R.styleable.CircleProgressBar_progress_text_color, Color.parseColor(COLOR_FFF2A670))
         mProgressBackgroundColor = a.getColor(R.styleable.CircleProgressBar_progress_background_color, Color.parseColor(COLOR_FFD3D3D5))
-        mStartDegree = a.getInt(R.styleable.CircleProgressBar_progress_start_degree, DEFAULT_START_DEGREE)
+        mStartDegree = a.getFloat(R.styleable.CircleProgressBar_progress_start_degree, DEFAULT_START_DEGREE)
         mDrawBackgroundOutsideProgress = a.getBoolean(R.styleable.CircleProgressBar_drawBackgroundOutsideProgress, false)
 
         a.recycle()
@@ -171,10 +244,21 @@ class CircleProgressBar : View {
         }
     }
 
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        canvas?.save()
+        canvas?.rotate(mStartDegree, mCenterX, mCenterY)
+        drawProgress(canvas)
+        canvas?.restore()
+
+        drawProgressText(canvas)
+    }
+
     /**
      * 绘制进度值
      */
-    private fun drawProgressText(canvas: Canvas) {
+    private fun drawProgressText(canvas: Canvas?) {
         if (mProgressFormatter == null) return
 
         val progressText = mProgressFormatter.format(mProgress, mMax)
@@ -184,7 +268,92 @@ class CircleProgressBar : View {
         mProgressTextPaint.textSize = mProgressTextSize
         mProgressTextPaint.color = mProgressTextColor
         mProgressTextPaint.getTextBounds(progressText.toString(), 0, progressText.length, mProgressTextRect)
-        canvas.drawText(progressText, 0, progressText.length, mCenterX, mCenterY + mProgressTextRect.height() / 2, mProgressTextPaint)
+        canvas?.drawText(progressText, 0, progressText.length, mCenterX, mCenterY + mProgressTextRect.height() / 2, mProgressTextPaint)
+    }
+
+    /**
+     * 绘制进度样式
+     */
+    private fun drawProgress(canvas: Canvas?) {
+        when (mStyle) {
+            SOLID -> drawSolidProgress(canvas)
+            SOLID_LINE -> drawSolidLineProgress(canvas)
+            else -> drawLineProgress(canvas)
+        }
+    }
+
+    /**
+     * 居中绘制线状圆环
+     */
+    private fun drawLineProgress(canvas: Canvas?) {
+        val unitDegrees: Float = (2f * Math.PI / mLineCount).toFloat()
+        val outerCircleRadius = mRadius
+        val interCircleRadius = mRadius - mLineWidth
+
+        val progressLineCount = mProgress.toFloat() / mMax * mLineCount
+
+        for (i in 0 until mLineCount) {
+            val rotateDegrees = i * -unitDegrees
+
+            val startX: Float = (mCenterX + Math.cos(rotateDegrees.toDouble()) * interCircleRadius).toFloat()
+            val startY: Float = (mCenterY - Math.sin(rotateDegrees.toDouble()) * interCircleRadius).toFloat()
+
+            val stopX: Float = (mCenterX + Math.cos(rotateDegrees.toDouble()) * outerCircleRadius).toFloat()
+            val stopY: Float = (mCenterY - Math.sin(rotateDegrees.toDouble()) * outerCircleRadius).toFloat()
+
+            if (mDrawBackgroundOutsideProgress) {
+                if (i >= progressLineCount) canvas?.drawLine(startX, startY, stopX, stopY, mProgressBackgroundPaint)
+            } else {
+                canvas?.drawLine(startX, startY, stopX, stopY, mProgressBackgroundPaint)
+            }
+
+            if (i < progressLineCount) canvas?.drawLine(startX, startY, stopX, stopY, mProgressPaint)
+        }
+    }
+
+    /**
+     * 画圆弧
+     */
+    private fun drawSolidProgress(canvas: Canvas?) {
+        if (mDrawBackgroundOutsideProgress) {
+            val startAngle: Float = MAX_DEGREE * mProgress / mMax
+            val sweepAngle: Float = MAX_DEGREE - startAngle
+            canvas?.drawArc(mProgressRectF, startAngle, sweepAngle, true, mProgressBackgroundPaint)
+        } else {
+            canvas?.drawArc(mProgressRectF, 0f, MAX_DEGREE, true, mProgressBackgroundPaint)
+        }
+        canvas?.drawArc(mProgressRectF, 0f, MAX_DEGREE * mProgress / mMax, true, mProgressPaint)
+    }
+
+    /**
+     * 绘制圆弧
+     */
+    private fun drawSolidLineProgress(canvas: Canvas?) {
+        if (mDrawBackgroundOutsideProgress) {
+            val startAngle: Float = MAX_DEGREE * mProgress / mMax
+            val sweepAngle: Float = MAX_DEGREE - startAngle
+            canvas?.drawArc(mProgressRectF, startAngle, sweepAngle, false, mProgressBackgroundPaint)
+        } else {
+            canvas?.drawArc(mProgressRectF, 0f, MAX_DEGREE, false, mProgressBackgroundPaint)
+        }
+        canvas?.drawArc(mProgressRectF, 0f, MAX_DEGREE * mProgress / mMax, false, mProgressPaint)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        mCenterX = w / 2f
+        mCenterY = h / 2f
+
+        mRadius = Math.min(mCenterX, mCenterY)
+        mProgressRectF.top = mCenterY - mRadius
+        mProgressRectF.bottom = mCenterY + mRadius
+        mProgressRectF.left = mCenterX - mRadius
+        mProgressRectF.right = mCenterX + mRadius
+
+        updateProgressShader()
+
+        //Prevent the progress from clipping
+        mProgressRectF.inset(mProgressStrokeWidth / 2, mProgressStrokeWidth / 2)
     }
 
     interface ProgressFormatter {
