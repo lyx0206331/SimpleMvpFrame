@@ -19,11 +19,12 @@
         android:layout_height="50dp"
         android:layout_marginTop="@dimen/default_margin"
         app:progress_background_color="@color/holo_darker_gray"
-        app:progress_end_color="@android:color/holo_green_light"
+        app:progress_end_color="@android:color/holo_red_light"
         app:progress_start_color="@android:color/holo_green_light"
         app:progress_start_degree="0"
         app:progress_text_color="@color/holo_blue_light"
-        app:style="solid" />
+        app:style="solid"
+        app:progress_shader="sweep" />
 
     <com.adrian.circleprogressbarlib.CircleProgressBar
         android:id="@+id/custom_progress1"

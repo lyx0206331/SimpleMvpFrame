@@ -25,8 +25,11 @@ class CircleProgressBar : View {
         const val MAX_DEGREE = 360f
         const val LINEAR_START_DEGREE = 90f
 
+        //表盘式刻度线进度条
         const val LINE = 0
+        //实心扇形进度条
         const val SOLID = 1
+        //实心线形进度条
         const val SOLID_LINE = 2
 
         const val LINEAR = 0
@@ -70,7 +73,7 @@ class CircleProgressBar : View {
             field = value
             invalidate()
         }
-    private var mMax = DEFAULT_MAX
+    var mMax = DEFAULT_MAX
         set(value) {
             field = value
             invalidate()
@@ -189,7 +192,7 @@ class CircleProgressBar : View {
     @IntDef(LINEAR, RADIAL, SWEEP)
     annotation class ShaderMode
 
-    //画笔形状
+    //画笔着色器
     @ShaderMode
     var mShader = LINEAR
         set(value) {
@@ -261,24 +264,24 @@ class CircleProgressBar : View {
     }
 
     /**
-     * 渐变进度条
+     * 更新着色器
      * 需要在onSizeChanged中执行{@link #onSizeChanged(int, int, int, int)}
      */
     private fun updateProgressShader() {
         if (mProgressStartColor != mProgressEndColor) {
             var shader: Shader? = null
             when (mShader) {
-                LINEAR -> {
+                LINEAR -> { //线性渐变
                     shader = LinearGradient(mProgressRectF.left, mProgressRectF.top, mProgressRectF.left, mProgressRectF.bottom, mProgressStartColor, mProgressEndColor, Shader.TileMode.CLAMP)
                     val matrix = Matrix()
                     matrix.setRotate(LINEAR_START_DEGREE, mCenterX, mCenterY)
                     shader.getLocalMatrix(matrix)
                 }
-                RADIAL -> {
+                RADIAL -> { //径向渐变
                     if (mRadius <= 0) return
                     shader = RadialGradient(mCenterX, mCenterY, mRadius, mProgressStartColor, mProgressEndColor, Shader.TileMode.CLAMP)
                 }
-                SWEEP -> {
+                SWEEP -> {  //扫描渐变
                     if (mRadius <= 0) return
                     val radian = mProgressStrokeWidth / Math.PI * 2f / mRadius
                     val rotateDegrees: Float = -(if (mCap == Paint.Cap.BUTT && mStyle == SOLID_LINE) 0f else Math.toDegrees(radian).toFloat())
@@ -289,7 +292,7 @@ class CircleProgressBar : View {
                 }
             }
             mProgressPaint.shader = shader
-        } else {
+        } else {    //无渐变
             mProgressPaint.shader = null
             mProgressPaint.color = mProgressStartColor
         }
