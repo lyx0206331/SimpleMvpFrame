@@ -76,13 +76,13 @@ class CircleProgressBar : View {
             invalidate()
         }
 
-    //Only work well in the Line Style,represents the line count of the rings included
+    //仅表盘式进度条有用，表示表盘刻度数量
     var mLineCount = 0
         set(value) {
             field = value
             invalidate()
         }
-    //Only work well in the Line Style,Height of the line of the progress bar
+    //仅表盘式进度条有用，表示刻度线宽度
     var mLineWidth = 0f
         set(value) {
             field = value
@@ -130,6 +130,7 @@ class CircleProgressBar : View {
             invalidate()
         }
 
+    //控件中间填充色（仅表盘式及线形进度有效，扇形未填充）
     var mCenterColor: Int = Color.TRANSPARENT
         set(value) {
             field = value
@@ -149,6 +150,7 @@ class CircleProgressBar : View {
             field = value
             invalidate()
         }
+    //居中图片（仅在表盘式及线形进度中绘制，未在扇形进度中绘制）
     var mCenterDrawable: Drawable? = null
         set(value) {
             field = value
@@ -195,7 +197,7 @@ class CircleProgressBar : View {
             updateProgressShader()
             invalidate()
         }
-    //The Stroke cap of mProgressPaint and mProgressBackgroundPaint
+    //进度及背景画笔绘制两端形状.Cap.ROUND(圆形线帽)、Cap.SQUARE(方形线帽)、Paint.Cap.BUTT(无线帽)
     var mCap: Paint.Cap = Paint.Cap.BUTT
         set(value) {
             field = value
@@ -204,8 +206,10 @@ class CircleProgressBar : View {
             invalidate()
         }
 
+    //按下监听
     var mOnPressedListener: OnPressedListener? = null
 
+    //进度条动画
     private var mAnimator: ValueAnimator? = null
 
     constructor(context: Context?) : this(context, null)
