@@ -130,6 +130,18 @@
             app:progress_text_color="@color/holo_green_light"
             app:style="line" />
 
+        <com.adrian.circleprogressbarlib.FantasticButton
+            android:id="@+id/fantastic_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="@dimen/default_margin"
+            app:progress_background_color="@color/holo_darker_gray"
+            app:progress_shader="radial"
+            app:progress_start_color="@color/holo_red_light"
+            app:progress_stroke_width="1dp"
+            app:progress_text_color="@color/holo_red_light"
+            app:style="solid" />
+
     </LinearLayout>
 
 </LinearLayout>

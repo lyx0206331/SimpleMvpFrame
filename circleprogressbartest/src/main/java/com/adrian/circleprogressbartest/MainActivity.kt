@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.adrian.circleprogressbarlib.CircleProgressBar
+import com.adrian.circleprogressbarlib.FantasticButton
 import com.adrian.circleprogressbarlib.Utils
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -78,6 +80,8 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+        fantastic_btn.startAnimator(4000)
     }
 
     private fun toast(msg: String) {
