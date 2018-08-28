@@ -42,7 +42,7 @@ class CircleProgressBar : View {
         const val DEFAULT_START_DEGREE = -90f
         const val DEFAULT_LINE_COUNT = 45
         const val DEFAULT_LINE_WIDTH = 4f
-        const val DEFAULT_PROGRESS_TEXT_SIZE = 11f
+        const val DEFAULT_PROGRESS_TEXT_SIZE = 21f
         const val DEFAULT_PROGRESS_STROKE_WIDTH = 1f
 
         const val COLOR_FFF2A670 = "#fff2a670"
@@ -165,6 +165,8 @@ class CircleProgressBar : View {
             field = value
             invalidate()
         }
+    //动画是否已停止,此判断防止多次响应停止接口方法
+    private var isStopedAnim = true
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(STOP_ANIM_SIMPLE, STOP_ANIM_REVERSE)
@@ -459,13 +461,17 @@ class CircleProgressBar : View {
         mAnimator?.addUpdateListener {
             mProgress = it.animatedValue as Int
             mOnPressedListener?.onPressProcess(mProgress)
-            if (mProgress == end) mOnPressedListener?.onPressStop(mProgress)
+            if (mProgress == end && !isStopedAnim) {
+                mOnPressedListener?.onPressStop(mProgress)
+                isStopedAnim = true
+            }
         }
         mAnimator?.duration = duration
         mAnimator?.repeatCount = 0
         mAnimator?.start()
 
         mOnPressedListener?.onPressStart()
+        isStopedAnim = false
     }
 
     /**
@@ -473,7 +479,10 @@ class CircleProgressBar : View {
      */
     fun stopAnimator() {
         if (mAnimator != null && mAnimator!!.isRunning) {
-            mOnPressedListener?.onPressStop(mAnimator!!.animatedValue as Int)
+            if (!isStopedAnim) {
+                mOnPressedListener?.onPressStop(mAnimator!!.animatedValue as Int)
+                isStopedAnim = true
+            }
             if (mStopAnimType == STOP_ANIM_SIMPLE) {    //直接停止动画并恢复到进度0
                 mAnimator?.cancel()
                 mProgress = 0
@@ -487,7 +496,7 @@ class CircleProgressBar : View {
         if (event == null || !isClickable) return true
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                startAnimator(5000)
+                startAnimator()
             }
             MotionEvent.ACTION_UP -> {
                 stopAnimator()
