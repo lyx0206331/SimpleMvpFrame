@@ -11,6 +11,13 @@
         <attr name="progress_background_color" format="color|reference" />
         <attr name="progress_start_degree" format="float|reference" />
         <attr name="drawBackgroundOutsideProgress" format="boolean|reference" />
+        <attr name="center_src" format="reference" />
+        <attr name="center_color" format="color|reference" />
+        <attr name="show_value" format="boolean|reference" />
+        <attr name="stop_anim_type">
+            <enum name="simple_stop" value="0" />
+            <enum name="reverse_stop" value="1" />
+        </attr>
 
         <attr name="style">
             <enum name="line" value="0" />

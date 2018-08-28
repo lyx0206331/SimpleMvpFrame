@@ -1,14 +1,17 @@
 package com.adrian.circleprogressbarlib
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.IntDef
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
-import java.lang.annotation.RetentionPolicy
 
 /**
  * date:2018/8/27 11:43
@@ -30,6 +33,9 @@ class CircleProgressBar : View {
         const val RADIAL = 1
         const val SWEEP = 2
 
+        const val STOP_ANIM_SIMPLE = 0
+        const val STOP_ANIM_REVERSE = 1
+
         const val DEFAULT_START_DEGREE = -90f
         const val DEFAULT_LINE_COUNT = 45
         const val DEFAULT_LINE_WIDTH = 4f
@@ -46,10 +52,18 @@ class CircleProgressBar : View {
     private val mProgressPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mProgressBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mProgressTextPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mProgressCenterPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private var mRadius = 0f
     private var mCenterX = 0f
     private var mCenterY = 0f
+
+    //是否显示进度值
+    var mShowValue: Boolean = true
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     var mProgress = 0
         set(value) {
@@ -116,6 +130,13 @@ class CircleProgressBar : View {
             invalidate()
         }
 
+    var mCenterColor: Int = Color.TRANSPARENT
+        set(value) {
+            field = value
+            mProgressCenterPaint.color = value
+            invalidate()
+        }
+
     //进度条旋转起始角度.默认-90
     var mStartDegree = -90f
         set(value) {
@@ -128,12 +149,25 @@ class CircleProgressBar : View {
             field = value
             invalidate()
         }
-    //格式化进度值为特殊格式
-    var mProgressFormatter = DefaultProgressFormatter()
+    var mCenterDrawable: Drawable? = null
         set(value) {
             field = value
             invalidate()
         }
+    //格式化进度值为特殊格式
+    var mProgressFormatter: ProgressFormatter = DefaultProgressFormatter()
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(STOP_ANIM_SIMPLE, STOP_ANIM_REVERSE)
+    annotation class StopAnimType
+
+    //停止动画类型
+    @StopAnimType
+    var mStopAnimType = 0
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(LINE, SOLID, SOLID_LINE)
@@ -170,6 +204,10 @@ class CircleProgressBar : View {
             invalidate()
         }
 
+    var mOnPressedListener: OnPressedListener? = null
+
+    private var mAnimator: ValueAnimator? = null
+
     constructor(context: Context?) : this(context, null)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
@@ -178,6 +216,7 @@ class CircleProgressBar : View {
         val a = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressBar, defStyleAttr, 0)
 
         mLineCount = a.getInt(R.styleable.CircleProgressBar_line_count, DEFAULT_LINE_COUNT)
+        mStopAnimType = a.getInt(R.styleable.CircleProgressBar_stop_anim_type, STOP_ANIM_SIMPLE)
         mStyle = a.getInt(R.styleable.CircleProgressBar_style, LINE)
         mShader = a.getInt(R.styleable.CircleProgressBar_progress_shader, LINEAR)
         mCap = if (a.hasValue(R.styleable.CircleProgressBar_progress_stroke_cap)) Paint.Cap.values()[a.getInt(R.styleable.CircleProgressBar_progress_stroke_cap, 0)] else Paint.Cap.BUTT
@@ -190,6 +229,9 @@ class CircleProgressBar : View {
         mProgressBackgroundColor = a.getColor(R.styleable.CircleProgressBar_progress_background_color, Color.parseColor(COLOR_FFD3D3D5))
         mStartDegree = a.getFloat(R.styleable.CircleProgressBar_progress_start_degree, DEFAULT_START_DEGREE)
         mDrawBackgroundOutsideProgress = a.getBoolean(R.styleable.CircleProgressBar_drawBackgroundOutsideProgress, false)
+        mCenterColor = a.getColor(R.styleable.CircleProgressBar_center_color, Color.TRANSPARENT)
+        mShowValue = a.getBoolean(R.styleable.CircleProgressBar_show_value, true)
+        mCenterDrawable = a.getDrawable(R.styleable.CircleProgressBar_center_src)
 
         a.recycle()
 
@@ -209,6 +251,9 @@ class CircleProgressBar : View {
         mProgressBackgroundPaint.strokeWidth = mProgressStrokeWidth
         mProgressBackgroundPaint.color = mProgressBackgroundColor
         mProgressBackgroundPaint.strokeCap = mCap
+
+        mProgressCenterPaint.style = Paint.Style.FILL
+        mProgressCenterPaint.color = mCenterColor
     }
 
     /**
@@ -226,9 +271,11 @@ class CircleProgressBar : View {
                     shader.getLocalMatrix(matrix)
                 }
                 RADIAL -> {
+                    if (mRadius <= 0) return
                     shader = RadialGradient(mCenterX, mCenterY, mRadius, mProgressStartColor, mProgressEndColor, Shader.TileMode.CLAMP)
                 }
                 SWEEP -> {
+                    if (mRadius <= 0) return
                     val radian = mProgressStrokeWidth / Math.PI * 2f / mRadius
                     val rotateDegrees: Float = -(if (mCap == Paint.Cap.BUTT && mStyle == SOLID_LINE) 0f else Math.toDegrees(radian).toFloat())
                     shader = SweepGradient(mCenterX, mCenterY, intArrayOf(mProgressStartColor, mProgressEndColor), floatArrayOf(0f, 1f))
@@ -252,6 +299,10 @@ class CircleProgressBar : View {
         drawProgress(canvas)
         canvas?.restore()
 
+        drawCenterColor(canvas)
+
+        drawCenterDrawable(canvas)
+
         drawProgressText(canvas)
     }
 
@@ -259,7 +310,7 @@ class CircleProgressBar : View {
      * 绘制进度值
      */
     private fun drawProgressText(canvas: Canvas?) {
-        if (mProgressFormatter == null) return
+        if (mProgressFormatter == null || !mShowValue) return
 
         val progressText = mProgressFormatter.format(mProgress, mMax)
 
@@ -269,6 +320,37 @@ class CircleProgressBar : View {
         mProgressTextPaint.color = mProgressTextColor
         mProgressTextPaint.getTextBounds(progressText.toString(), 0, progressText.length, mProgressTextRect)
         canvas?.drawText(progressText, 0, progressText.length, mCenterX, mCenterY + mProgressTextRect.height() / 2, mProgressTextPaint)
+    }
+
+    /**
+     * 中间未填充颜色时，绘制居中颜色
+     */
+    private fun drawCenterColor(canvas: Canvas?) {
+        if (mStyle == LINE || mStyle == SOLID_LINE) {
+            canvas?.drawCircle(mCenterX, mCenterY, mRadius - mProgressStrokeWidth, mProgressCenterPaint)
+        }
+    }
+
+    /**
+     * 绘制居中图片
+     */
+    private fun drawCenterDrawable(canvas: Canvas?) {
+        try {
+            if ((mStyle == LINE || mStyle == SOLID_LINE) && mCenterDrawable != null) {
+                val bmp: Bitmap = (mCenterDrawable as BitmapDrawable).bitmap
+                val bmpWidth = bmp.width
+                val bmpHeight = bmp.height
+                val bmpRect = Rect(0, 0, bmpWidth, bmpHeight)
+                val desLeft: Int = (mCenterX - bmpWidth / 2).toInt()
+                val desTop: Int = (mCenterY - bmpHeight / 2).toInt()
+                val desRight = desLeft + bmpWidth
+                val desBottom = desTop + bmpHeight
+                val desRect = Rect(desLeft, desTop, desRight, desBottom)
+                canvas?.drawBitmap(bmp, bmpRect, desRect, mProgressCenterPaint)
+            }
+        } catch (e: Exception) {
+            Utils.logE("CircleProgressBar", "Exception:${e.message}")
+        }
     }
 
     /**
@@ -283,7 +365,7 @@ class CircleProgressBar : View {
     }
 
     /**
-     * 居中绘制线状圆环
+     * 居中绘制表盘式线状圆环
      */
     private fun drawLineProgress(canvas: Canvas?) {
         val unitDegrees: Float = (2f * Math.PI / mLineCount).toFloat()
@@ -312,7 +394,7 @@ class CircleProgressBar : View {
     }
 
     /**
-     * 画圆弧
+     * 绘制实心扇形圆弧
      */
     private fun drawSolidProgress(canvas: Canvas?) {
         if (mDrawBackgroundOutsideProgress) {
@@ -326,7 +408,7 @@ class CircleProgressBar : View {
     }
 
     /**
-     * 绘制圆弧
+     * 绘制实心线形圆弧
      */
     private fun drawSolidLineProgress(canvas: Canvas?) {
         if (mDrawBackgroundOutsideProgress) {
@@ -352,8 +434,73 @@ class CircleProgressBar : View {
 
         updateProgressShader()
 
-        //Prevent the progress from clipping
+        //防止进度条被裁剪
         mProgressRectF.inset(mProgressStrokeWidth / 2, mProgressStrokeWidth / 2)
+    }
+
+    /**
+     * 开始动画
+     * @param duration 动画执行时长.默认1s
+     * @param start 动画开始时进度.默认0
+     * @param end 动画终止时进度.默认最大值
+     */
+    fun startAnimator(duration: Long = 1000, start: Int = 0, end: Int = mMax) {
+        if (mAnimator == null) {
+            mAnimator = ValueAnimator()
+        }
+        mAnimator?.setIntValues(if (start < 0) 0 else start, if (end > mMax) mMax else end)
+        mAnimator?.addUpdateListener {
+            mProgress = it.animatedValue as Int
+            mOnPressedListener?.onPressProcess(mProgress)
+            if (mProgress == end) mOnPressedListener?.onPressStop(mProgress)
+        }
+        mAnimator?.duration = duration
+        mAnimator?.repeatCount = 0
+        mAnimator?.start()
+
+        mOnPressedListener?.onPressStart()
+    }
+
+    /**
+     * 停止动画
+     */
+    fun stopAnimator() {
+        if (mAnimator != null && mAnimator!!.isRunning) {
+            mOnPressedListener?.onPressStop(mAnimator!!.animatedValue as Int)
+            if (mStopAnimType == STOP_ANIM_SIMPLE) {    //直接停止动画并恢复到进度0
+                mAnimator?.cancel()
+                mProgress = 0
+            } else {    //动画回退到进度0
+                mAnimator?.reverse()
+            }
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event == null || !isClickable) return true
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                startAnimator(5000)
+            }
+            MotionEvent.ACTION_UP -> {
+                stopAnimator()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                stopAnimator()
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    interface OnPressedListener {
+        //按下时响应
+        fun onPressStart()
+
+        //按下过程中响应，带当前进度值
+        fun onPressProcess(progress: Int)
+
+        //结束按下响应，带结束时的进度值
+        fun onPressStop(progress: Int)
     }
 
     interface ProgressFormatter {
@@ -364,7 +511,7 @@ class CircleProgressBar : View {
         private val defaultPattern = "%d%%"
 
         override fun format(progress: Int, max: Int): CharSequence {
-            return java.lang.String.format(defaultPattern, progress.toFloat() / max.toFloat() * 100)
+            return java.lang.String.format(defaultPattern, (progress.toFloat() / max.toFloat() * 100).toInt())
         }
 
     }
@@ -374,10 +521,8 @@ class CircleProgressBar : View {
         var progress = 0
 
         constructor(source: Parcelable) : super(source)
-        constructor(source: Parcel?) : super(source) {
-            if (source != null) {
-                progress = source.readInt()
-            }
+        constructor(source: Parcel) : super(source) {
+            progress = source.readInt()
         }
 
         override fun writeToParcel(out: Parcel?, flags: Int) {
@@ -385,16 +530,17 @@ class CircleProgressBar : View {
             out?.writeInt(progress)
         }
 
-        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(p0: Parcel?): SavedState {
-                return SavedState(p0)
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel): SavedState {
+                return SavedState(parcel)
             }
 
-            override fun newArray(p0: Int): Array<SavedState?> {
-                return arrayOfNulls<SavedState>(p0)
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
             }
 
         }
+
     }
 
     override fun onSaveInstanceState(): Parcelable? {
