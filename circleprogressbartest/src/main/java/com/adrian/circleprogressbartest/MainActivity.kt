@@ -1,13 +1,17 @@
 package com.adrian.circleprogressbartest
 
 import android.animation.ValueAnimator
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.widget.Button
 import android.widget.Toast
 import com.adrian.circleprogressbarlib.CircleProgressBar
-import com.adrian.circleprogressbarlib.FantasticButton
 import com.adrian.circleprogressbarlib.Utils
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_center_view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,12 +37,53 @@ class MainActivity : AppCompatActivity() {
         mCustomProgressBar5 = findViewById(R.id.custom_progress5)
         mCustomProgressBar6 = findViewById(R.id.custom_progress6)
 
+        mCustomProgressBar1?.mProgressTextSize = Utils.dip2px(this, 10f)
+
         mCustomProgressBar5?.mProgressFormatter = object : CircleProgressBar.ProgressFormatter {
             override fun format(progress: Int, max: Int): CharSequence {
                 return "${progress}s"
             }
 
         }
+
+        fantastic_btn.mStyle = CircleProgressBar.SOLID_LINE
+        fantastic_btn.mProgressStrokeWidth = Utils.dip2px(this, 3f)
+        fantastic_btn.mProgressBackgroundColor = ContextCompat.getColor(this, R.color.holo_purple)
+        fantastic_btn.mStopAnimType = CircleProgressBar.STOP_ANIM_REVERSE
+        fantastic_btn.mCenterColor = ContextCompat.getColor(this, R.color.holo_blue_light)
+        fantastic_btn.mProgressStartColor = ContextCompat.getColor(this, R.color.colorAccent)
+        fantastic_btn.mProgressEndColor = ContextCompat.getColor(this, R.color.holo_orange_light)
+        fantastic_btn.mShader = CircleProgressBar.LINEAR
+
+        fantastic_btn.mOnPressedListener = object : CircleProgressBar.OnPressedListener {
+            override fun onPressEnd() {
+                toast("press end")
+            }
+
+            override fun onPressStart() {
+                toast("press start")
+            }
+
+            override fun onPressProcess(progress: Int) {
+                Utils.logE("PROGRESS", "progress: $progress")
+//                btn.text = "btn:$progress"
+                textView.text = "tv:$progress"
+            }
+
+            override fun onPressInterrupt(progress: Int) {
+                toast("press interrupt: $progress")
+            }
+        }
+
+        val centerView = LayoutInflater.from(this).inflate(R.layout.layout_center_view, null)
+        centerView.findViewById<Button>(R.id.btn).setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> (view as Button).text = "Down"
+                MotionEvent.ACTION_UP -> (view as Button).text = "Up"
+            }
+            super.onTouchEvent(motionEvent)
+        }
+        fantastic_btn.setCenterView(centerView)
     }
 
     override fun onResume() {
@@ -67,6 +112,10 @@ class MainActivity : AppCompatActivity() {
         mCustomProgressBar2?.startAnimator(3000, 100, 30)
 //        mCustomProgressBar5?.startAnimator(4000)
         mCustomProgressBar5?.mOnPressedListener = object : CircleProgressBar.OnPressedListener {
+            override fun onPressEnd() {
+                toast("press end")
+            }
+
             override fun onPressStart() {
                 toast("press start")
             }
@@ -75,13 +124,11 @@ class MainActivity : AppCompatActivity() {
                 Utils.logE("PROGRESS", "progress: $progress")
             }
 
-            override fun onPressStop(progress: Int) {
-                toast("press stop: $progress")
+            override fun onPressInterrupt(progress: Int) {
+                toast("press interrupt: $progress")
             }
 
         }
-
-        fantastic_btn.startAnimator(4000)
     }
 
     private fun toast(msg: String) {

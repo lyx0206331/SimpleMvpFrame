@@ -16,7 +16,7 @@ import android.view.View
 /**
  * date:2018/8/27 11:43
  * author：RanQing
- * description：
+ * description：此控件带进度显示，可设置居中图片，可显示进度值，可选择进度样式，可选择动画效果，也可当按下时带进度的按钮使用
  */
 class CircleProgressBar : View {
 
@@ -32,8 +32,11 @@ class CircleProgressBar : View {
         //实心线形进度条
         const val SOLID_LINE = 2
 
+        //线性渐变
         const val LINEAR = 0
+        //径向渐变
         const val RADIAL = 1
+        //扫描渐变
         const val SWEEP = 2
 
         const val STOP_ANIM_SIMPLE = 0
@@ -68,11 +71,13 @@ class CircleProgressBar : View {
             invalidate()
         }
 
+    //进度
     var mProgress = 0
         set(value) {
             field = value
             invalidate()
         }
+    //进度条最大值
     var mMax = DEFAULT_MAX
         set(value) {
             field = value
@@ -97,6 +102,8 @@ class CircleProgressBar : View {
         set(value) {
             field = value
             mProgressRectF.inset(value / 2, value / 2)
+            mProgressPaint.strokeWidth = value
+            mProgressBackgroundPaint.strokeWidth = value
             invalidate()
         }
     //进度条文字大小
@@ -350,10 +357,10 @@ class CircleProgressBar : View {
                 val bmpWidth = bmp.width
                 val bmpHeight = bmp.height
                 val bmpRect = Rect(0, 0, bmpWidth, bmpHeight)
-                val desLeft: Int = (mCenterX - bmpWidth / 2).toInt()
-                val desTop: Int = (mCenterY - bmpHeight / 2).toInt()
-                val desRight = desLeft + bmpWidth
-                val desBottom = desTop + bmpHeight
+                val desLeft: Int = (mCenterX - bmpWidth / 2 + mProgressStrokeWidth).toInt()
+                val desTop: Int = (mCenterY - bmpHeight / 2 + mProgressStrokeWidth).toInt()
+                val desRight: Int = (mCenterX + bmpWidth / 2 - mProgressStrokeWidth).toInt()
+                val desBottom: Int = (mCenterX + bmpWidth / 2 - mProgressStrokeWidth).toInt()
                 val desRect = Rect(desLeft, desTop, desRight, desBottom)
                 canvas?.drawBitmap(bmp, bmpRect, desRect, mProgressCenterPaint)
             }
@@ -452,8 +459,9 @@ class CircleProgressBar : View {
      * @param duration 动画执行时长.默认1s
      * @param start 动画开始时进度.默认0
      * @param end 动画终止时进度.默认最大值
+     * @param repeatCount 动画重复执行次数.默认为0不重复，ValueAnimator.INFINITE(无限循环)
      */
-    fun startAnimator(duration: Long = 1000, start: Int = 0, end: Int = mMax) {
+    fun startAnimator(duration: Long = 1000, start: Int = 0, end: Int = mMax, repeatCount: Int = 0) {
         if (mAnimator == null) {
             mAnimator = ValueAnimator()
         }
@@ -462,12 +470,12 @@ class CircleProgressBar : View {
             mProgress = it.animatedValue as Int
             mOnPressedListener?.onPressProcess(mProgress)
             if (mProgress == end && !isStopedAnim) {
-                mOnPressedListener?.onPressStop(mProgress)
+                mOnPressedListener?.onPressEnd()
                 isStopedAnim = true
             }
         }
         mAnimator?.duration = duration
-        mAnimator?.repeatCount = 0
+        mAnimator?.repeatCount = repeatCount
         mAnimator?.start()
 
         mOnPressedListener?.onPressStart()
@@ -480,7 +488,7 @@ class CircleProgressBar : View {
     fun stopAnimator() {
         if (mAnimator != null && mAnimator!!.isRunning) {
             if (!isStopedAnim) {
-                mOnPressedListener?.onPressStop(mAnimator!!.animatedValue as Int)
+                mOnPressedListener?.onPressInterrupt(mAnimator!!.animatedValue as Int)
                 isStopedAnim = true
             }
             if (mStopAnimType == STOP_ANIM_SIMPLE) {    //直接停止动画并恢复到进度0
@@ -515,8 +523,11 @@ class CircleProgressBar : View {
         //按下过程中响应，带当前进度值
         fun onPressProcess(progress: Int)
 
-        //结束按下响应，带结束时的进度值
-        fun onPressStop(progress: Int)
+        //中断按下响应，带中断时的进度值
+        fun onPressInterrupt(progress: Int)
+
+        //结束按下响应
+        fun onPressEnd()
     }
 
     interface ProgressFormatter {

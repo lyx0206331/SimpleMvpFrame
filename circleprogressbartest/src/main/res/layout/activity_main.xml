@@ -117,7 +117,7 @@
             app:style="solid_line"
             app:stop_anim_type="reverse_stop"
             app:center_color="@color/holo_blue_dark"
-            app:show_value="false"
+            app:show_value="true"
             app:center_src="@mipmap/ic_launcher_round" />
 
         <com.adrian.circleprogressbarlib.CircleProgressBar
@@ -132,15 +132,9 @@
 
         <com.adrian.circleprogressbarlib.FantasticButton
             android:id="@+id/fantastic_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="@dimen/default_margin"
-            app:progress_background_color="@color/holo_darker_gray"
-            app:progress_shader="radial"
-            app:progress_start_color="@color/holo_red_light"
-            app:progress_stroke_width="1dp"
-            app:progress_text_color="@color/holo_red_light"
-            app:style="solid" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/default_margin" />
 
     </LinearLayout>
 
