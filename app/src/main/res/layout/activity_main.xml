@@ -16,9 +16,7 @@
 
         <include layout="@layout/layout_supercircle" />
 
-        <include layout="@layout/layout_step_counter" />
-
-        <include layout="@layout/layout_chart_view1" />
+        <include layout="@layout/layout_circleprogressbar" />
 
         <TextView
             android:id="@+id/text"

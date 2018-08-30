@@ -2,42 +2,20 @@ package com.adrian.simplemvpframe;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.adrian.circleprogressbarlib.CircleProgressBar;
 import com.adrian.simplemvp.MvpPresenter;
 import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
-import com.adrian.simplemvpframe.views.chart_view.ChartView;
-import com.adrian.simplemvpframe.views.chart_view.StepCounterProgressKt;
 import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
     SuperCircleView mSuperCircleView;
     TextView textView;
-
-    private StepCounterProgressKt healthyProgressView;
-    private EditText et_input;
-    private Button bt_show;
-    private Button bt_reset;
-    private TextView tv_value;
-
-    private ChartView myChartView;
-    private LinearLayout linearLayout;
-    private LinearLayout llChart;
-    private List<Float> chartList;
+    CircleProgressBar mCircleProgressbar;
 
     TextView text;
     MvpPresenter presenter;
@@ -51,7 +29,7 @@ public class MainActivity extends BaseActivity implements MvpView {
 
         initStepCounter();
 
-        initChartView();
+        initCircleProgressbar();
 
         text = (TextView) findViewById(R.id.text);
 
@@ -79,96 +57,11 @@ public class MainActivity extends BaseActivity implements MvpView {
     }
 
     private void initStepCounter() {
-        et_input = (EditText) findViewById(R.id.et_input);
-        bt_show = (Button) findViewById(R.id.bt_show);
-        tv_value = (TextView) findViewById(R.id.tv_value);
-        bt_reset = findViewById(R.id.btn_reset);
-
-        healthyProgressView = (StepCounterProgressKt) findViewById(R.id.simple);
-
-        healthyProgressView.beginContinue(true);
-
-        healthyProgressView.setInterpolator(new AccelerateInterpolator());
-
-        healthyProgressView.setValue(17);
-
-        bt_show.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    float value = Float.valueOf(et_input.getText().toString().trim());
-                    if (value > 100) {
-                        throw new NumberFormatException();
-                    }
-                    healthyProgressView.setValue(value);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    Toast.makeText(MainActivity.this, "请输入有效进度", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
-
-        bt_reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                healthyProgressView.reset();
-            }
-        });
-
-        healthyProgressView.setOnValueChangeListener(new StepCounterProgressKt.OnValueChangeListener() {
-            @Override
-            public void onValueChange(float value) {
-                tv_value.setText((int) value + "");
-            }
-        });
     }
 
-    private void initChartView() {
-        myChartView = findViewById(R.id.chart_view1);
-
-        myChartView.setLeftColorBottom(getResources().getColor(R.color.leftColorBottom));
-        myChartView.setLeftColor(getResources().getColor(R.color.leftColor));
-        myChartView.setRightColor(getResources().getColor(R.color.rightColor));
-        myChartView.setRightColorBottom(getResources().getColor(R.color.rightBottomColor));
-        myChartView.setSelectLeftColor(getResources().getColor(R.color.selectLeftColor));
-        myChartView.setSelectRightColor(getResources().getColor(R.color.selectRightColor));
-        myChartView.setLineColor(getResources().getColor(R.color.xyColor));
-        chartList = new ArrayList<>();
-
-        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        linearLayout.removeView(llChart);
-        Random random = new Random();
-        while (chartList.size() < 24) {
-            int randomInt = random.nextInt(100);
-            chartList.add((float) randomInt);
-        }
-        myChartView.setList(chartList);
-        myChartView.setListener(new ChartView.OnClickNumberListener() {
-            @Override
-            public void clickNumber(int number, int x, int y) {
-                linearLayout.removeView(llChart);
-                //反射加载点击柱状图弹出布局
-                llChart = (LinearLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_shouru_zhichu, null);
-                TextView tvZhichu = (TextView) llChart.findViewById(R.id.tv_zhichu);
-                TextView tvShouru = (TextView) llChart.findViewById(R.id.tv_shouru);
-                tvZhichu.setText((number + 1) + "月支出" + " " + chartList.get(number * 2));
-                tvShouru.setText("收入: " + chartList.get(number * 2 + 1));
-                llChart.measure(0, 0);//调用该方法后才能获取到布局的宽度
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                        RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = x - 100;
-                if (x - 100 < 0) {
-                    params.leftMargin = 0;
-                } else if (x - 100 > linearLayout.getWidth() - llChart.getMeasuredWidth()) {
-                    //设置布局距左侧屏幕宽度减去布局宽度
-                    params.leftMargin = linearLayout.getWidth() - llChart.getMeasuredWidth();
-                }
-                llChart.setLayoutParams(params);
-                linearLayout.addView(llChart);
-            }
-        });
+    private void initCircleProgressbar() {
+        mCircleProgressbar = findViewById(R.id.circle_progressbar);
+//        mCircleProgressbar.startAnimator(1000, 0, 100, 0);
     }
 
     @Override

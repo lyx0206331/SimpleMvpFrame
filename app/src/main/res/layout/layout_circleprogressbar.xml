@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+        <com.adrian.circleprogressbarlib.CircleProgressBar
+            android:id="@+id/circle_progressbar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            app:progress_background_color="@android:color/transparent"
+            app:progress_end_color="@color/holo_green_light"
+            app:progress_start_color="@color/holo_green_light"
+            app:progress_stroke_width="3dp"
+            app:progress_text_color="@color/holo_green_light"
+            app:style="solid_line"
+            app:stop_anim_type="reverse_stop"
+            app:center_color="@color/holo_blue_dark"
+            app:show_value="true"
+            app:center_src="@mipmap/ic_launcher_round" />
+    </LinearLayout>
+</merge>
