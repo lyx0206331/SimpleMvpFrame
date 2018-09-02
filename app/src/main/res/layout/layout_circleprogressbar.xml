@@ -14,15 +14,16 @@
             android:layout_height="50dp"
             android:layout_margin="16dp"
             android:clickable="true"
-            app:progress_background_color="@android:color/transparent"
-            app:progress_end_color="@color/holo_green_light"
-            app:progress_start_color="@color/holo_green_light"
-            app:progress_stroke_width="3dp"
-            app:progress_text_color="@color/holo_green_light"
-            app:style="solid_line"
-            app:stop_anim_type="reverse_stop"
-            app:center_color="@color/holo_blue_dark"
-            app:show_value="true"
-            app:center_src="@mipmap/ic_launcher_round" />
+            app:cpb_background_color="@android:color/transparent"
+            app:cpb_end_color="@color/holo_green_light"
+            app:cpb_start_color="@color/holo_green_light"
+            app:cpb_stroke_width="3dp"
+            app:cpb_text_color="@color/holo_green_light"
+            app:cpb_style="solid_line"
+            app:cpb_stop_anim_type="reverse_stop"
+            app:cpb_center_color="@color/holo_blue_dark"
+            app:cpb_show_value="true"
+            app:cpb_center_src="@mipmap/ic_launcher_round"
+            app:cpb_continuable="false" />
     </LinearLayout>
 </merge>

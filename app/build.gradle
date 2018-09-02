@@ -33,7 +33,7 @@ dependencies {
     implementation project(':wheelviewpicker')
     implementation project(':chartviewlib')
     implementation project(':wheelviewlib')
-        implementation 'com.github.lyx0206331:CircleProgressBar:0.0.3'
+        implementation 'com.github.lyx0206331:CircleProgressBar:0.0.6'
 //    implementation project(':circleprogressbarlib')
 }
 repositories {
