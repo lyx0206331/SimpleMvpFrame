@@ -62,6 +62,27 @@ public class MainActivity extends BaseActivity implements MvpView {
     private void initCircleProgressbar() {
         mCircleProgressbar = findViewById(R.id.circle_progressbar);
 //        mCircleProgressbar.startAnimator(1000, 0, 100, 0);
+        mCircleProgressbar.setMOnPressedListener(new CircleProgressBar.OnPressedListener() {
+            @Override
+            public void onPressStart() {
+
+            }
+
+            @Override
+            public void onPressProcess(int i) {
+
+            }
+
+            @Override
+            public void onPressInterrupt(int i) {
+
+            }
+
+            @Override
+            public void onPressEnd() {
+                new DrawBitmapDialog(MainActivity.this).show();
+            }
+        });
     }
 
     @Override
