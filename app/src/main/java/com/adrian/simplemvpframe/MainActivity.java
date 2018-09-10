@@ -1,6 +1,7 @@
 package com.adrian.simplemvpframe;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -80,7 +81,7 @@ public class MainActivity extends BaseActivity implements MvpView {
 
             @Override
             public void onPressEnd() {
-                new DrawBitmapDialog(MainActivity.this).show();
+                startActivity(new Intent(MainActivity.this, TestNestedScrollViewActivity.class));
             }
         });
     }

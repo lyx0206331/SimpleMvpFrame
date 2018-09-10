@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical">
         <com.adrian.circleprogressbarlib.CircleProgressBar
             android:id="@+id/circle_progressbar"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="16dp"
+            android:layout_gravity="center_horizontal"
             android:clickable="true"
             app:cpb_background_color="@android:color/transparent"
             app:cpb_end_color="@color/holo_green_light"
@@ -25,5 +19,4 @@
             app:cpb_show_value="true"
             app:cpb_center_src="@mipmap/ic_launcher_round"
             app:cpb_continuable="false" />
-    </LinearLayout>
 </merge>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.adrian.simplemvpframe.views.MyNestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/myNestedScrollView"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="800dp"
+            android:gravity="center"
+            android:background="@color/holo_blue_dark"
+            android:text="Part1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="800dp"
+            android:gravity="center"
+            android:background="@color/holo_green_light"
+            android:text="Part2" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="800dp"
+            android:gravity="center"
+            android:background="@color/holo_red_light"
+            android:text="Part3" />
+    </LinearLayout>
+
+</com.adrian.simplemvpframe.views.MyNestedScrollView>
