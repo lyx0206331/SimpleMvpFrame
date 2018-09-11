@@ -1,11 +1,13 @@
 package com.adrian.heartanimation
 
+import android.animation.TypeEvaluator
+
 /**
  * date:2018/9/11 19:36
  * author：RanQing
  * description：
  */
-object ArgbEvaluator {
+object ArgbEvaluator : TypeEvaluator<Any> {
 
     /**
      * This function returns the calculated in-between value for a color
@@ -23,7 +25,7 @@ object ArgbEvaluator {
      * color channels and interpolating each one separately, recombining the
      * resulting values in the same way.
      */
-    fun evaluate(fraction: Float, startValue: Any, endValue: Float): Any {
+    override fun evaluate(fraction: Float, startValue: Any, endValue: Any): Any {
         val startInt = startValue as Int
         val startA = startInt.shr(24).and(0xff)
         val startR = startInt.shr(16).and(0xff)
