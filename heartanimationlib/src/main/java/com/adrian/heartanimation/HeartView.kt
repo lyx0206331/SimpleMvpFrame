@@ -119,7 +119,7 @@ class HeartView : View, Checkable {
         mCycleTime = ta.getInt(R.styleable.PraiseView_durationTime, 600).toLong()
         mDefaultColor = ta.getColor(R.styleable.PraiseView_defaultColor, DEFAULT_COLOR)
         mCheckedColor = ta.getColor(R.styleable.PraiseView_checkedColor, CHECKED_COLOR)
-        mUnLikeType = ta.getInt(R.styleable.LikeView_unlike_style, NORMAL)
+        mUnLikeType = ta.getInt(R.styleable.PraiseView_unlike_style, NORMAL)
         ta.recycle()
         mOffset = c * mRadius
         mCenterX = mRadius
@@ -346,9 +346,9 @@ class HeartView : View, Checkable {
 
         mPaint.style = Paint.Style.FILL
         for (i in 0..6) {
-            canvas.drawCircle((rDotS * Math.sin(angleA)) as Float, (rDotS * Math.cos(angleA)) as Float, dotR, mPaint)
+            canvas.drawCircle((rDotS * Math.sin(angleA)).toFloat(), (rDotS * Math.cos(angleA)).toFloat(), dotR, mPaint)
             angleA += 2 * Math.PI / 7
-            canvas.drawCircle((rDotL * Math.sin(angleB)) as Float, (rDotL * Math.cos(angleB)) as Float, dotR, mPaint)
+            canvas.drawCircle((rDotL * Math.sin(angleB)).toFloat(), (rDotL * Math.cos(angleB)).toFloat(), dotR, mPaint)
             angleB += 2 * Math.PI / 7
         }
         mCurrentRadius = mRadius / 3 + offL * 4
@@ -362,8 +362,11 @@ class HeartView : View, Checkable {
 
         var angleA = 0.0
         var angleB = -Math.PI / 20
-        val dotRS: Float
-        val dotRL: Float
+        val dotRS: Float = dotR * (1 - mCurrentPercent)
+        val dotRL: Float = if (dotR * (1 - mCurrentPercent) * 4 > dotR)
+            dotR
+        else
+            dotR * (1 - mCurrentPercent) * 3
         if (rDotL < 2.6 * mRadius) {//限制圆点的扩散范围
             rDotS += dotR / 17
             rDotL += dotR / 14
@@ -377,17 +380,12 @@ class HeartView : View, Checkable {
         }
 
         if (isMax && mCurrentRadius > mRadius) {
-            mCurrentRadius = mCurrentRadius - dotR / 16
+            mCurrentRadius -= dotR / 16
 
         }
         drawHeart(canvas, mCurrentRadius, mCheckedColor)
 
-        mPaint.alpha = (255 * (1 - mCurrentPercent)) as Int//圆点逐渐透明
-        dotRS = dotR * (1 - mCurrentPercent)
-        dotRL = if (dotR * (1 - mCurrentPercent) * 4 > dotR)
-            dotR
-        else
-            dotR * (1 - mCurrentPercent) * 3
+        mPaint.alpha = (255 * (1 - mCurrentPercent)).toInt()//圆点逐渐透明
         for (i in 0..6) {
             mPaint.color = dotColors[i]
             canvas.drawCircle((rDotS * Math.sin(angleA)).toFloat(), ((rDotS * Math.cos(angleA))).toFloat(), dotRS, mPaint)
@@ -399,7 +397,7 @@ class HeartView : View, Checkable {
     }
 
     /**
-     * 初始化Bézier 曲线四组控制点
+     * 初始化贝塞尔曲线四组控制点
      */
     private fun initControlPoints(mRadius: Float) {
         mOffset = c * mRadius
@@ -435,10 +433,10 @@ class HeartView : View, Checkable {
      * 点赞的变化效果
      */
     fun like() {
-        if (mAnimatorTime != null && mAnimatorTime!!.isRunning()) {
+        if (mAnimatorTime != null && mAnimatorTime!!.isRunning) {
             return
         }
-        if (mBrokenTime != null && mBrokenTime!!.isRunning()) {
+        if (mBrokenTime != null && mBrokenTime!!.isRunning) {
             return
         }
         resetState()
@@ -447,9 +445,9 @@ class HeartView : View, Checkable {
         mAnimatorTime?.interpolator = LinearInterpolator()//需要随时间匀速变化
         mAnimatorTime?.start()
         mAnimatorTime?.addUpdateListener { animation ->
-            val animatedValue = animation.animatedValue as Float
+            val animatedValue = animation.animatedValue as Int
 
-            if (animatedValue == 0f) {
+            if (animatedValue == 0) {
                 if (mAnimatorArgb == null || !mAnimatorArgb!!.isRunning) {
                     mAnimatorArgb = ofArgb(mDefaultColor, -0x8b897, -0x218434)
                     mAnimatorArgb?.duration = mCycleTime * 28 / 120
@@ -457,7 +455,7 @@ class HeartView : View, Checkable {
                     mAnimatorArgb?.start()
                 }
             } else if (animatedValue <= 100) {
-                val percent = calcPercent(0f, 100f, animatedValue)
+                val percent = calcPercent(0, 100, animatedValue)
                 mCurrentRadius = mRadius - mRadius * percent
                 if (mAnimatorArgb != null && mAnimatorArgb!!.isRunning) {
                     mCurrentColor = mAnimatorArgb?.animatedValue as Int
@@ -466,7 +464,7 @@ class HeartView : View, Checkable {
                 invalidate()
 
             } else if (animatedValue <= 280) {
-                val percent = calcPercent(100f, 340f, animatedValue)//此阶段未达到最大半径
+                val percent = calcPercent(100, 340, animatedValue)//此阶段未达到最大半径
                 mCurrentRadius = 2 * mRadius * percent
                 if (mAnimatorArgb != null && mAnimatorArgb!!.isRunning) {
                     mCurrentColor = mAnimatorArgb?.animatedValue as Int
@@ -474,7 +472,7 @@ class HeartView : View, Checkable {
                 mCurrentState = CIRCLE_VIEW
                 invalidate()
             } else if (animatedValue <= 340) {
-                val percent = calcPercent(100f, 340f, animatedValue)//半径接上一阶段增加，此阶段外环半径已经最大值
+                val percent = calcPercent(100, 340, animatedValue)//半径接上一阶段增加，此阶段外环半径已经最大值
                 mCurrentPercent = if (1f - percent + 0.2f > 1f) 1f else 1f - percent + 0.2f
                 //用于计算圆环宽度，最小0.2，与动画进度负相关
                 mCurrentRadius = 2 * mRadius * percent
@@ -484,18 +482,18 @@ class HeartView : View, Checkable {
                 mCurrentState = RING_VIEW
                 invalidate()
             } else if (animatedValue <= 480) {
-                val percent = calcPercent(340f, 480f, animatedValue)//内环半径增大直至消亡
+                val percent = calcPercent(340, 480, animatedValue)//内环半径增大直至消亡
                 mCurrentPercent = percent
                 mCurrentRadius = 2 * mRadius//外环半径不再改变
                 mCurrentState = RING_DOT_HEART_VIEW
                 invalidate()
             } else if (animatedValue < 1200) {
-                val percent = calcPercent(480f, 1200f, animatedValue)
+                val percent = calcPercent(480, 1200, animatedValue)
                 mCurrentPercent = percent
                 mCurrentState = DOT_HEART_VIEW
                 invalidate()
 
-            } else if (animatedValue == 1200f) {
+            } else if (animatedValue == 1200) {
                 mCurrentColor = mCheckedColor
                 mCurrentRadius = mRadius
                 mCurrentState = HEART_VIEW
@@ -559,7 +557,7 @@ class HeartView : View, Checkable {
         rDotL = 0f
         offS = 0f
         offL = 0f
-        isChecked = true
+        mIsChecked = true
     }
 
     /**
@@ -574,11 +572,11 @@ class HeartView : View, Checkable {
         rDotL = 0f
         offS = 0f
         offL = 0f
-        isChecked = false
+        mIsChecked = false
     }
 
-    private fun calcPercent(start: Float, end: Float, current: Float): Float {
-        return (current - start) / (end - start)
+    private fun calcPercent(start: Int, end: Int, current: Int): Float {
+        return 1f * (current - start) / (end - start)
     }
 
 
@@ -601,10 +599,10 @@ class HeartView : View, Checkable {
         }
         if (isSetChecked) {
             mCurrentColor = mCheckedColor
-            isChecked = true
+            mIsChecked = true
         } else {
             mCurrentColor = mDefaultColor
-            isChecked = false
+            mIsChecked = false
         }
         mCurrentRadius = mRadius
         mCurrentState = HEART_VIEW

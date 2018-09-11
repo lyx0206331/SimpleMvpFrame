@@ -7,7 +7,7 @@ import android.animation.TypeEvaluator
  * author：RanQing
  * description：
  */
-object ArgbEvaluator : TypeEvaluator<Any> {
+object ArgbEvaluator : TypeEvaluator<Int> {
 
     /**
      * This function returns the calculated in-between value for a color
@@ -25,22 +25,20 @@ object ArgbEvaluator : TypeEvaluator<Any> {
      * color channels and interpolating each one separately, recombining the
      * resulting values in the same way.
      */
-    override fun evaluate(fraction: Float, startValue: Any, endValue: Any): Any {
-        val startInt = startValue as Int
-        val startA = startInt.shr(24).and(0xff)
-        val startR = startInt.shr(16).and(0xff)
-        val startG = startInt.shr(8).and(0xff)
-        val startB = startInt.and(0xff)
+    override fun evaluate(fraction: Float, startValue: Int, endValue: Int): Int {
+        val startA = startValue.shr(24).and(0xff)
+        val startR = startValue.shr(16).and(0xff)
+        val startG = startValue.shr(8).and(0xff)
+        val startB = startValue.and(0xff)
 
-        val endInt = endValue as Int
-        val endA = endInt.shr(24).and(0xff)
-        val endR = endInt.shr(16).and(0xff)
-        val endG = endInt.shr(8).and(0xff)
-        val endB = endInt.and(0xff)
+        val endA = endValue.shr(24).and(0xff)
+        val endR = endValue.shr(16).and(0xff)
+        val endG = endValue.shr(8).and(0xff)
+        val endB = endValue.and(0xff)
 
-        return startA + (fraction * (endA - startA)) as Int shl 24 or
-                startR + (fraction * (endR - startR)) as Int shl 16 or
-                startG + (fraction * (endG - startG)) as Int shl 8 or
-                startB + (fraction * (endB - startB)) as Int
+        return ((startA + (fraction * (endA - startA))).toInt() shl 24) or
+                ((startR + (fraction * (endR - startR))).toInt() shl 16) or
+                ((startG + (fraction * (endG - startG))).toInt() shl 8) or
+                (startB + (fraction * (endB - startB))).toInt()
     }
 }
