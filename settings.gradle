@@ -1,1 +1,1 @@
-include ':app', ':simplemvp', ':wheelviewpicker', ':pickerlib', ':wheelviewlib', ':chartviewlib', ':progressbarlib', ':progressbartest', ':transitionanimlib', ':transitionanimtest', ':heartanimationlib', ':heartanimsample', ':praiseanimlib'
+include ':app', ':simplemvp', ':wheelviewpicker', ':pickerlib', ':wheelviewlib', ':chartviewlib', ':progressbarlib', ':progressbartest', ':transitionanimlib', ':transitionanimtest', ':heartanimationlib', ':heartanimsample'
