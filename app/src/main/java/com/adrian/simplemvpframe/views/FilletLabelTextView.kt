@@ -13,7 +13,7 @@ import org.jetbrains.anko.textColor
 /**
  * date:2018/9/15 14:55
  * author：RanQing
- * description：
+ * description：圆角带边框及填充色的TextView
  */
 class FilletLabelTextView : TextView {
 

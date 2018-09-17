@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity implements MvpView {
 
             @Override
             public void onPressInterrupt(int i) {
-
+                startActivity(new Intent(MainActivity.this, TestSnackbarUtilsActivity.class));
             }
 
             @Override
