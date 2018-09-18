@@ -180,7 +180,7 @@ class SnackbarUtils {
      */
     fun backColor(@ColorInt backgroundColor: Int): SnackbarUtils {
         if (getSnackbar() != null) {
-            getSnackbar()!!.getView().setBackgroundColor(backgroundColor)
+            getSnackbar()!!.view.setBackgroundColor(backgroundColor)
         }
         return this
     }
@@ -191,7 +191,7 @@ class SnackbarUtils {
      */
     fun messageColor(@ColorInt messageColor: Int): SnackbarUtils {
         if (getSnackbar() != null) {
-            (getSnackbar()!!.getView().findViewById(R.id.snackbar_text) as TextView).setTextColor(messageColor)
+            (getSnackbar()!!.view.findViewById(R.id.snackbar_text) as TextView).setTextColor(messageColor)
         }
         return this
     }
@@ -202,7 +202,7 @@ class SnackbarUtils {
      */
     fun actionColor(@ColorInt actionTextColor: Int): SnackbarUtils {
         if (getSnackbar() != null) {
-            (getSnackbar()!!.getView().findViewById(R.id.snackbar_action) as Button).setTextColor(actionTextColor)
+            (getSnackbar()!!.view.findViewById(R.id.snackbar_action) as Button).setTextColor(actionTextColor)
         }
         return this
     }
@@ -242,9 +242,9 @@ class SnackbarUtils {
      */
     fun gravityFrameLayout(gravity: Int): SnackbarUtils {
         if (getSnackbar() != null) {
-            val params = FrameLayout.LayoutParams(getSnackbar()!!.getView().getLayoutParams().width, getSnackbar()!!.getView().getLayoutParams().height)
+            val params = FrameLayout.LayoutParams(getSnackbar()!!.view.layoutParams.width, getSnackbar()!!.view.layoutParams.height)
             params.gravity = gravity
-            getSnackbar()!!.getView().setLayoutParams(params)
+            getSnackbar()!!.view.layoutParams = params
         }
         return this
     }
@@ -645,23 +645,23 @@ class SnackbarUtils {
             val locations = IntArray(2)
             targetView.getLocationOnScreen(locations)
             val snackbarHeight = calculateSnackBarHeight()
-            val screenHeight = ScreenUtil.getScreenHeight(getSnackbar()!!.getView().getContext())
+            val screenHeight = ScreenUtil.getScreenHeight(getSnackbar()!!.view.context)
             //必须保证指定View的底部可见 且 单行Snackbar可以完整的展示
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 //为什么要'+2'? 因为在Android L(Build.VERSION_CODES.LOLLIPOP)以上,例如Button会有一定的'阴影(shadow)',阴影的大小由'高度(elevation)'决定.
                 //为了在Android L以上的系统中展示的Snackbar不要覆盖targetView的阴影部分太大比例,所以人为减小2px的layout_marginBottom属性.
-                if (locations[1] + targetView.getHeight() >= contentViewTop && locations[1] + targetView.getHeight() + snackbarHeight + 2 <= screenHeight) {
+                if (locations[1] + targetView.height >= contentViewTop && locations[1] + targetView.height + snackbarHeight + 2 <= screenHeight) {
                     gravityFrameLayout(Gravity.BOTTOM)
-                    val params = getSnackbar()!!.getView().getLayoutParams()
-                    (params as ViewGroup.MarginLayoutParams).setMargins(marginLeft, 0, marginRight, screenHeight - (locations[1] + targetView.getHeight() + snackbarHeight + 2))
-                    getSnackbar()!!.getView().setLayoutParams(params)
+                    val params = getSnackbar()!!.view.layoutParams
+                    (params as ViewGroup.MarginLayoutParams).setMargins(marginLeft, 0, marginRight, screenHeight - (locations[1] + targetView.height + snackbarHeight + 2))
+                    getSnackbar()!!.view.layoutParams = params
                 }
             } else {
-                if (locations[1] + targetView.getHeight() >= contentViewTop && locations[1] + targetView.getHeight() + snackbarHeight <= screenHeight) {
+                if (locations[1] + targetView.height >= contentViewTop && locations[1] + targetView.height + snackbarHeight <= screenHeight) {
                     gravityFrameLayout(Gravity.BOTTOM)
-                    val params = getSnackbar()!!.getView().getLayoutParams()
-                    (params as ViewGroup.MarginLayoutParams).setMargins(marginLeft, 0, marginRight, screenHeight - (locations[1] + targetView.getHeight() + snackbarHeight))
-                    getSnackbar()!!.getView().setLayoutParams(params)
+                    val params = getSnackbar()!!.view.layoutParams
+                    (params as ViewGroup.MarginLayoutParams).setMargins(marginLeft, 0, marginRight, screenHeight - (locations[1] + targetView.height + snackbarHeight))
+                    getSnackbar()!!.view.layoutParams = params
                 }
             }
         }

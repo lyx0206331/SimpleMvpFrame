@@ -1,6 +1,8 @@
 package com.adrian.simplemvpframe
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -14,7 +16,9 @@ import android.widget.Toast
 import com.adrian.simplemvpframe.R.id.bt_confirm
 import com.adrian.simplemvpframe.views.snackbar.SnackbarUtils
 import com.adrian.simplemvpframe.utils.ScreenUtil
+import com.adrian.simplemvpframe.utils.SimpleSnackbarUtil
 import kotlinx.android.synthetic.main.activity_test_snackbar_utils.*
+import org.jetbrains.anko.backgroundColor
 
 
 class TestSnackbarUtilsActivity : AppCompatActivity(), View.OnClickListener {
@@ -217,11 +221,15 @@ class TestSnackbarUtilsActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.bt_bellow -> {
                 //TODO implement
-                var total1 = 0
-                val l2 = IntArray(2)
-                window.findViewById<View>(android.R.id.content).getLocationInWindow(l2)
-                total1 = l2[1]
-                SnackbarUtils.Short(bt_bellow, "设置Snackbar显示在指定View的下方").bellow(bt_gravity_center, total1, 32, 32).show()
+//                var total1 = 0
+//                val l2 = IntArray(2)
+//                window.findViewById<View>(android.R.id.content).getLocationInWindow(l2)
+//                total1 = l2[1]
+//                SnackbarUtils.Short(bt_bellow, "设置Snackbar显示在指定View的下方").bellow(bt_gravity_center, total1, 32, 32).show()
+
+
+                SimpleSnackbarUtil.build(bt_margins, "测试一下").setDuration(5000).setRoundCorner(60f).setGravity(Gravity.CENTER)
+                        .setStroke(2, Color.GREEN).setBackgroundColor(Color.YELLOW).below(bt_radius_stroke, 160, 160).show()
             }
             R.id.bt_multimethods -> {
                 var total2 = 0
