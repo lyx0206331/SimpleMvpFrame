@@ -22,7 +22,7 @@ import org.jetbrains.anko.textColor
 /**
  * date:2018/9/18 11:31
  * author：RanQing
- * description：显示于某一控件下的Snackbar
+ * description：显示于某一控件下方的Snackbar
  */
 object SimpleSnackbarUtil {
 
