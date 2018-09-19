@@ -1,6 +1,10 @@
 package com.adrian.simplemvpframe.utils
 
+import android.util.Log
+import com.adrian.simplemvpframe.model.TestModel
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.lang.reflect.Field
 
 /**
  * date:2018/9/19 19:13
@@ -39,5 +43,22 @@ object ArrayListUtil {
 //                value::class
             }
         }
+    }
+
+    fun logE(msg: String) {
+        Log.e("TEST", msg)
+    }
+
+    fun test(obj: Any) {
+        obj.getAllFields().map {
+            logE("${it.name}")
+        }
+    }
+
+    inline fun <reified T> T.getAllFields() = T::class.java.declaredFields
+
+    inline fun <reified T> getFieldByName(t: T, fieldName: String): Field {
+        val clazz = T::class.java
+        return clazz.getDeclaredField(fieldName)
     }
 }
