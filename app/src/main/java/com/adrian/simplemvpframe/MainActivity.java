@@ -11,7 +11,7 @@ import com.adrian.simplemvp.MvpPresenter;
 import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
 import com.adrian.simplemvpframe.model.TestModel;
-import com.adrian.simplemvpframe.utils.ArrayListUtil;
+import com.adrian.simplemvpframe.utils.SimpleOpUtil;
 import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
 
 public class MainActivity extends BaseActivity implements MvpView {
@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity implements MvpView {
         presenter = new MvpPresenter();
         presenter.attachView(this);
 
-        ArrayListUtil.INSTANCE.test(new TestModel());
+        SimpleOpUtil.INSTANCE.test();
     }
 
     private void initSuperCircle() {
