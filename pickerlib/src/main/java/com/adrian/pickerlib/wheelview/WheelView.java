@@ -123,19 +123,19 @@ public class WheelView extends View {
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.wheelview, 0, 0);
-            mGravity = a.getInt(R.styleable.wheelview_wv_gravity, Gravity.CENTER);
-            textColorOut = a.getColor(R.styleable.wheelview_wv_textColorOut, 0xFFa8a8a8);
-            textColorCenter = a.getColor(R.styleable.wheelview_wv_textColorCenter, 0xFF2a2a2a);
-            dividerColor = a.getColor(R.styleable.wheelview_wv_dividerColor, 0xFFd5d5d5);
-            centerBackground = a.getColor(R.styleable.wheelview_wv_centerBackground, Color.TRANSPARENT);
-            textSelectedSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textSelectedSize, sp2px(context, 16));
-            textUnselectedSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textUnselectedSize, sp2px(context, 16));
-            textLabelColor = a.getColor(R.styleable.wheelview_wv_textLabelColor, sp2px(context, 16));
-            textLabelSize = a.getDimensionPixelOffset(R.styleable.wheelview_wv_textLabelSize, sp2px(context, 16));
-            lineSpacingMultiplier = a.getFloat(R.styleable.wheelview_wv_lineSpacingMultiplier, 2.0F);
-            isLoop = a.getBoolean(R.styleable.wheelview_wv_isLoop, false);
-            initPosition = a.getInt(R.styleable.wheelview_wv_initPosition, -1);
-            visibleItemCount = a.getInt(R.styleable.wheelview_wv_visibleItemCount, 7);
+            mGravity = a.getInt(R.styleable.wheelview_p_wv_gravity, Gravity.CENTER);
+            textColorOut = a.getColor(R.styleable.wheelview_p_wv_textColorOut, 0xFFa8a8a8);
+            textColorCenter = a.getColor(R.styleable.wheelview_p_wv_textColorCenter, 0xFF2a2a2a);
+            dividerColor = a.getColor(R.styleable.wheelview_p_wv_dividerColor, 0xFFd5d5d5);
+            centerBackground = a.getColor(R.styleable.wheelview_p_wv_centerBackground, Color.TRANSPARENT);
+            textSelectedSize = a.getDimensionPixelOffset(R.styleable.wheelview_p_wv_textSelectedSize, sp2px(context, 16));
+            textUnselectedSize = a.getDimensionPixelOffset(R.styleable.wheelview_p_wv_textUnselectedSize, sp2px(context, 16));
+            textLabelColor = a.getColor(R.styleable.wheelview_p_wv_textLabelColor, sp2px(context, 16));
+            textLabelSize = a.getDimensionPixelOffset(R.styleable.wheelview_p_wv_textLabelSize, sp2px(context, 16));
+            lineSpacingMultiplier = a.getFloat(R.styleable.wheelview_p_wv_lineSpacingMultiplier, 2.0F);
+            isLoop = a.getBoolean(R.styleable.wheelview_p_wv_isLoop, false);
+            initPosition = a.getInt(R.styleable.wheelview_p_wv_initPosition, -1);
+            visibleItemCount = a.getInt(R.styleable.wheelview_p_wv_visibleItemCount, 7);
             a.recycle();//回收内存
         }
 

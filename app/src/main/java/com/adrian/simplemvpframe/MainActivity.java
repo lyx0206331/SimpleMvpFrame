@@ -10,7 +10,6 @@ import com.adrian.circleprogressbarlib.CircleProgressBar;
 import com.adrian.simplemvp.MvpPresenter;
 import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
-import com.adrian.simplemvpframe.model.TestModel;
 import com.adrian.simplemvpframe.utils.SimpleOpUtil;
 import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
 
@@ -85,7 +84,7 @@ public class MainActivity extends BaseActivity implements MvpView {
 
             @Override
             public void onPressEnd() {
-                startActivity(new Intent(MainActivity.this, TestNestedScrollViewActivity.class));
+
             }
         });
     }

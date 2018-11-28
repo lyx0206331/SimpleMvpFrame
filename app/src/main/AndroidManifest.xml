@@ -47,7 +47,6 @@
             </intent-filter>
             -->
         </activity>
-        <activity android:name=".TestNestedScrollViewActivity" />
         <activity android:name=".TestSnackbarUtilsActivity"></activity>
     </application>
 
