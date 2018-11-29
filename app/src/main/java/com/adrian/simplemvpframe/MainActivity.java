@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity implements MvpView {
 
             @Override
             public void onPressEnd() {
-
+                startActivity(new Intent(MainActivity.this, BitmapActivity.class));
             }
         });
     }

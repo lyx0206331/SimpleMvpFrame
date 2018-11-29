@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.adrian.simplemvpframe">
 
+    <!-- 往SDCard写入数据权限 -->
+       
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <!--  从SDCard读取数据权限 -->
+       
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -47,7 +54,8 @@
             </intent-filter>
             -->
         </activity>
-        <activity android:name=".TestSnackbarUtilsActivity"></activity>
+        <activity android:name=".TestSnackbarUtilsActivity" />
+        <activity android:name=".BitmapActivity"></activity>
     </application>
 
 </manifest>
