@@ -4,8 +4,6 @@ import android.content.Context
 import android.database.DataSetObserver
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.annotation.ColorInt
-import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -13,7 +11,8 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import java.util.*
+import androidx.annotation.ColorInt
+import androidx.viewpager.widget.ViewPager
 import kotlin.math.abs
 
 /**
@@ -22,38 +21,40 @@ import kotlin.math.abs
  * description：
  */
 class DotsIndicator @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
+
     companion object {
         const val DEFAULT_POINT_COLOR = Color.CYAN
         const val DEFAULT_WIDTH_FACTOR = 2.5f
     }
 
-    var dots: ArrayList<ImageView>? = null
-    var viewPager: ViewPager? = null
+    val dots by lazy {
+        arrayListOf<ImageView>()
+    }
+    var mViewPager: ViewPager? = null
         set(value) {
             field = value
             setUpViewPager()
             refreshDots()
         }
-    var dotsSize = 0f
-    var dotsCornerRadius = 0f
-    var dotsSpacing = 0f
+    var dotsSize = dp2px(context, 16)
+    var dotsCornerRadius = dotsSize / 2
+    var dotsSpacing = dp2px(context, 4)
     var currentPage = 0
     var dotsWidthFactor = DEFAULT_WIDTH_FACTOR
     @ColorInt
     var dotsColor = DEFAULT_POINT_COLOR
-    var dotsClickable = false
+    var dotsClickable = true
     var pageChangedListener: ViewPager.OnPageChangeListener? = null
 
     init {
-        dots = arrayListOf()
         orientation = HORIZONTAL
 
-        dotsSize = dp2px(context, 16)
-        dotsSpacing = dp2px(context, 4)
-        dotsCornerRadius = dotsSize / 2
+//        dotsSize = dp2px(context, 16)
+//        dotsSpacing = dp2px(context, 4)
+//        dotsCornerRadius = dotsSize / 2
 
         if (attrs != null) {
-            val a = context.obtainStyledAttributes(attrs, R.styleable.DotsIndicator)
+            val a = context.obtainStyledAttributes(attrs, R.styleable.DotsIndicator, defStyleAttr, 0)
             dotsColor = a.getColor(R.styleable.DotsIndicator_dotsColor, DEFAULT_POINT_COLOR)
             setUpCircleColors(dotsColor)
 
@@ -81,11 +82,11 @@ class DotsIndicator @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     private fun refreshDots() {
-        if (viewPager != null && viewPager?.adapter != null) {
-            if (dots?.size.orZero() < viewPager?.adapter?.count.orZero()) {
-                addDots(viewPager?.adapter?.count.orZero() - dots?.size.orZero())
-            } else if (dots?.size.orZero() > viewPager?.adapter?.count.orZero()) {
-                removeDots(viewPager?.adapter?.count.orZero() - dots?.size.orZero())
+        if (mViewPager != null && mViewPager?.adapter != null) {
+            if (dots?.size.orZero() < mViewPager?.adapter?.count.orZero()) {
+                addDots(mViewPager?.adapter?.count.orZero() - dots?.size.orZero())
+            } else if (dots?.size.orZero() > mViewPager?.adapter?.count.orZero()) {
+                removeDots(dots?.size.orZero() - mViewPager?.adapter?.count.orZero())
             }
             setUpDotsAnimators()
         } else {
@@ -95,7 +96,7 @@ class DotsIndicator @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     private fun setUpDotsAnimators() {
-        viewPager?.apply {
+        mViewPager?.apply {
             if (adapter != null && adapter?.count.orZero() > 0) {
                 if (currentPage < dots?.size.orZero()) {
                     val dot = dots?.get(currentPage)
@@ -122,9 +123,7 @@ class DotsIndicator @JvmOverloads constructor(context: Context, attrs: Attribute
                     removeOnPageChangeListener(pageChangedListener!!)
                 }
                 setUpOnPageChangedListener()
-                if (pageChangedListener != null) {
-                    addOnPageChangeListener(pageChangedListener!!)
-                }
+                addOnPageChangeListener(pageChangedListener!!)
             }
         }
     }
@@ -183,7 +182,7 @@ class DotsIndicator @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     private fun setUpViewPager() {
-        viewPager?.adapter?.apply {
+        mViewPager?.adapter?.apply {
             registerDataSetObserver(object : DataSetObserver() {
                 override fun onChanged() {
                     super.onChanged()
@@ -202,8 +201,7 @@ class DotsIndicator @JvmOverloads constructor(context: Context, attrs: Attribute
 
     private fun setUpCircleColors(@ColorInt color: Int) {
         dots?.forEach {
-            //            ((it.background) as GradientDrawable).color = color
-            it.setBackgroundColor(color)
+            ((it.background) as GradientDrawable).setColor(color)
         }
     }
 
@@ -216,12 +214,11 @@ class DotsIndicator @JvmOverloads constructor(context: Context, attrs: Attribute
             lp.height = dotsSize.toInt()
             lp.setMargins(dotsSpacing.toInt(), 0, dotsSpacing.toInt(), 0)
             (iv.background as GradientDrawable).cornerRadius = dotsCornerRadius
-//            (iv.background as GradientDrawable).color = dotsColor
-            iv.setBackgroundColor(dotsColor)
+            (iv.background as GradientDrawable).setColor(dotsColor)
 
             dot.setOnClickListener {
-                if (dotsClickable && viewPager != null && viewPager?.adapter != null && i < viewPager?.adapter?.count.orZero()) {
-                    viewPager?.setCurrentItem(i, true)
+                if (dotsClickable && mViewPager != null && mViewPager?.adapter != null && i < mViewPager?.adapter?.count.orZero()) {
+                    mViewPager?.setCurrentItem(i, true)
                 }
             }
 
