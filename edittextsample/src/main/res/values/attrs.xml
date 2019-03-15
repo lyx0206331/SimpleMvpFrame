@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VerifyCodeEditor">
+        <!--输入框数量-->
+        <attr name="vceInputCount" format="integer" />
+        <!--输入框间距-->
+        <attr name="vceInputSpace" format="dimension|reference" />
+        <!--下划线高度-->
+        <attr name="vceUnderlineHeight" format="dimension|reference" />
+        <!--输入文本大小-->
+        <attr name="vceInputTextSize" format="dimension|reference" />
+        <!--下划线选中颜色-->
+        <attr name="vceFocusColor" format="color|reference" />
+        <!--下划线未选中颜色-->
+        <attr name="vceUnfocusColor" format="color|reference" />
+        <!--下划线距文本的距离-->
+        <attr name="vceUnderlineSpace" format="dimension|reference" />
+        <!--光标-->
+        <attr name="vceCursorDrawable" format="reference" />
+    </declare-styleable>
+</resources>
