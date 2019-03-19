@@ -43,6 +43,11 @@ open class VerifyCodeEditor @JvmOverloads constructor(context: Context, attrs: A
     private val underlineList by lazy { arrayListOf<View>() }
 
     var currentPosition = 0
+        set(value) {
+            field = if (value > editTextList.size - 1) editTextList.size - 1 else value
+            editTextList[field].requestFocus()
+            editTextList[field].setSelection(editTextList[field].text?.length ?: 0)
+        }
     var listener: InputCompleteListener? = null
     //有焦点时下划线颜色
     @ColorInt
@@ -115,6 +120,14 @@ open class VerifyCodeEditor @JvmOverloads constructor(context: Context, attrs: A
 
     //输入内容
     var content = ""
+        set(value) {
+            field = value
+            if (value.length == inputCount) {
+                for ((i, editor) in editTextList.withIndex()) {
+                    editor.setText("${value[i]}")
+                }
+            }
+        }
         get() {
             if (editTextList.isEmpty()) return ""
             val builder = StringBuilder()
