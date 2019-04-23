@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import com.adrian.simplemvp.R;
 
+/**
+ * @author Administrator
+ */
 public abstract class BaseActivity extends AppCompatActivity implements IBaseView {
 
     private ProgressDialog mProgressDialog;

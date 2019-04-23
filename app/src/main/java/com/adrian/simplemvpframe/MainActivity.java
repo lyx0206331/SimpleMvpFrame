@@ -3,6 +3,7 @@ package com.adrian.simplemvpframe;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,6 +13,12 @@ import com.adrian.simplemvp.MvpView;
 import com.adrian.simplemvp.base.BaseActivity;
 import com.adrian.simplemvpframe.utils.SimpleOpUtil;
 import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
@@ -29,7 +36,15 @@ public class MainActivity extends BaseActivity implements MvpView {
 
         initSuperCircle();
 
-        initStepCounter();
+//        Log.e("REALROUND", "parseDouble 0.125: " + realRounding(0.125, 2));
+//        Log.e("REALROUND", "parseDouble 5.749: " + realRounding(5.749, 1));
+
+        ArrayList<Integer> primes = getPrimeNumbers(2, 100);
+
+        for (int prime :
+                primes) {
+            Log.e("PRIME", "获取2 - 100之间的质数:" + prime);
+        }
 
         initCircleProgressbar();
 
@@ -60,7 +75,47 @@ public class MainActivity extends BaseActivity implements MvpView {
         valueAnimator.start();
     }
 
-    private void initStepCounter() {
+    /**
+     * 获取一定范围内的质数
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    private ArrayList getPrimeNumbers(int start, int end) {
+        if (start < 2 || start >= end) {
+            throw new InvalidParameterException("参数不合法，请传入不小于2的整数");
+        }
+        ArrayList<Integer> primeNums = new ArrayList<>();
+        if (start == 2) {
+            primeNums.add(2);
+        }
+        //偶数不用计算
+        for (int i = start % 2 == 0 ? start + 1 : start; i < end; i += 2) {
+            int centerValue = (i + 2) / 2;
+            boolean isPrime = true;
+            for (int j = 2; j <= centerValue; j++) {
+                if (i % j == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+            if (isPrime) {
+                primeNums.add(i);
+            }
+        }
+        return primeNums;
+    }
+
+    /**
+     * 四舍五入
+     *
+     * @param value  原始值
+     * @param retain 保留位数
+     * @return
+     */
+    private double realRounding(double value, int retain) {
+        return new BigDecimal(value).setScale(retain, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     private void initCircleProgressbar() {
