@@ -1,0 +1,23 @@
+ext {
+    //表示是作为module还是application
+    isModule = false
+    //applicationId版本好sdkVersion统一管理
+    android = [
+            compileSdkVersion           : 28,
+            buildToolsVersion           : 28,
+            applicationId               : "com.adrian.simplemvpframe",
+            minSdkVersion               : 19,
+            targetSdkVersion            : 28,
+            versionCode                 : 1,
+            versionName                 : "1.0",
+            testInstrumentationRunner   : "android.support.test.runner.AndroidJUnitRunner"
+    ]
+
+    def APPCOMPAT_V7_VERSION = "28.0.0"
+    def CONSTRAINT_LAYOUT_VERSION = "1.1.3"
+
+    dependencies = [
+            appcompatV7     : 'com.android.support:appcompat-v7:' + APPCOMPAT_V7_VERSION,
+            constraintLayout: 'com.android.support.constraint:constraint-layout:' + CONSTRAINT_LAYOUT_VERSION
+    ]
+}
