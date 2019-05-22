@@ -2,9 +2,12 @@ package com.adrian.simplemvpframe;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.adrian.circleprogressbarlib.CircleProgressBar;
@@ -27,12 +30,28 @@ public class MainActivity extends BaseActivity implements MvpView {
     CircleProgressBar mCircleProgressbar;
 
     TextView text;
+    ImageView ivShapeTest;
     MvpPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ivShapeTest = findViewById(R.id.ivShapeTest);
+//        GradientDrawable drawable = new GradientDrawable();
+//        drawable.setSize(30, 30);
+//        drawable.setCornerRadius(15);
+//        drawable.setColor(Color.BLUE);
+//        drawable.setShape(GradientDrawable.OVAL);
+//        drawable.setBounds(0, 0, 30, 30);
+//        ivShapeTest.setImageDrawable(drawable);
+//        GradientDrawable background = new GradientDrawable();
+//        background.setSize(50, 50);
+//        background.setStroke(2, Color.GREEN);
+//        background.setCornerRadius(25f);
+//        background.setShape(GradientDrawable.RING);
+//        ivShapeTest.setBackground(background);
 
         initSuperCircle();
 
