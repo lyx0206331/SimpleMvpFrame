@@ -22,6 +22,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
@@ -74,6 +76,8 @@ public class MainActivity extends BaseActivity implements MvpView {
         presenter.attachView(this);
 
         SimpleOpUtil.INSTANCE.test();
+
+        testRegExp();
     }
 
     private void initSuperCircle() {
@@ -92,6 +96,23 @@ public class MainActivity extends BaseActivity implements MvpView {
             }
         });
         valueAnimator.start();
+    }
+
+    private void testRegExp() {
+        String txt = "<@>82_zhao2哎呦不错</@>f模压苛<@>83_<@>84_zhao4哎呦不错</@>";
+        String reg = "[<@>\\\\d+_.+</@>]+";
+
+        Log.e("REG", "txt: " + txt);
+        Log.e("REG", "reg: " + reg);
+
+        Pattern pattern = Pattern.compile(reg);
+
+        Matcher matcher = pattern.matcher(txt);
+        String replace = matcher.replaceAll("");
+        Log.e("REG", "replace: " + replace);
+        while (matcher.find()) {
+            Log.e("REG", "group: " + matcher.group());
+        }
     }
 
     /**
