@@ -108,8 +108,8 @@ public class MainActivity extends BaseActivity implements MvpView {
         Pattern pattern = Pattern.compile(reg);
 
         Matcher matcher = pattern.matcher(txt);
-        String replace = matcher.replaceAll("");
-        Log.e("REG", "replace: " + replace);
+//        String replace = matcher.replaceAll("");
+//        Log.e("REG", "replace: " + replace);
         while (matcher.find()) {
             Log.e("REG", "group: " + matcher.group());
         }
