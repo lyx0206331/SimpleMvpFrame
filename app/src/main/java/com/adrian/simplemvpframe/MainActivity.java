@@ -2,8 +2,6 @@ package com.adrian.simplemvpframe;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,12 +16,8 @@ import com.adrian.simplemvpframe.utils.SimpleOpUtil;
 import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
@@ -77,7 +71,7 @@ public class MainActivity extends BaseActivity implements MvpView {
 
         SimpleOpUtil.INSTANCE.test();
 
-        testRegExp();
+        formatContent("<@>82_zhao3哎呦不错</@>sd枯<@>83_zhao3哎呦不错</@>asdfgasd<@>84_zhao3哎呦不错</@>花飘万家雪");
     }
 
     private void initSuperCircle() {
@@ -98,21 +92,14 @@ public class MainActivity extends BaseActivity implements MvpView {
         valueAnimator.start();
     }
 
-    private void testRegExp() {
-        String txt = "<@>82_zhao2哎呦不错</@>f模压苛<@>83_<@>84_zhao4哎呦不错</@>";
-        String reg = "[<@>\\\\d+_.+</@>]+";
+    private String formatContent(String content) {
+        String reg = "<@>\\d+_";
 
-        Log.e("REG", "txt: " + txt);
-        Log.e("REG", "reg: " + reg);
+        String result = content.replaceAll(reg, "@").replaceAll("</@>", " ");
 
-        Pattern pattern = Pattern.compile(reg);
+        Log.e("REG", "result: " + result);
 
-        Matcher matcher = pattern.matcher(txt);
-//        String replace = matcher.replaceAll("");
-//        Log.e("REG", "replace: " + replace);
-        while (matcher.find()) {
-            Log.e("REG", "group: " + matcher.group());
-        }
+        return result;
     }
 
     /**
