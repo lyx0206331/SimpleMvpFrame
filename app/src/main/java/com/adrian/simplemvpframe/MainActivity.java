@@ -18,6 +18,8 @@ import com.adrian.simplemvpframe.views.chart_view.SuperCircleView;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends BaseActivity implements MvpView {
 
@@ -72,6 +74,7 @@ public class MainActivity extends BaseActivity implements MvpView {
         SimpleOpUtil.INSTANCE.test();
 
         formatContent("<@>82_zhao3哎呦不错</@>sd枯<@>83_zhao3哎呦不错</@>asdfgasd<@>84_zhao3哎呦不错</@>花飘万家雪");
+        parseEventId("http://event.2bulu.com/d-5d282827688cd06178c15ab6.htm?staticSource=%7B%22userInfo%22%3A%7B%22sdkLevel%22%3A%2212.3.1%22%2C%22cityName%22%3A%22%E8%A5%BF%E5%AE%89%22%2C%22p_terminalType%22%3A%223%22%2C%22netType%22%3A%224%22%2C%22channel%22%3A%22appStore%22%2C%22imei%22%3A%22%22%2C%22p_appVersion%22%3A%226.4.2.6%22%2C%22imsi%22%3A%22%22%2C%22deviceName%22%3A%22iPhone+7+Plus%22%2C%22userId%22%3A%221974388%22%2C%22mac%22%3A%22%22%2C%22openUDID%22%3A%221FDD0C9B-61FB-48EE-A4B2-CDBE2C5107D3%22%7D%2C%22record%22%3A%22%3CPage%3ANullPage%3E%3CSection%3AAdvertise1%3E%22%7D");
     }
 
     private void initSuperCircle() {
@@ -100,6 +103,26 @@ public class MainActivity extends BaseActivity implements MvpView {
         Log.e("REG", "result: " + result);
 
         return result;
+    }
+
+    private boolean parseEventId(String eventUrl) {
+        String regex = "(http://event.2bulu.com/d-)([0-9a-z]+)(\\.htm.*)";
+
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(eventUrl);
+
+        if (m.matches()) {
+            Log.e("REG", "当前是赛事链接");
+            int groupCount = m.groupCount();
+            Log.e("REG", "groupCount:" + groupCount);
+            for (int i = 0; i < groupCount; i++) {
+                Log.e("REG", m.group(i));
+            }
+            return true;
+        } else {
+            Log.e("REG", "当前非赛事链接");
+            return false;
+        }
     }
 
     /**
