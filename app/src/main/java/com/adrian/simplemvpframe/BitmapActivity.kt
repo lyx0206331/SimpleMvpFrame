@@ -1,19 +1,15 @@
 package com.adrian.simplemvpframe
 
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.adrian.simplemvpframe.utils.cropBitmap
 import com.adrian.simplemvpframe.utils.scaleBmpWithMaxSize
 import com.adrian.simplemvpframe.utils.scaleBmpWithMinSize
 import kotlinx.android.synthetic.main.activity_bitmap.*
-import org.jetbrains.anko.sdk25.coroutines.onClick
-import java.io.File
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class BitmapActivity : AppCompatActivity() {
 

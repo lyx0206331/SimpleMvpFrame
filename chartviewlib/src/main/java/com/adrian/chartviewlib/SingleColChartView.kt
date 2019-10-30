@@ -257,12 +257,12 @@ class SingleColChartView : View {
         super.onDraw(canvas)
         if (canvas == null || !isAvailable()) return
 
-        canvas?.drawColor(background)
+        canvas.drawColor(background)
 
-        drawAxesLine(canvas!!)
-        drawAxesTxt(canvas!!)
-        drawColumn(canvas!!, dataList)
-        drawValue(canvas!!, dataList)
+        drawAxesLine(canvas)
+        drawAxesTxt(canvas)
+        drawColumn(canvas, dataList)
+        drawValue(canvas, dataList)
     }
 
     /**
@@ -309,7 +309,7 @@ class SingleColChartView : View {
             canvas.drawText(value, 0f, startY.toFloat() + offsetY, paintAxesTxt)
 
             //绘制虚线
-            if (!TextUtils.isEmpty(value?.trim())) {
+            if (!TextUtils.isEmpty(value.trim())) {
                 drawDashed(index, startY, canvas)
                 if (targetLineIndex > 0 && index == targetLineIndex) {
                     var targetTxt = "目标"
@@ -467,7 +467,7 @@ class SingleColChartView : View {
             return true
         }
         val x = event.x
-        val y = event.y
+//        val y = event.y
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchIndex = ((x - xPoint) / xUnit).toInt()
@@ -547,7 +547,7 @@ class SingleColChartView : View {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
-    open interface OnClickColumnListener {
+    interface OnClickColumnListener {
         fun clickColumn(index: Int, value: Int)
     }
 
